@@ -12,16 +12,6 @@ RUN pip install \
     scikit-image \
     matplotlib
 
-#RUN conda install -y -n base
-#scipy scikit-image
-#torch==2.1.0
-#rank_bm25
-#geopandas
-#folium
-#rasterio
-#streamlit_folium
-#torchvision==0.16.0
-
 # INCLUDEX perms.txt
 
 COPY . /ta1/dev/usc-umn-inferlink-ta1/
