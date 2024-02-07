@@ -12,8 +12,8 @@ RUN conda install -y -n base \
     conda-forge::gdal==3.6.2 \
     fastai::opencv-python-headless
 
-RUN apt install -y libtiff-dev \
-    && apt install -y tesseract-ocr libtesseract-dev \
+RUN apt-get install -y libtiff-dev \
+    && apt-get install -y tesseract-ocr libtesseract-dev \
     && pip --no-input install pytesseract \
     && pip --no-input install --upgrade openai
 

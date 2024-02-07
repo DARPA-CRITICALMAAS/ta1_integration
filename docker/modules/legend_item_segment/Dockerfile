@@ -13,7 +13,7 @@ RUN conda install -y -n base \
     fastai::opencv-python-headless
 
 RUN apt update \
-    && apt install -y libtiff-dev tesseract-ocr libtesseract-dev libvips-dev \
+    && apt-get install -y libtiff-dev tesseract-ocr libtesseract-dev libvips-dev \
     && pip --no-input install pytesseract openai pyvips wandb gdown \
     && conda install -y -n base rasterio pyproj
 

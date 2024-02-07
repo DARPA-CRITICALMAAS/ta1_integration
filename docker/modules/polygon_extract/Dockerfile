@@ -12,12 +12,12 @@ RUN conda install -y -n base \
     conda-forge::gdal==3.6.2 \
     fastai::opencv-python-headless
 
-RUN apt install -y libtiff-dev
+RUN apt-get install -y libtiff-dev
 
 RUN pip --no-input install scikit-image Pillow==9.4.0 rasterio wandb
 
-RUN apt update \
-    && apt -y install libvips-dev \
+RUN apt-get update \
+    && apt-get -y install libvips-dev \
     && pip --no-input install pyvips
 
 # INCLUDEX perms.txt

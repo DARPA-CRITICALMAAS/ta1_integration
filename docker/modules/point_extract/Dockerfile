@@ -12,7 +12,7 @@ RUN conda install -y -n base \
     conda-forge::gdal==3.6.2 \
     fastai::opencv-python-headless
 
-RUN apt install -y libtiff-dev
+RUN apt-get install -y libtiff-dev
 
 # INCLUDEX perms.txt
 

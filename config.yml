@@ -165,6 +165,9 @@ point_extract:
 # produces: json
 georeference:
     # inputs:
+    input_path: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
+    support_path: $INPUT_DIR/georeference
     # outputs:
+    output_path: $OUTPUT_DIR/georeference/$MAP_NAME.json
     # misc:
-    version: ""
+    temp_path: $TEMP_DIR/georeference
