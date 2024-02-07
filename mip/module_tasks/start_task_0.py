@@ -11,6 +11,13 @@ class StartTask0(SimpleTask):
     NAME = "start"
     REQUIRES = []
 
+    def run_pre(self):
+        check_file_exists(
+            self.task_config.host_input_dir
+            / "maps"
+            / self.config.map_name
+            / f"{self.config.map_name}.tif")
+
     def run_body(self):
         (self.task_config.host_task_output_dir / "output.txt").write_text("ok\n")
         (self.task_config.host_task_temp_dir / "temp.txt").write_text("ok\n")
