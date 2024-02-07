@@ -51,6 +51,6 @@ then
         echo ""
         echo "*** $i... ***"
         echo ""
-        docker push inferlink/ta_$i
+        docker push inferlink/ta1_$i
     done
 fi
