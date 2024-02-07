@@ -2,14 +2,14 @@
 
 from mip.utils.docker_task import DockerTask
 from mip.module_tasks.registry import register_task
-from mip.module_tasks.start_task_0 import StartTask0
+from mip.module_tasks.start_task import StartTask
 from mip.utils.checker import check_directory_exists
 
 
 @register_task
-class GeoreferenceTask10(DockerTask):
+class GeoreferenceTask(DockerTask):
     NAME = "georeference"
-    REQUIRES = [StartTask0]
+    REQUIRES = [StartTask]
 
     def run_post(self):
         # TODO

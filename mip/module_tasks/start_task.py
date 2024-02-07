@@ -7,7 +7,7 @@ from mip.module_tasks.registry import register_task
 
 
 @register_task
-class StartTask0(SimpleTask):
+class StartTask(SimpleTask):
     NAME = "start"
     REQUIRES = []
 

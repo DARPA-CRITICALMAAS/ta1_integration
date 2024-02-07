@@ -3,15 +3,15 @@
 import shutil
 
 from mip.utils.docker_task import DockerTask
-from mip.module_tasks.text_spotting_task_6 import TextSpottingTask6
+from mip.module_tasks.text_spotting_task import TextSpottingTask
 from mip.utils.checker import check_file_exists
 from mip.module_tasks.registry import register_task
 
 
 @register_task
-class LegendItemSegmentTask3(DockerTask):
+class LegendItemSegmentTask(DockerTask):
     NAME = "legend_item_segment"
-    REQUIRES = [TextSpottingTask6]
+    REQUIRES = [TextSpottingTask]
 
     def run_post(self):
         d = self.task_config.host_task_output_dir

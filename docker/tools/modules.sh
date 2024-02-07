@@ -1,15 +1,15 @@
 #!/bin/bash
 set -e
 
-export LEGEND_SEGMENT=dockers/2_legend_segment
-export LEGEND_ITEM_SEGMENT=dockers/3_legend_item_segment
-export LEGEND_ITEM_DESCRIPTION=dockers/4_legend_item_description
-export MAP_CROP=dockers/5_map_crop
-export TEXT_SPOTTING=dockers/6_text_spotting
-export LINE_EXTRACT=dockers/7_line_extract
-export POLYGON_EXTRACT=dockers/8_polygon_extract
-export POINT_EXTRACT=dockers/9_point_extract
-export GEOREFERENCE=dockers/10_georeference
+export LEGEND_SEGMENT=docker/legend_segment
+export LEGEND_ITEM_SEGMENT=docker/legend_item_segment
+export LEGEND_ITEM_DESCRIPTION=docker/legend_item_description
+export MAP_CROP=docker/map_crop
+export TEXT_SPOTTING=docker/text_spotting
+export LINE_EXTRACT=docker/line_extract
+export POLYGON_EXTRACT=docker/polygon_extract
+export POINT_EXTRACT=docker/point_extract
+export GEOREFERENCE=docker/georeference
 
 export MODULE_DIRS=" \
     $LEGEND_SEGMENT \
