@@ -1,4 +1,4 @@
 Dockerfile.tmp
 __pycache__
-
-
+luigi.log
+.idea
