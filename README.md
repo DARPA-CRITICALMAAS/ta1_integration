@@ -148,10 +148,6 @@ This section explains how to add a new module, in three steps:
 In our examples below, we will call the new module `extract_ore`, its container
 `inferlink/ta1_extract_ore`, and its class `ExtractOreTask`.
 
-_NOTE: Many of the existing module names have numbers in their names, e.g.
-"5_map_crop" or "MapCrop5Task". This is just to alleviate my own confusion and
-will soon go away._
-
 
 ## 3.1. Your New Module
 
@@ -168,7 +164,7 @@ any hard-coded paths and do not assume anything lives at "`.`"._
 
 Each module needs to be run in its own docker container.
 
-1. Add new directory `integration/dockers/extract_ore`. (You can copy from one
+1. Add new directory `docker/modules/extract_ore`. (You can copy from one
    of the existing modules.)
 2. Write a `Dockerfile` for your module and put it in the new dir. You should
    copy from one of the existing modules, but in general the file should contain
@@ -181,7 +177,7 @@ Each module needs to be run in its own docker container.
    4. The special line `# INCLUDEX perms.txt`. This adds some user permission
       support and sets up the volumes used by all the docker containers.
    5. The two lines `CMD []` and `ENTRYPOINT ["python", "/path/to/module.py"]`.
-3. Copy the file `build_docker.sh` from one of the existing modules into your
+3. Copy the file `build.sh` from one of the existing modules into your
    new directory. In the simplest case, you'll need to only change the name of
    the docker image in the `docker build` step.
 
@@ -200,14 +196,12 @@ docker run \
 
 To build your container, you need to first set the environment variable
 `$REPO_ROOT` to point to where you have the `usc-umn-inferlink-ta1` repo checked
-out. Then, you can just run your `./build_docker.sh`.
+out. Then, you can just run your `./build.sh`.
 
-To build all the containers using mipper's build tools, first edit the file
-`docker-tools/modules.sh` to add your new module (in three places, just follow
-what's already there). Then, run the build script in that directory as
-`./build.sh --build`: this will build each of the docker containers. (You can
-then run `./build.sh --push` to push all the containers, if you have write
-access to the inferlink DockerHub repository.)
+To build all the containers using mipper's build tools, run the build script
+in that directory as `./build_all.sh --build`: this will build each of the
+docker containers. (You can then run `./build_all.sh --push` to push all the
+containers, if you have write access to InferLink's DockerHub repository.)
 
 
 ## 3.3. Your New Mipper Module
