@@ -36,7 +36,7 @@ then
 	echo ""
 	echo "*** $i... ***"
 	echo ""
-	pushd $REPO_ROOT/$i
+	pushd ../$i
 	./build_docker.sh
 	popd
     done
