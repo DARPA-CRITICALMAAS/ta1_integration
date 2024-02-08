@@ -21,9 +21,11 @@ RUN pip --no-input install ipywidgets
 
 # INCLUDEX perms.txt
 
-COPY . /ta1/dev/usc-umn-inferlink-ta1/
+COPY ./usc-umn-inferlink-ta1/ /ta1/dev/usc-umn-inferlink-ta1/
+COPY ./ta1_integration/docker/modules/legend_item_segment/runme.sh \
+    /home/cmaas/legend_item_segment_runme.sh
 
 ENV TESSERACT_EXE=/usr/bin/tesseract
 
 CMD []
-ENTRYPOINT ["/ta1/dev/usc-umn-inferlink-ta1/integration/dockers/3_legend_item_segment/runme.sh"]
+ENTRYPOINT ["/home/cmaas/legend_item_segment_runme.sh"]

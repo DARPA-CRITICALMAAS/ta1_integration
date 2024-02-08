@@ -38,7 +38,7 @@ legend_segment:
 legend_item_segment:
     # inputs:
     input_image: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
-    path_to_mapkurator_output: $OUTPUT_DIR/text_spotting/mapKurator_test/stitch/test/$MAP_NAME.geojson
+    #path_to_mapkurator_output: $OUTPUT_DIR/text_spotting/mapKurator_test/stitch/test/$MAP_NAME.geojson
     input_legend_segmentation: $INPUT_DIR/legend_item_segment/ch2_validation_evaluation_labels_coco.json
     # outputs:
     output_dir: $OUTPUT_DIR/legend_item_segment
@@ -47,7 +47,7 @@ legend_item_segment:
     postprocessing_for_crs: True
     competition_custom: True
     path_to_intermediate: $TEMP_DIR/legend_item_segment
-    version: 1
+    version: 1.2
     log: $OUTPUT_DIR/legend_item_segment/log_file.txt
 
 
@@ -171,3 +171,15 @@ georeference:
     output_path: $OUTPUT_DIR/georeference/$MAP_NAME.json
     # misc:
     temp_path: $TEMP_DIR/georeference
+
+
+# 11
+# where: geopackage
+# by: Weiwei
+# requires: point_extract, line_extract, polygon_extract, georeference
+# produces: ?
+geopackage:
+    # inputs:
+    # outputs:
+    # misc:
+    version: ""

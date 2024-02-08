@@ -195,8 +195,11 @@ docker run \
 ```
 
 To build your container, you need to first set the environment variable
-`$REPO_ROOT` to point to where you have the `usc-umn-inferlink-ta1` repo checked
-out. Then, you can just run your `./build.sh`.
+`$REPO_ROOT` to point to the dir _above_ where you have the
+`usc-umn-inferlink-ta1` repo checked out. That is, if `$REPO_ROOT` is set to
+`/home/user/dev`, your repo will be at `/home/user/dev/usc-umn-inferlink-ta1`.
+
+Then, you can just run your `./build.sh`.
 
 To build all the containers using mipper's build tools, run the build script
 in that directory as `./build_all.sh --build`: this will build each of the

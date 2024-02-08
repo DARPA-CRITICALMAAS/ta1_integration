@@ -26,4 +26,4 @@ COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
 #ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/polygon/loam_handler.py"]
-ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/integration/docker-tools/always_pass.py"]
+ENTRYPOINT ["echo", "Hi."]

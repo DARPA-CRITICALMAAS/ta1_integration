@@ -19,7 +19,7 @@ class LegendItemSegmentTask(DockerTask):
 
         # TODO: remove this fixup step
         src = (self.task_config.host_input_dir
-               / "input"
+               / "maps"
                / self.config.map_name
                / "legend_item_segment"
                / f"{self.config.map_name}.json")
