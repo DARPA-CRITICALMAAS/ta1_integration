@@ -195,9 +195,10 @@ docker run \
 ```
 
 To build your container, you need to first set the environment variable
-`$REPO_ROOT` to point to the dir _above_ where you have the
-`usc-umn-inferlink-ta1` repo checked out. That is, if `$REPO_ROOT` is set to
-`/home/user/dev`, your repo will be at `/home/user/dev/usc-umn-inferlink-ta1`.
+`$REPO_DIR` to point to the dir _above_ where you have the
+`usc-umn-inferlink-ta1` repo checked out. That is, if `$REPO_DIR` is set to
+`/home/user/dev`, your repository should be at 
+`/home/user/dev/usc-umn-inferlink-ta1`.
 
 Then, you can just run your `./build.sh`.
 

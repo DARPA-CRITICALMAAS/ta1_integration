@@ -1,6 +1,7 @@
 # Copyright 2024 InferLink Corporation
 
 from mip.utils.docker_task import DockerTask
+from mip.module_tasks.legend_segment_task import LegendSegmentTask
 from mip.module_tasks.point_extract_task import PointExtractTask
 from mip.module_tasks.line_extract_task import LineExtractTask
 from mip.module_tasks.polygon_extract_task import PolygonExtractTask
@@ -13,6 +14,7 @@ from mip.module_tasks.registry import register_task
 class GeopackageTask(DockerTask):
     NAME = "geopackage"
     REQUIRES = [
+        LegendSegmentTask,
         PointExtractTask,
         LineExtractTask,
         PolygonExtractTask,
