@@ -1,4 +1,9 @@
 Dockerfile.tmp
 __pycache__
+<<<<<<< Updated upstream
 luigi.log
 .idea
+=======
+
+.DS_Store
+>>>>>>> Stashed changes
