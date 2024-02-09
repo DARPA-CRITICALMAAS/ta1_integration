@@ -1,7 +1,7 @@
 # Copyright 2024 InferLink Corporation
 
 from mip.utils.docker_task import DockerTask
-from mip.module_tasks.legend_segment_task import LegendSegmentTask
+from mip.module_tasks.start_task import StartTask
 from mip.utils.checker import check_directory_exists
 from mip.module_tasks.registry import register_task
 
@@ -10,7 +10,7 @@ from mip.module_tasks.registry import register_task
 class MapCropTask(DockerTask):
     NAME = "map_crop"
     REQUIRES = [
-        # LegendSegmentTask,
+        StartTask,
     ]
 
     def run_post(self):

@@ -93,7 +93,7 @@ class DockerRunner:
             logger.info(f"container perf: {container_data}")
 
             try:
-                exit_status = self._container.wait(timeout=10)
+                exit_status = self._container.wait(timeout=15)
                 return exit_status["StatusCode"]
             except requests.exceptions.ConnectionError as ex:
                 if "read timed out" in str(ex).lower():

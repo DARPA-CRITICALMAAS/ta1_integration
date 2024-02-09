@@ -157,6 +157,7 @@ polygon_extract:
     path_to_json: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType_internal.json
     # outputs:
     dir_to_integrated_output: $OUTPUT_DIR/polygon_extract
+    dir_to_intermediate: $TEMP_DIR/polygon_extract
     # misc:
     version: 0
     log: $OUTPUT_DIR/polygon_extract/log_file.txt
