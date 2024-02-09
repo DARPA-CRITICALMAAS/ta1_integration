@@ -161,7 +161,7 @@ polygon_extract:
     # misc:
     version: 0
     log: $OUTPUT_DIR/polygon_extract/log_file.txt
-    threads: 1
+    #threads: 1
 
 
 # ---------------------------------------------------------------------------
@@ -211,6 +211,15 @@ georeference:
 # produces: ?
 geopackage:
     # inputs:
+    map_name: $MAP_NAME
+    layout_output_dir: $OUTPUT_DIR/legend_item_description
+    georef_output_dir: $OUTPUT_DIR/example_inputs/georeference
+    poly_output_dir: $OUTPUT_DIR/polygon_extract
+    ln_output_dir: $OUTPUT_DIR/line_extract
+    pt_output_dir: $OUTPUT_DIR/point_extract
+    nongeoref_map_dir: $INPUT_DIR/maps
     # outputs:
+    output_dir: $OUTPUT_DIR/geopackage/gpkg_outputs
+    georef_map_output: $OUTPUT_DIR/geopackage
     # misc:
     version: ""
