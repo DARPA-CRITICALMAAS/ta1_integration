@@ -90,7 +90,7 @@ class DockerRunner:
         while True:
             host_data, container_data = perf_collector.update(self._container)
             logger.info(f"host perf: {host_data}")
-            logger.info(f"container perf: {container_data}")
+            logger.info(f"cont perf: {container_data}")
 
             try:
                 exit_status = self._container.wait(timeout=15)
