@@ -15,6 +15,7 @@ class TemplateParameters(BaseModel):
     region: str
     region_az: str
     stack_name: str
+    ami_id: str
 
     def to_yaml(self) -> str:
         return to_yaml_str(self)

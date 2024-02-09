@@ -48,6 +48,10 @@ class Stack:
                 "ParameterKey": "RegionAZ",
                 "ParameterValue": self._parameters.region_az,
             },
+            {
+                "ParameterKey": "AMIId",
+                "ParameterValue": self._parameters.ami_id,
+            },
         ]
 
         tags: list[dict[str, str]] = [

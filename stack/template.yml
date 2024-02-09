@@ -9,10 +9,8 @@ Parameters:
         Type: String
     RegionAZ:
         Type: String
-    AMI:
+    AMIId:
         Type: String
-        Default: ami-008fe2fc65df48dac
-
 
 
 Resources:
@@ -91,7 +89,7 @@ Resources:
         Type: 'AWS::EC2::Instance'
         Properties:
             SubnetId: !Ref SubnetA
-            ImageId: !Ref AMI
+            ImageId: !Ref AMIId
             InstanceType:
                 Ref: InstanceType
             KeyName: !Ref EC2KeyName

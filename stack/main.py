@@ -15,8 +15,14 @@ DEFAULT_OWNER_NAME = "mpg"
 DEFAULT_KEY_NAME = "mpg-key"
 DEFAULT_REGION = "us-west-2"
 DEFAULT_REGION_AZ = "us-west-2a"
-DEFAULT_INSTANCE_TYPE = "p2.8xlarge"
+DEFAULT_INSTANCE_TYPE = "p3.8xlarge"  # "p2.xlarge"
 DEFAULT_DISK_GB = 250
+
+UBUNTU_AMI_ID = "ami-008fe2fc65df48dac"
+UBUNTU_GPU_AMI_ID = "ami-0493c723783e0b7f9"
+
+# Deep Learning Proprietary Nvidia Driver AMI GPU TensorFlow 2.13 (Ubuntu 20.04) 20240101
+UBUNTU_GPU_AMI_ID = "ami-0d7f1f074c0dfe7c6"
 
 
 def main() -> int:
@@ -62,6 +68,11 @@ def main() -> int:
         type=str,
         default=DEFAULT_INSTANCE_TYPE,
     )
+    parser.add_argument(
+        "--ami_id",
+        type=str,
+        default=UBUNTU_GPU_AMI_ID,
+    )
 
     # actions
     parser.add_argument(
@@ -90,6 +101,7 @@ def main() -> int:
         region=args.region,
         region_az=args.region_az,
         stack_name=args.stack_name,
+        ami_id=args.ami_id,
     )
 
     if "_" in args.stack_name:
