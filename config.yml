@@ -179,9 +179,9 @@ point_extract:
     output_dir_root: $OUTPUT_DIR/point_extract
     #misc:
     map_metadata_dir: $OUTPUT_DIR/legend_item_description
-    cropped_legend_dir: /tmp
+    cropped_legend_dir: $TEMP_DIR/point_extract
     template_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Template
-    processed_legend_dir: /tmp
+    processed_legend_dir: $TEMP_DIR/point_extract
     map_patches_dir: $OUTPUT_DIR/map_crop
     model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Model_weights
 
@@ -223,4 +223,3 @@ geopackage:
     output_dir: $OUTPUT_DIR/geopackage/gpkg_outputs
     georef_map_output: $OUTPUT_DIR/geopackage
     # misc:
-    version: ""
