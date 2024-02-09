@@ -20,10 +20,11 @@ RUN apt-get update \
     && apt-get -y install libvips-dev \
     && pip --no-input install pyvips
 
+RUN pip --no-input install gdown
+
 # INCLUDEX perms.txt
 
 COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
-#ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/polygon/loam_handler.py"]
-ENTRYPOINT ["echo", "Hi."]
+ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/polygon/loam_handler.py"]

@@ -152,6 +152,7 @@ line_extract:
 # produces: geojson?
 polygon_extract:
     # inputs:
+    path_to_legend_description: $OUTPUT_DIR/legend_item_description/$MAP_NAME_polygon.json
     path_to_legend_solution: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType.geojson
     path_to_tif: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
     path_to_json: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType_internal.json
