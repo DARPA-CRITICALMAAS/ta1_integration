@@ -33,7 +33,7 @@ class DockerRunner:
             device = docker.types.DeviceRequest(
                 driver="nvidia",
                 count=-1,
-                capabilities=[["hello-gpu"]])
+                capabilities=[["gpu"]])
             devices = [device]
         else:
             devices = []
