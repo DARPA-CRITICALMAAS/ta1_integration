@@ -182,7 +182,7 @@ point_extract:
     # outputs:
     output_dir_root: $OUTPUT_DIR/point_extract
     map_metadata_dir: $OUTPUT_DIR/legend_item_description
-    map_patches_dir: $OUTPUT_DIR/map_crop
+    map_patches_dir: $OUTPUT_DIR/map_crop/WY_CO_Peach_g1000_s1000
     # temp:
     cropped_legend_dir: $TEMP_DIR/point_extract
     processed_legend_dir: $TEMP_DIR/point_extract

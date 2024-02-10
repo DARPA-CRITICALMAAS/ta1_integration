@@ -14,10 +14,14 @@ RUN conda install -y -n base \
 
 RUN apt-get install -y libtiff-dev
 
+RUN pip install monai imageio pyvista
+
+# ... RUN pip install MultiScaleDeformableAttention ...
+
 # INCLUDEX perms.txt
 
 COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
-#ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/line/run_line_extraction.py"]
-ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/integration/docker-tools/always_pass.py"]
+ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/line/run_line_extraction.py"]
+#ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/integration/docker-tools/always_pass.py"]
