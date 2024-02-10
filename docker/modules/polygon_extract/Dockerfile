@@ -20,6 +20,8 @@ RUN apt-get update \
     && apt-get -y install libvips-dev \
     && pip --no-input install pyvips
 
+RUN conda install -c conda-forge ipywidgets
+
 RUN pip --no-input install gdown
 
 # INCLUDEX perms.txt
