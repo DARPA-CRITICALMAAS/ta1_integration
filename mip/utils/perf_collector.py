@@ -1,6 +1,6 @@
 # Copyright 2024 InferLink Corporation
 
-from datetime import datetime
+import time
 from typing import Any, Optional
 
 from docker.models.containers import Container
@@ -12,23 +12,22 @@ class PerfRecord:
     def __init__(
             self,
             *,
-            timestamp: Optional[datetime],
+            elapsed: float,
             cpu_util: float,  # percentage, [0..n*100]
             mem_used: int,  # bytes
             gpu_util: float,  # percentage, [0..n*100]
             gpu_mem_used: int,
     ):  # bytes
-        self.timestamp = timestamp
+        self.elapsed = round(elapsed)
         self.cpu_util = cpu_util
         self.mem_used = mem_used
         self.gpu_util = gpu_util
         self.gpu_mem_used = gpu_mem_used
 
     def __str__(self) -> str:
-        t = f"[{self.timestamp.strftime('%H:%M:%S')}] " if self.timestamp else ""
         mem_gb = round(self.mem_used / (1024 * 1024 * 1024), 1)
         gpu_mem_gb = round(self.gpu_mem_used / (1024 * 1024 * 1024), 1)
-        return f"{t}cpu={self.cpu_util}% mem={mem_gb}GB gpu={self.gpu_util}% gpu_mem={gpu_mem_gb}GB"
+        return f"elap={self.elapsed}s cpu={self.cpu_util}% mem={mem_gb}GB gpu={self.gpu_util}% gpu_mem={gpu_mem_gb}GB"
 
 
 class PerfStats:
@@ -41,13 +40,15 @@ class PerfStats:
         self._num_gpus: int = 0
         self._total_gpu_mem: int = 0
 
+        self._start_time = time.time()
+
     def get_peak_data(self) -> PerfRecord:
         cpu_util = max([p.cpu_util for p in self._data])
         mem_used = max([p.mem_used for p in self._data])
         gpu_util = max([p.gpu_util for p in self._data])
         gpu_mem_used = max([p.gpu_mem_used for p in self._data])
         data = PerfRecord(
-            timestamp=None,
+            elapsed=0,
             cpu_util=cpu_util,
             mem_used=mem_used,
             gpu_util=gpu_util,
@@ -61,7 +62,7 @@ class PerfStats:
         gpu_util = sum([p.gpu_util for p in self._data]) / len(self._data)
         gpu_mem_used = round(sum([p.gpu_mem_used for p in self._data]) / len(self._data))
         data = PerfRecord(
-            timestamp=None,
+            elapsed=0,
             cpu_util=cpu_util,
             mem_used=mem_used,
             gpu_util=gpu_util,
@@ -106,8 +107,9 @@ class PerfStats:
             gpu_perc /= self._num_gpus
             self._total_gpu_mem = gpu_bytes_total
 
+        elapsed = time.time() - self._start_time
         data = PerfRecord(
-            timestamp=datetime.now(),
+            elapsed=elapsed,
             cpu_util=cpu_perc,
             mem_used=mem_bytes_used,
             gpu_util=gpu_perc,
@@ -144,8 +146,9 @@ class PerfStats:
         if not self._num_cpus:
             self._num_cpus = num_cpus
 
+        elapsed = time.time() - self._start_time
         data = PerfRecord(
-            timestamp=datetime.now(),
+            elapsed=elapsed,
             cpu_util=cpu_perc,
             mem_used=mem_bytes_used,
             gpu_util=0.0,

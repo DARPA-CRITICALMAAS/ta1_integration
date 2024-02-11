@@ -18,6 +18,7 @@ class TaskConfig:
         self.container_input_dir = config.container_input_dir
         self.container_output_dir = config.container_output_dir
         self.container_temp_dir = config.container_temp_dir
+        self.container_repo_dir = config.container_repo_dir
 
         self.container_task_output_dir = self.container_output_dir / task_name
         self.container_task_temp_dir = self.container_temp_dir / task_name
@@ -25,6 +26,7 @@ class TaskConfig:
         self.host_input_dir = config.host_input_dir
         self.host_output_dir = config.host_job_output_dir
         self.host_temp_dir = config.host_job_temp_dir
+        self.host_repo_dir = config.host_repo_dir
 
         self.host_task_output_dir = self.host_output_dir / task_name
         self.host_task_temp_dir = self.host_temp_dir / task_name
@@ -50,5 +52,6 @@ class TaskConfig:
             s = s.replace("$INPUT_DIR", str(self.container_input_dir))
             s = s.replace("$OUTPUT_DIR", str(self.container_output_dir))
             s = s.replace("$TEMP_DIR", str(self.container_temp_dir))
+            s = s.replace("$REPO_DIR", str(self.container_repo_dir))
             return s
         return str(s)

@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+    DiskGB:
+        Type: Number
+    EC2KeyName:
+        Type: String
+    InstanceType:
+        Type: String
+    RegionAZ:
+        Type: String
+    AMIId:
+        Type: String
+
+
+Resources:
+
+    VPC:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: 10.0.0.0/16
+            EnableDnsSupport: true
+            EnableDnsHostnames: true
+            InstanceTenancy: default
+
+    InternetGateway:
+        Type: AWS::EC2::InternetGateway
+
+    VPCGatewayAttachment:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            VpcId: !Ref VPC
+            InternetGatewayId: !Ref InternetGateway
+
+    SubnetA:
+        Type: AWS::EC2::Subnet
+        Properties:
+            AvailabilityZone: !Ref RegionAZ
+            VpcId: !Ref VPC
+            CidrBlock: 10.0.0.0/24
+            MapPublicIpOnLaunch: true
+
+    RouteTable:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref VPC
+
+    InternetRoute:
+        Type: AWS::EC2::Route
+        DependsOn: InternetGateway
+        Properties:
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref InternetGateway
+            RouteTableId: !Ref RouteTable
+
+    SubnetARouteTableAssociation:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            RouteTableId: !Ref RouteTable
+            SubnetId: !Ref SubnetA
+
+    InstanceSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupName: "Internet Group"
+            GroupDescription: "SSH and web traffic in, all traffic out."
+            VpcId: !Ref VPC
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: 80
+                  ToPort: 80
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: 443
+                  ToPort: 443
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: 22
+                  ToPort: 22
+                  CidrIp: 0.0.0.0/0
+
+    ElasticIP:
+        Type: AWS::EC2::EIP
+        Properties:
+            Domain: vpc
+            InstanceId: !Ref Linux
+
+    Linux:
+        Type: 'AWS::EC2::Instance'
+        Properties:
+            SubnetId: !Ref SubnetA
+            ImageId: !Ref AMIId
+            InstanceType:
+                Ref: InstanceType
+            KeyName: !Ref EC2KeyName
+            SecurityGroupIds:
+                - Ref: InstanceSecurityGroup
+            BlockDeviceMappings:
+                - DeviceName: /dev/sda1
+                  Ebs:
+                    VolumeSize: !Ref DiskGB
+            UserData:
+                Fn::Base64: |
+                  #!/bin/bash
+                  echo "Hello World!" > hello.txt
+
+Outputs:
+    PublicIp:
+        Value:
+            Fn::GetAtt:
+                - Linux
+                - PublicIp

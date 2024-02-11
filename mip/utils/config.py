@@ -28,9 +28,12 @@ class Config:
         self.host_input_dir = Path(self.data["host"]["input_dir"])
         self.host_output_dir = Path(self.data["host"]["output_dir"])
         self.host_temp_dir = Path(self.data["host"]["temp_dir"])
+        self.host_repo_dir = Path(self.data["host"]["repo_dir"])
+
         self.container_input_dir = Path(self.data["container"]["input_dir"])
         self.container_output_dir = Path(self.data["container"]["output_dir"])
         self.container_temp_dir = Path(self.data["container"]["temp_dir"])
+        self.container_repo_dir = Path(self.data["container"]["repo_dir"])
 
         self.host_job_output_dir = self.host_output_dir / self.job_name
         self.host_job_temp_dir = self.host_temp_dir / self.job_name
