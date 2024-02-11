@@ -46,7 +46,7 @@ class SimpleTask(luigi.Task):
             self.run_pre()
         except Exception as ex:
             logger.error(f"FAIL: run_pre() of {self.task_config.task_name}")
-            logger.error(f"{ex}")
+            #logger.error(f"{ex}")
             raise
 
         logger.info(f"run_pre() completed: {self.task_config.task_name}")
@@ -55,7 +55,7 @@ class SimpleTask(luigi.Task):
             self.run_body()
         except Exception as ex:
             logger.error(f"FAIL: run_body() of {self.task_config.task_name}")
-            logger.error(f"{ex}")
+            #logger.error(f"{ex}")
             raise
 
         logger.info(f"run_body() completed: {self.task_config.task_name}")
@@ -64,7 +64,7 @@ class SimpleTask(luigi.Task):
             self.run_post()
         except Exception as ex:
             logger.error(f"FAIL: run_post() of {self.task_config.task_name}")
-            logger.error(f"{ex}")
+            #logger.error(f"{ex}")
             raise
 
         logger.info(f"run_post() completed: {self.task_config.task_name}")

@@ -2,11 +2,8 @@
 
 **Now**
 
-* complete polygon extract (#59) - UNDERWAY
-* review Top Ten -- add don't write current dir
-* 
 * complete point extract (#45)
-* complete line extract (#36)
+* complete line extract (#36) -- needs Deformable-DETR library, CUDA prob, 4 yrs old
 * complete geopackage
 * geopackage post-run verify
 * line extract post-run verify (#30)
@@ -17,7 +14,6 @@
 * generate perf data for WY_CO_EatonRes
 * mail to Yao-Yi: 30 min presentation, 15 min with each module owner 
 * ec2 cost chart
-* printouts
 * update overview slides: perf (10), issues (11)
 
 **This Week**
