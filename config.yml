@@ -176,13 +176,13 @@ polygon_extract:
 # produces: TIF, geojson
 point_extract:
     # inputs:
-    map_dir: $INPUT_DIR/maps/$MAP_NAME
+    map_dir: $INPUT_DIR/maps
     template_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Template
     model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Model_weights
     # outputs:
     output_dir_root: $OUTPUT_DIR/point_extract
     map_metadata_dir: $OUTPUT_DIR/legend_item_description
-    map_patches_dir: $OUTPUT_DIR/map_crop/WY_CO_Peach_g1000_s1000
+    map_patches_dir: $OUTPUT_DIR/map_crop
     # temp:
     cropped_legend_dir: $TEMP_DIR/point_extract
     processed_legend_dir: $TEMP_DIR/point_extract
