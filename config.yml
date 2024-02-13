@@ -56,6 +56,7 @@ legend_item_segment:
     postprocessing_for_crs: True
     competition_custom: True
     version: 1.2
+    only_poly: True
 
 
 # ---------------------------------------------------------------------------
@@ -158,6 +159,7 @@ polygon_extract:
     path_to_legend_description: $OUTPUT_DIR/legend_item_description/$MAP_NAME_polygon.json
     path_to_legend_solution: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType.geojson
     path_to_json: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType_internal.json
+    path_to_model: $INPUT_DIR/modules/polygon_extract/checkpoints/checkpoint_epoch14.pth
     # outputs:
     dir_to_integrated_output: $OUTPUT_DIR/polygon_extract
     log: $OUTPUT_DIR/polygon_extract/log_file.txt
