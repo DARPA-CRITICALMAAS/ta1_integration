@@ -135,7 +135,7 @@ line_extract:
     config: $INPUT_DIR/modules/line_extract/usgs_railroads.yaml
     trained_model_dir: $INPUT_DIR/modules/line_extract/trained_weights
     map_legend_json: $OUTPUT_DIR/legend_item_description
-    cropped_image_dir: $OUTPUT_DIR/map_crop/$MAP_NAME_g256_s256"
+    cropped_image_dir: $OUTPUT_DIR/map_crop/$MAP_NAME_g256_s256
     # outputs:
     prediction_dir: $OUTPUT_DIR/line_extract
     # temp:
