@@ -63,6 +63,8 @@ class DockerTask(SimpleTask):
         ]
 
         user = self.USER
+        if self.NAME == "line_extract":
+            user = "root"
 
         volumes = [
             f"{self.task_config.host_input_dir}:{self.task_config.container_input_dir}",
