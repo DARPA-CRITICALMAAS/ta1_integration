@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pdb
 from datetime import datetime
 import logging
 import shutil
@@ -11,7 +10,7 @@ from typing import Optional
 import luigi
 
 from mip.utils.config import Config
-from mip.utils.task_config import TaskConfig
+from mip.utils.module_config import ModuleConfig
 from mip.utils.perf_collector import PerfCollector
 
 
@@ -29,7 +28,7 @@ class SimpleTask(luigi.Task):
         super().__init__(*args, **kwargs)
 
         self.config = Config.CONFIG
-        self.task_config = TaskConfig(self.config, self.NAME)
+        self.task_config = ModuleConfig(self.config, self.NAME)
         self.start_time: Optional[datetime] = None
         self.end_time: Optional[datetime] = None
 
@@ -44,27 +43,24 @@ class SimpleTask(luigi.Task):
 
         try:
             self.run_pre()
-        except Exception as ex:
+        except Exception:
             logger.error(f"FAIL: run_pre() of {self.task_config.task_name}")
-            #logger.error(f"{ex}")
             raise
 
         logger.info(f"run_pre() completed: {self.task_config.task_name}")
 
         try:
             self.run_body()
-        except Exception as ex:
+        except Exception:
             logger.error(f"FAIL: run_body() of {self.task_config.task_name}")
-            #logger.error(f"{ex}")
             raise
 
         logger.info(f"run_body() completed: {self.task_config.task_name}")
 
         try:
             self.run_post()
-        except Exception as ex:
+        except Exception:
             logger.error(f"FAIL: run_post() of {self.task_config.task_name}")
-            #logger.error(f"{ex}")
             raise
 
         logger.info(f"run_post() completed: {self.task_config.task_name}")

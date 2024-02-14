@@ -10,7 +10,7 @@ import nvidia_smi
 from mip.module_tasks import *  # force registration of all module tasks
 from mip.module_tasks.registry import registry_lookup, get_tasks
 from mip.utils.config import Config
-from mip.utils.task_config import TaskConfig
+from mip.utils.module_config import ModuleConfig
 from mip.utils.simple_task import SimpleTask
 from mip.apps.options import Options
 
@@ -67,7 +67,7 @@ def main() -> int:
 
     if opts.force:
         for task_name in opts.target_task_names:
-            task_config = TaskConfig(cfg, task_name)
+            task_config = ModuleConfig(cfg, task_name)
             task_config.host_task_file.unlink(missing_ok=True)
 
     nvidia_smi.nvmlInit()
@@ -86,5 +86,5 @@ def main() -> int:
 
 
 if __name__ == '__main__':
-    status = main()
-    sys.exit(status)
+    sts = main()
+    sys.exit(sts)

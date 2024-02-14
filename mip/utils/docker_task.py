@@ -2,7 +2,6 @@
 
 import datetime
 import logging
-from typing import TextIO
 
 from mip.utils.docker_runner import DockerRunner
 from mip.utils.simple_task import SimpleTask
@@ -13,8 +12,6 @@ logger = logging.getLogger('luigi-interface')
 class DockerTask(SimpleTask):
 
     NAME = "invalid"
-    GPU = True
-    USER = "cmaas"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,15 +53,10 @@ class DockerTask(SimpleTask):
 
     def _make_container(self) -> DockerRunner:
         image_name = f"inferlink/ta1_{self.NAME}"
-        gpus = self.GPU
 
         environment = [
             f"OPENAI_API_KEY={self.config.openai_key}"
         ]
-
-        user = self.USER
-        if self.NAME == "line_extract":
-            user = "root"
 
         volumes = [
             f"{self.task_config.host_input_dir}:{self.task_config.container_input_dir}",
@@ -82,8 +74,8 @@ class DockerTask(SimpleTask):
             command=options,
             volumes=volumes,
             environment=environment,
-            user=user,
-            gpus=gpus,
+            user=self.task_config.user,
+            gpus=self.task_config.gpu,
         )
 
         return container
