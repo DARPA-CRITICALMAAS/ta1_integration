@@ -44,4 +44,4 @@ RUN pip install geopandas rasterio
 COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
-ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Program/run_final.py"]
+ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Program/run_final_text.py"]
