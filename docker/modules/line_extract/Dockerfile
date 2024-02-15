@@ -88,7 +88,14 @@ ENV NVIDIA-SMI /usr/bin/nvidia-smi
 
 RUN git clone https://github.com/fundamentalvision/Deformable-DETR.git /ta1/dev/Deformable-DETR
 
+RUN apt-get update && apt-get install sudo
+
 # INCLUDEX perms.txt
+
+USER root
+RUN adduser cmaas sudo
+RUN echo "cmaas ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER cmaas
 
 COPY ./usc-umn-inferlink-ta1/ /ta1/dev/usc-umn-inferlink-ta1/
 

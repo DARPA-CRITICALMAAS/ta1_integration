@@ -1,6 +1,7 @@
 # Copyright 2024 InferLink Corporation
 
 import logging
+import math
 import requests  # needed for docker exceptions
 import time
 from typing import Optional
@@ -94,6 +95,8 @@ class DockerRunner:
             gb = 1024 * 1024 * 1024
             host_mem = round(host_data.mem_used / gb, 1)
             cont_mem = round(cont_data.mem_used / gb, 1)
+            nice_time = _time_format(host_data.elapsed)
+            logger.info(f"elapsed: {nice_time}")
             logger.info(f"host perf: {host_cpu}%, {host_mem}GB")
             logger.info(f"cont perf: {cont_cpu}%, {cont_mem}GB")
 
@@ -115,3 +118,12 @@ def _make_mount(v: str) -> docker.types.Mount:
         target=t[1],
         read_only=False)
     return mount
+
+
+def _time_format(secs: int) -> str:
+    h = math.floor(secs / (60 * 60))
+    v = secs % (60 * 60)
+    m = math.floor(v / 60)
+    v = v % 60
+    s = v
+    return f"{h:02}:{m:02}:{s:02}"

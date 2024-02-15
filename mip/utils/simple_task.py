@@ -38,7 +38,8 @@ class SimpleTask(luigi.Task):
         self.start_time = datetime.now()
 
         for p in [self.task_config.host_task_output_dir, self.task_config.host_task_temp_dir]:
-            shutil.rmtree(p, ignore_errors=True)
+            if p.exists():
+                shutil.rmtree(p)
             p.mkdir(parents=False, exist_ok=False)
 
         try:

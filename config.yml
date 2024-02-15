@@ -147,7 +147,7 @@ modules:
     # produces: geojson
     -   name: line_extract
         gpu: true
-        user: root
+        user: cmaas
         options:
             # inputs:
             config: $INPUT_DIR/modules/line_extract/usgs_railroads.yaml
