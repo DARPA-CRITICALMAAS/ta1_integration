@@ -120,6 +120,7 @@ modules:
     # produced: geojson
     -   name: text_spotting
         gpu: true
+        user: root
         options:
             # inputs:
             input_dir_path: $OUTPUT_DIR/map_crop/$MAP_NAME_g1000_s1000

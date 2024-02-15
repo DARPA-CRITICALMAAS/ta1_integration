@@ -20,4 +20,4 @@ WORKDIR /ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based
 
 CMD []
 ENTRYPOINT ["python", "-W", "ignore", \
-    "/ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based/run_georenference.py"]
+    "/ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based/run_georeference.py"]
