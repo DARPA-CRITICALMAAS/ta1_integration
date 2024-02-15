@@ -16,10 +16,10 @@ def get_options() -> None:
 def main() -> int:
     get_options()
 
-    static_info = StaticInfo()
+    static_info = StaticInfo.poll()
     print(static_info)
 
-    dynamic_info = DynamicInfo(static_info)
+    dynamic_info = DynamicInfo.poll(static_info, elapsed=0.0)
     print(dynamic_info)
 
     return 0

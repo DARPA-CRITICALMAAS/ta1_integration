@@ -30,7 +30,7 @@ class ModuleConfig:
 
         self.host_task_file = self.host_output_dir / f"{module_name}.task.txt"
         self.host_docker_file = self.host_output_dir / f"{module_name}.docker.txt"
-        self.host_perf_file = self.host_output_dir / f"{module_name}.perf.txt"
+        self.host_perf_file = self.host_output_dir / f"{module_name}.perf.json"
 
         self._module = self._config.get_module_config(module_name)
         self.user = self._module.user

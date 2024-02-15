@@ -10,7 +10,7 @@ DEFAULT_TASK_NAME = "all"
 DEFAULT_OPENAI_KEY_FILE = f"{os.path.expanduser('~')}/.ssh/openai"
 
 
-class Options:
+class MipperOptions:
     def __init__(self):
 
         parser = argparse.ArgumentParser(

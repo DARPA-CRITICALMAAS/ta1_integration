@@ -11,7 +11,7 @@ import luigi
 
 from mip.utils.config import Config
 from mip.utils.module_config import ModuleConfig
-from mip.performance.perf_collector import PerfCollector
+from mip.performance.perf_collection import PerfCollection
 
 
 logger = logging.getLogger('luigi-interface')
@@ -32,7 +32,7 @@ class SimpleTask(luigi.Task):
         self.start_time: Optional[datetime] = None
         self.end_time: Optional[datetime] = None
 
-        self.perf_collector = PerfCollector()
+        self.perf_collection = PerfCollection()
 
     def run(self):
         self.start_time = datetime.now()

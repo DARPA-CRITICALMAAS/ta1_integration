@@ -10,7 +10,7 @@ import torch
 
 from mip.performance.static_info import StaticInfo
 from mip.performance.dynamic_info import DynamicInfo
-
+from mip.performance.utils import start_nvidia, shutdown_nvidia
 
 @dataclasses.dataclass
 class Options:
@@ -76,6 +76,8 @@ class ComputeLoad:
 
 
 def main() -> int:
+    start_nvidia()
+
     options = get_options()
 
     cpu_load = None
@@ -83,7 +85,7 @@ def main() -> int:
 
     print("START")
 
-    static_info = StaticInfo()
+    static_info = StaticInfo.poll()
 
     start = time.time()
     tick = start
@@ -101,7 +103,8 @@ def main() -> int:
 
         now = time.time()
         if now > tick:
-            dyn = DynamicInfo(static_info)
+            elapsed = now - start
+            dyn = DynamicInfo.poll(static_info, elapsed)
             print(dyn)
             tick = now + 1
 
@@ -109,6 +112,8 @@ def main() -> int:
             break
 
     print("END")
+
+    shutdown_nvidia()
 
     return 0
 

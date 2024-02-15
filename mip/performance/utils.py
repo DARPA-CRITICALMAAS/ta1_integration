@@ -2,6 +2,8 @@
 
 import math
 
+import nvidia_smi
+
 
 def to_hhmmss(secs: float | int) -> str:
     secs = float(secs)
@@ -9,7 +11,7 @@ def to_hhmmss(secs: float | int) -> str:
     v = secs % (60 * 60)
     m = math.floor(v / 60)
     v = v % 60
-    s = v
+    s = round(v)
     return f"{h:02}:{m:02}:{s:02}"
 
 
@@ -21,3 +23,10 @@ def to_gb(x: float | int) -> int:
     x = float(x)
     gb = float(1024 ** 3)
     return round(x / gb)
+
+
+def start_nvidia():
+    nvidia_smi.nvmlInit()
+
+def shutdown_nvidia():
+    nvidia_smi.nvmlShutdown()

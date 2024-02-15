@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from mip.apps.options import Options
+from mip.apps.mipper_options import MipperOptions
 from mip.utils.configuration_models import ConfigurationModel, ModuleConfigurationModel
 
 
@@ -13,7 +13,7 @@ class Config:
     # TODO: hack, because we don't know how to pass non-string state to Tasks
     CONFIG: Optional[Config] = None
 
-    def __init__(self, options: Options):
+    def __init__(self, options: MipperOptions):
         self.map_name: str = options.map_name
         self.job_name: str = options.job_name
 

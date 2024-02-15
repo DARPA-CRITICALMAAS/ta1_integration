@@ -1,191 +1,77 @@
 #!/usr/bin/env python3
 # Copyright 2024 InferLink Corporation
 
-from dataclasses import dataclass
-import json
 from glob import glob
-import math
 from pathlib import Path
 import sys
 
+from mip.performance.perf_collection import PerfCollection
+from mip.performance.utils import to_utilization, to_hhmmss, to_gb
 
-@dataclass
-class Record:
-    name: str
-    elapsed: int
+def csv_header() -> str:
+    s = ""
+    s += "name,"
+    s += "elapsed sec,"
+    s += "hhmmss,"
 
-    host_num_cpus: int
-    host_total_mem: int
-    host_num_gpus: int
-    host_total_gpu_mem: int
+    s += "cpu_count,"
+    s += "cpu_mem_total GB,"
+    s += "gpu_count,"
+    s += "gpu_mem_total GB,"
 
-    host_avg_cpu_util: float
-    host_avg_mem_used: float
-    host_avg_gpu_util: float
-    host_avg_gpu_mem_used: float
+    s += "avg_cpu_util %,"
+    s += "avg_cpu_mem_used GB,"
+    s += "avg_gpu_util %,"
+    s += "avg_gpu_mem_used GB,"
 
-    host_peak_cpu_util: float
-    host_peak_mem_used: float
-    host_peak_gpu_util: float
-    host_peak_gpu_mem_used: float
+    s += "peak_cpu_util %,"
+    s += "peak_cpu_mem_used GB,"
+    s += "peak_gpu_util %,"
+    s += "peak_gpu_mem_used GB"
 
-    cont_num_cpus: float
-    cont_total_mem: float
-    cont_num_gpus: float
-    cont_total_gpu_mem: float
-
-    cont_avg_cpu_util: float
-    cont_avg_mem_used: float
-    cont_avg_gpu_util: float
-    cont_avg_gpu_mem_used: float
-
-    cont_peak_cpu_util: float
-    cont_peak_mem_used: float
-    cont_peak_gpu_util: float
-    cont_peak_gpu_mem_used: float
-
-    def headers(self) -> str:
-        s = ""
-        s += "name,"
-        s += "elapsed,"
-        s += "hhmmss,"
-
-        s += "host_num_cpus,"
-        s += "host_total_mem,"
-        s += "host_num_gpus,"
-        s += "host_total_gpu_mem,"
-
-        s += "host_avg_cpu_util,"
-        s += "host_avg_mem_used,"
-        s += "host_avg_gpu_util,"
-        s += "host_avg_gpu_mem_used,"
-
-        s += "host_peak_cpu_util,"
-        s += "host_peak_mem_used,"
-        s += "host_peak_gpu_util,"
-        s += "host_peak_gpu_mem_used,"
-
-        s += "cont_num_cpus,"
-        s += "cont_total_mem,"
-        s += "cont_num_gpus,"
-        s += "cont_total_gpu_mem,"
-
-        s += "cont_avg_cpu_util,"
-        s += "cont_avg_mem_used,"
-        s += "cont_avg_gpu_util,"
-        s += "cont_avg_gpu_mem_used,"
-
-        s += "cont_peak_cpu_util,"
-        s += "cont_peak_mem_used,"
-        s += "cont_peak_gpu_util,"
-        s += "cont_peak_gpu_mem_used,"
-
-        s += "0\n"
-        return s
-
-    def __str__(self) -> str:
-        s = ""
-        s += f"{self.name},"
-        s += f"{self.elapsed},"
-        s += f"{time_format(self.elapsed)},"
-
-        s += f"{self.host_num_cpus},"
-        s += f"{gb(self.host_total_mem)},"
-        s += f"{self.host_num_gpus},"
-        s += f"{gb(self.host_total_gpu_mem)},"
-
-        s += f"{util(self.host_avg_cpu_util)},"
-        s += f"{gb(self.host_avg_mem_used)},"
-        s += f"{util(self.host_avg_gpu_util)},"
-        s += f"{gb(self.host_avg_gpu_mem_used)},"
-
-        s += f"{util(self.host_peak_cpu_util)},"
-        s += f"{gb(self.host_peak_mem_used)},"
-        s += f"{util(self.host_peak_gpu_util)},"
-        s += f"{gb(self.host_peak_gpu_mem_used)},"
-
-        s += f"{self.cont_num_cpus},"
-        s += f"{gb(self.cont_total_mem)},"
-        s += f"{self.cont_num_gpus},"
-        s += f"{gb(self.cont_total_gpu_mem)},"
-
-        s += f"{util(self.cont_avg_cpu_util)},"
-        s += f"{gb(self.cont_avg_mem_used)},"
-        s += f"{util(self.cont_avg_gpu_util)},"
-        s += f"{gb(self.cont_avg_gpu_mem_used)},"
-
-        s += f"{util(self.cont_peak_cpu_util)},"
-        s += f"{gb(self.cont_peak_mem_used)},"
-        s += f"{util(self.cont_peak_gpu_util)},"
-        s += f"{gb(self.cont_peak_gpu_mem_used)},"
-
-        s += "0\n"
-        return s
+    return s
 
 
-def time_format(secs: int) -> str:
-    h = math.floor(secs / (60 * 60))
-    v = secs % (60 * 60)
-    m = math.floor(v / 60)
-    v = v % 60
-    s = v
-    return f"{h:02}:{m:02}:{s:02}"
+def csv_record(collection: PerfCollection, module_name: str) -> str:
+    s = ""
+    s += f"{module_name},"
+    s += f"{collection.elapsed},"
+    s += f"{to_hhmmss(collection.elapsed)},"
 
+    s += f"{collection.static_info.cpu_count},"
+    s += f"{to_gb(collection.static_info.cpu_mem_total)},"
+    s += f"{collection.static_info.gpu_count},"
+    s += f"{to_gb(collection.static_info.gpu_mem_total)},"
 
-def util(x: float) -> float:
-    return round(x,1)
+    avg = collection.get_average_data()
+    s += f"{to_utilization(avg.cpu_util)},"
+    s += f"{to_gb(avg.cpu_mem_used)},"
+    s += f"{to_utilization(avg.gpu_util)},"
+    s += f"{to_gb(avg.gpu_mem_used)},"
 
+    peak = collection.get_peak_data()
+    s += f"{to_utilization(peak.cpu_util)},"
+    s += f"{to_gb(peak.cpu_mem_used)},"
+    s += f"{to_utilization(peak.gpu_util)},"
+    s += f"{to_gb(peak.gpu_mem_used)},"
 
-def gb(x: float) -> float:
-    return round(x / (1024*1024*1024), 1)
-
-def json_to_record(file: str, name: str) -> Record:
-    s = Path(file).read_text()
-    d = json.loads(s)
-    print(name)
-
-    r = Record(
-        name=name,
-        elapsed = d["host"]["elapsed"],
-        host_num_cpus = d["host"]["peak"]["num_cpus"],
-        host_total_mem = d["host"]["peak"]["total_mem"],
-        host_num_gpus = d["host"]["peak"]["num_gpus"],
-        host_total_gpu_mem =  d["host"]["peak"]["total_gpu_mem"],
-        host_avg_cpu_util = d["host"]["average"]["cpu_util"],
-        host_avg_mem_used = d["host"]["average"]["mem_used"],
-        host_avg_gpu_util = d["host"]["average"]["gpu_util"],
-        host_avg_gpu_mem_used = d["host"]["average"]["gpu_mem_used"],
-        host_peak_cpu_util = d["host"]["peak"]["cpu_util"],
-        host_peak_mem_used = d["host"]["peak"]["mem_used"],
-        host_peak_gpu_util = d["host"]["peak"]["gpu_util"],
-        host_peak_gpu_mem_used = d["host"]["peak"]["gpu_mem_used"],
-        cont_num_cpus = d["container"]["peak"]["num_cpus"],
-        cont_total_mem = d["container"]["peak"]["total_mem"],
-        cont_num_gpus = d["container"]["peak"]["num_gpus"],
-        cont_total_gpu_mem =  d["container"]["peak"]["total_gpu_mem"],
-        cont_avg_cpu_util = d["container"]["average"]["cpu_util"],
-        cont_avg_mem_used = d["container"]["average"]["mem_used"],
-        cont_avg_gpu_util = d["container"]["average"]["gpu_util"],
-        cont_avg_gpu_mem_used = d["container"]["average"]["gpu_mem_used"],
-        cont_peak_cpu_util = d["container"]["peak"]["cpu_util"],
-        cont_peak_mem_used = d["container"]["peak"]["mem_used"],
-        cont_peak_gpu_util = d["container"]["peak"]["gpu_util"],
-        cont_peak_gpu_mem_used = d["container"]["peak"]["gpu_mem_used"],
-    )
-    return r
+    return s
 
 
 def main() -> int:
-    d = sys.argv[1]
-    files = glob(d + "/*.perf.txt")
+    output_dir = sys.argv[1]
+    files = glob(output_dir + "/*.perf.json")
 
-    with open("x.csv", "w") as f:
+    rollup_file = output_dir + "/rollup.csv"
+    with open(rollup_file, "w") as f:
         got_header = False
         for file in files:
-            module = file[len(d)+1:-9]
-            rec = json_to_record(file, module)
+            module_name = file[len(output_dir)+1:-9]
+
+            collection = PerfCollection.read(Path(file))
+            rec = csv_record(collection, module_name)
             if not got_header:
-                print(rec.headers(), file=f)
+                print(csv_header(), file=f)
                 got_header = True
             print(rec, file=f)
     return 0

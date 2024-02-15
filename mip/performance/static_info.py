@@ -1,47 +1,46 @@
 # Copyright 2024 InferLink Corporation
 
+from __future__ import annotations
+
 from typing import Any
 
 import nvidia_smi
 import psutil
+from pydantic import BaseModel
 
 from mip.performance.utils import to_gb
 
-_NVIDIA_STARTED = False
-
 
 # intended to be used as a singleton
-class StaticInfo:
+class StaticInfo(BaseModel):
+    cpu_count: int
+    cpu_mem_total: int
+    gpu_count: int
+    gpu_mem_total: int
 
-    def __init__(self):
-        if not _NVIDIA_STARTED:
-            nvidia_smi.nvmlInit()
-
+    @staticmethod
+    def poll() -> StaticInfo:
         mem = psutil.virtual_memory()
-        self.cpu_mem_total = mem.total
-        self.cpu_count = psutil.cpu_count()
+        cpu_mem_total = mem.total
+        cpu_count = psutil.cpu_count()
 
         # try:
-        self.gpu_count = nvidia_smi.nvmlDeviceGetCount()
+        gpu_count = nvidia_smi.nvmlDeviceGetCount()
         # except Exception:
         #    num_gpus = 0
 
-        self.gpu_mem_total = 0
-        for i in range(self.gpu_count):
+        gpu_mem_total = 0
+        for i in range(gpu_count):
             handle = nvidia_smi.nvmlDeviceGetHandleByIndex(i)
             gpu_mem_info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
-            self.gpu_mem_total += gpu_mem_info.total
+            gpu_mem_total += gpu_mem_info.total
 
-    def __del__(self):
-        nvidia_smi.nvmlShutdown()
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "cpu_count": self.cpu_count,
-            "cpu_mem_total": self.cpu_mem_total,
-            "gpu_count": self.gpu_count,
-            "gpu_mem_total": self.gpu_mem_total,
-        }
+        return  StaticInfo(
+            cpu_count=cpu_count,
+            cpu_mem_total=cpu_mem_total,
+            gpu_count=gpu_count,
+            gpu_mem_total=gpu_mem_total,
+        )
 
     def __str__(self) -> str:
         s = (

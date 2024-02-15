@@ -33,7 +33,7 @@ class DockerTask(SimpleTask):
             print(container.shell_command, file=f)
             print(container.run_command, file=f)
 
-        status, log_data, elapsed = container.run(self.perf_collector)
+        status, log_data, elapsed = container.run(self.perf_collection)
 
         with open(docker_log_path, "a") as f:
             print(log_data, file=f)
@@ -46,7 +46,7 @@ class DockerTask(SimpleTask):
         logger.debug(log_data)
         logger.debug("-----------------------------------------------")
 
-        s = json.dumps(self.perf_collector.to_dict(), indent=4)
+        s = self.perf_collection.to_json()
         self.task_config.host_perf_file.write_text(s)
 
         if status:
