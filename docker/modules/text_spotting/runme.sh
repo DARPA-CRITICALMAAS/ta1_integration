@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo $@
-
 cd /home/mapkurator-system
 
 /root/anaconda3/bin/conda run -n mapkurator \

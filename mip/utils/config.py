@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, Optional
-
-import yaml
+from typing import Optional
 
 from mip.apps.options import Options
+from mip.utils.configuration_models import ConfigurationModel, ModuleConfigurationModel
 
 
 class Config:
@@ -16,26 +14,32 @@ class Config:
     CONFIG: Optional[Config] = None
 
     def __init__(self, options: Options):
-
         self.map_name: str = options.map_name
         self.job_name: str = options.job_name
 
-        config_text = Path(options.config_file).read_text()
-        self.data = yaml.load(config_text, Loader=yaml.FullLoader)
+        self._configuration = ConfigurationModel.read(options.config_file)
 
         self.openai_key = options.openai_key_file.read_text().strip()
 
-        self.host_input_dir = Path(self.data["host"]["input_dir"])
-        self.host_output_dir = Path(self.data["host"]["output_dir"])
-        self.host_temp_dir = Path(self.data["host"]["temp_dir"])
-        self.host_repo_dir = Path(self.data["host"]["repo_dir"])
+        self.host_input_dir = self._configuration.host.input_dir
+        self.host_output_dir = self._configuration.host.output_dir
+        self.host_temp_dir = self._configuration.host.temp_dir
+        self.host_repo_dir = self._configuration.host.repo_dir
 
-        self.container_input_dir = Path(self.data["container"]["input_dir"])
-        self.container_output_dir = Path(self.data["container"]["output_dir"])
-        self.container_temp_dir = Path(self.data["container"]["temp_dir"])
-        self.container_repo_dir = Path(self.data["container"]["repo_dir"])
+        self.container_input_dir = self._configuration.container.input_dir
+        self.container_output_dir = self._configuration.container.output_dir
+        self.container_temp_dir = self._configuration.container.temp_dir
+        self.container_repo_dir = self._configuration.container.repo_dir
 
         self.host_job_output_dir = self.host_output_dir / self.job_name
         self.host_job_temp_dir = self.host_temp_dir / self.job_name
 
         Config.CONFIG = self
+
+    def get_module_config(self, module_name: str) -> ModuleConfigurationModel:
+        items = [i for i in self._configuration.modules if i.name == module_name]
+        if not items:
+            raise Exception(f"module not found: {module_name}")
+        if len(items) > 1:
+            raise Exception(f"duplicate module names found: {module_name}")
+        return items[0]

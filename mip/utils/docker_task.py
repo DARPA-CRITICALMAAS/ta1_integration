@@ -1,8 +1,8 @@
 # Copyright 2024 InferLink Corporation
 
 import datetime
+import json
 import logging
-from typing import TextIO
 
 from mip.utils.docker_runner import DockerRunner
 from mip.utils.simple_task import SimpleTask
@@ -13,15 +13,13 @@ logger = logging.getLogger('luigi-interface')
 class DockerTask(SimpleTask):
 
     NAME = "invalid"
-    GPU = True
-    USER = "cmaas"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def run_body(self):
 
-        docker_log_path = self.task_config.host_output_dir / f"{self.NAME}.docker.txt"
+        docker_log_path = self.task_config.host_docker_file
 
         container = self._make_container()
 
@@ -41,9 +39,6 @@ class DockerTask(SimpleTask):
             print(log_data, file=f)
             print("\n", file=f)
 
-            s = self.perf_collector.dump_report()
-            print(s, file=f)
-
             print(f"# elapsed: {elapsed} seconds", file=f)
             print(f"# exit_status: {status}", file=f)
 
@@ -51,18 +46,18 @@ class DockerTask(SimpleTask):
         logger.debug(log_data)
         logger.debug("-----------------------------------------------")
 
+        s = json.dumps(self.perf_collector.to_dict(), indent=4)
+        self.task_config.host_perf_file.write_text(s)
+
         if status:
             raise Exception(f"docker run failed: {self.NAME}")
 
     def _make_container(self) -> DockerRunner:
         image_name = f"inferlink/ta1_{self.NAME}"
-        gpus = self.GPU
 
         environment = [
             f"OPENAI_API_KEY={self.config.openai_key}"
         ]
-
-        user = self.USER
 
         volumes = [
             f"{self.task_config.host_input_dir}:{self.task_config.container_input_dir}",
@@ -80,8 +75,8 @@ class DockerTask(SimpleTask):
             command=options,
             volumes=volumes,
             environment=environment,
-            user=user,
-            gpus=gpus,
+            user=self.task_config.user,
+            gpus=self.task_config.gpu,
         )
 
         return container

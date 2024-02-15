@@ -84,6 +84,7 @@ name of the job.
 _In the following, we will assume you are using `/ta1/...` as the root of the
 three mipper directories. Feel free to change these paths._
 
+1. `sudo addgroup --gid 1024 cmaasgroup ; sudo adduser ubuntu cmaasgroup`
 1. Obtain a machine to run on: it requires multiple cores, good GPUs, and 128GB
    of RAM. (A p2.xlarge EC2 instance seems to work well.)
 2. Make the three dirs: `mkdir /ta1/input /ta1/output /ta1/temp`

@@ -61,19 +61,6 @@ ENV C_INCLUDE_PATH=/usr/include/gdal
 # Install GDAL Python bindings
 RUN pip install GDAL==$(gdal-config --version)
 
-RUN pip install \
-    opencv-python \
-    PyYAML \
-    shapely==1.8.5.post1 \
-    monai==0.7.0 \
-    tqdm \
-    scipy \
-    imageio \
-    pyvista \
-    geopandas \
-    ignite==1.1.0 \
-    pytorch-ignite==0.4.9
-
 # Install libgl1-mesa-glx
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
@@ -86,22 +73,15 @@ ENV PATH /usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:${LD_LIBRARY_PATH}
 ENV NVIDIA-SMI /usr/bin/nvidia-smi
 
-RUN git clone https://github.com/fundamentalvision/Deformable-DETR.git /ta1/dev/Deformable-DETR
-
-RUN apt-get update && apt-get install sudo
-
-# INCLUDEX perms.txt
-
-USER root
-RUN adduser cmaas sudo
-RUN echo "cmaas ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
-USER cmaas
-
 COPY ./usc-umn-inferlink-ta1/ /ta1/dev/usc-umn-inferlink-ta1/
 
+RUN pip install -r /ta1/dev/usc-umn-inferlink-ta1/line/requirements.txt
 
-COPY ./ta1_integration/docker/modules/line_extract/runme.sh \
-    /home/cmaas/line_extract_runme.sh
+RUN git clone https://github.com/fundamentalvision/Deformable-DETR.git \
+    /ta1/dev/Deformable-DETR
+
+COPY ./ta1_integration/docker/modules/line_extract/buildme.sh \
+    /buildme.sh
 
 CMD []
-ENTRYPOINT ["/home/cmaas/line_extract_runme.sh"]
+ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/line/run_line_extraction.py"]
