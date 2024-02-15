@@ -5,7 +5,7 @@ from typing import Any
 import nvidia_smi
 import psutil
 
-from mip.performance.utils import to_gb
+from mip.performance.utils import to_gb, to_utilization
 from mip.performance.static_info import StaticInfo
 
 
@@ -27,7 +27,7 @@ class DynamicInfo:
                 self.gpu_mem_used += gpu_mem_info.used
                 gpu_util_i = nvidia_smi.nvmlDeviceGetUtilizationRates(handle)
                 self.gpu_util += gpu_util_i.gpu
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "cpu_util": self.cpu_util,
@@ -38,9 +38,9 @@ class DynamicInfo:
 
     def __str__(self) -> str:
         s = (
-            f"cpu_util={self.cpu_util}"
-            + f" cpu_mem_used={to_gb(self.cpu_mem_used)}"
-            + f" gpu_util={self.gpu_util}"
-            + f" gpu_mem_used={to_gb(self.gpu_mem_used)}"
+            f"cpu_util={to_utilization(self.cpu_util):3}%"
+            + f"    cpu_mem_used={to_gb(self.cpu_mem_used):3}GB"
+            + f"    gpu_util={to_utilization(self.gpu_util):3}%"
+            + f"    gpu_mem_used={to_gb(self.gpu_mem_used):3}GB"
         )
         return s

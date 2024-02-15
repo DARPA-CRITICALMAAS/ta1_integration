@@ -13,11 +13,11 @@ def to_hhmmss(secs: float | int) -> str:
     return f"{h:02}:{m:02}:{s:02}"
 
 
-def to_utilization(x: float | int, prec: int = 1) -> float:
-    return round(x, prec)
+def to_utilization(x: float | int) -> int:
+    return round(x)
 
 
-def to_gb(x: float | int, prec: int = 1) -> float:
+def to_gb(x: float | int) -> int:
     x = float(x)
     gb = float(1024 ** 3)
-    return round(x / gb, prec)
+    return round(x / gb)

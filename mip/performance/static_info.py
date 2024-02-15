@@ -7,10 +7,16 @@ import psutil
 
 from mip.performance.utils import to_gb
 
+_NVIDIA_STARTED = False
 
+
+# intended to be used as a singleton
 class StaticInfo:
 
     def __init__(self):
+        if not _NVIDIA_STARTED:
+            nvidia_smi.nvmlInit()
+
         mem = psutil.virtual_memory()
         self.cpu_mem_total = mem.total
         self.cpu_count = psutil.cpu_count()
@@ -26,6 +32,9 @@ class StaticInfo:
             gpu_mem_info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
             self.gpu_mem_total += gpu_mem_info.total
 
+    def __del__(self):
+        nvidia_smi.nvmlShutdown()
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "cpu_count": self.cpu_count,
@@ -37,8 +46,8 @@ class StaticInfo:
     def __str__(self) -> str:
         s = (
             f"cpu_count={self.cpu_count}"
-            + f" cpu_mem_total={to_gb(self.cpu_mem_total)}"
-            + f" gpu_count={self.gpu_count}"
-            + f" gpu_mem_total={to_gb(self.gpu_mem_total)}"
+            + f"  cpu_mem_total={to_gb(self.cpu_mem_total)}GB"
+            + f"  gpu_count={self.gpu_count}"
+            + f"  gpu_mem_total={to_gb(self.gpu_mem_total)}GB"
         )
         return s
