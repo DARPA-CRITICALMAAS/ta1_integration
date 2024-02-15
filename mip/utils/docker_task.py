@@ -1,6 +1,7 @@
 # Copyright 2024 InferLink Corporation
 
 import datetime
+import json
 import logging
 
 from mip.utils.docker_runner import DockerRunner
@@ -18,7 +19,7 @@ class DockerTask(SimpleTask):
 
     def run_body(self):
 
-        docker_log_path = self.task_config.host_output_dir / f"{self.NAME}.docker.txt"
+        docker_log_path = self.task_config.host_docker_file
 
         container = self._make_container()
 
@@ -38,15 +39,15 @@ class DockerTask(SimpleTask):
             print(log_data, file=f)
             print("\n", file=f)
 
-            s = self.perf_collector.dump_report()
-            print(s, file=f)
-
             print(f"# elapsed: {elapsed} seconds", file=f)
             print(f"# exit_status: {status}", file=f)
 
         logger.debug("-----------------------------------------------")
         logger.debug(log_data)
         logger.debug("-----------------------------------------------")
+
+        s = json.dumps(self.perf_collector.to_dict(), indent=4)
+        self.task_config.host_perf_file.write_text(s)
 
         if status:
             raise Exception(f"docker run failed: {self.NAME}")

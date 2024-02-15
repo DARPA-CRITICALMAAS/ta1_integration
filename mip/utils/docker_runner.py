@@ -1,15 +1,15 @@
 # Copyright 2024 InferLink Corporation
 
+import logging
 import requests  # needed for docker exceptions
 import time
 from typing import Optional
-import logging
 
 import docker
 import docker.types
 import docker.errors
 
-from mip.utils.perf_collector import PerfCollector
+from mip.performance.perf_collector import PerfCollector
 
 
 logger = logging.getLogger('luigi-interface')
@@ -88,9 +88,14 @@ class DockerRunner:
     def _wait_for_completion(self, perf_collector: PerfCollector) -> int:
         # use the wait(timeout) call a perf stats collector (and potential heartbeat)
         while True:
-            host_data, container_data = perf_collector.update(self._container)
-            logger.info(f"host perf: {host_data}")
-            logger.info(f"cont perf: {container_data}")
+            host_data, cont_data = perf_collector.update(self._container)
+            host_cpu = host_data.cpu_util
+            cont_cpu = cont_data.cpu_util
+            gb = 1024 * 1024 * 1024
+            host_mem = round(host_data.mem_used / gb, 1)
+            cont_mem = round(cont_data.mem_used / gb, 1)
+            logger.info(f"host perf: {host_cpu}%, {host_mem}GB")
+            logger.info(f"cont perf: {cont_cpu}%, {cont_mem}GB")
 
             try:
                 exit_status = self._container.wait(timeout=15)

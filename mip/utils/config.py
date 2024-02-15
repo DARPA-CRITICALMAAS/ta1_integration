@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Optional
 
 from mip.apps.options import Options
-from mip.utils.configuration_models import ConfigurationModel
+from mip.utils.configuration_models import ConfigurationModel, ModuleConfigurationModel
 
 
 class Config:
@@ -36,7 +36,7 @@ class Config:
 
         Config.CONFIG = self
 
-    def get_module_config(self, module_name: str) -> ModuleConfiguration:
+    def get_module_config(self, module_name: str) -> ModuleConfigurationModel:
         items = [i for i in self._configuration.modules if i.name == module_name]
         if not items:
             raise Exception(f"module not found: {module_name}")

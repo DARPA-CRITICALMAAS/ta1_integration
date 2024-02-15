@@ -11,7 +11,7 @@ import luigi
 
 from mip.utils.config import Config
 from mip.utils.module_config import ModuleConfig
-from mip.utils.perf_collector import PerfCollector
+from mip.performance.perf_collector import PerfCollector
 
 
 logger = logging.getLogger('luigi-interface')
