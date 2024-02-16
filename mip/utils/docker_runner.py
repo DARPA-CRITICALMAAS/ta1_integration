@@ -1,18 +1,21 @@
 # Copyright 2024 InferLink Corporation
 
+import logging
+import math
 import requests  # needed for docker exceptions
 import time
 from typing import Optional
-import logging
 
 import docker
 import docker.types
 import docker.errors
 
-from mip.utils.perf_collector import PerfCollector
+from mip.performance.perf_collection import PerfCollection
 
 
 logger = logging.getLogger('luigi-interface')
+
+WAIT_TIME = 10
 
 
 class DockerRunner:
@@ -70,12 +73,12 @@ class DockerRunner:
         self.run_command = f"# docker run {gpus_s} --user {user} {vs} {image} {options}\n"
 
     # returns (status code, log data, elapsed seconds)
-    def run(self, perf_collector: PerfCollector) -> tuple[int, str, int]:
+    def run(self, perf_collection: PerfCollection) -> tuple[int, str, int]:
         start = time.time()
 
         self._container.start()
 
-        exit_status = self._wait_for_completion(perf_collector)
+        exit_status = self._wait_for_completion(perf_collection, start)
 
         end = time.time()
         elapsed = round(end-start)
@@ -85,15 +88,16 @@ class DockerRunner:
 
         return exit_status, log, elapsed
 
-    def _wait_for_completion(self, perf_collector: PerfCollector) -> int:
+    def _wait_for_completion(self, perf_collection: PerfCollection, start_time: float) -> int:
         # use the wait(timeout) call a perf stats collector (and potential heartbeat)
         while True:
-            host_data, container_data = perf_collector.update(self._container)
-            logger.info(f"host perf: {host_data}")
-            logger.info(f"cont perf: {container_data}")
+            elapsed = time.time() - start_time
+            dynamic_info = perf_collection.poll(elapsed)
+            s = str(dynamic_info)
+            logger.info(s)
 
             try:
-                exit_status = self._container.wait(timeout=15)
+                exit_status = self._container.wait(timeout=WAIT_TIME)
                 return exit_status["StatusCode"]
             except requests.exceptions.ConnectionError as ex:
                 if "read timed out" in str(ex).lower():

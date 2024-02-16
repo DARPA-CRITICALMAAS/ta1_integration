@@ -5,18 +5,20 @@ import sys
 
 import luigi
 import luigi.tools.deps_tree as deps_tree
-import nvidia_smi
 
 from mip.module_tasks import *  # force registration of all module tasks
 from mip.module_tasks.registry import registry_lookup, get_tasks
 from mip.utils.config import Config
-from mip.utils.task_config import TaskConfig
+from mip.utils.module_config import ModuleConfig
 from mip.utils.simple_task import SimpleTask
-from mip.apps.options import Options
+from mip.performance.utils import start_nvidia, shutdown_nvidia
+from mip.apps.mipper_options import MipperOptions
 
 
 def main() -> int:
-    opts = Options()
+    start_nvidia()
+
+    opts = MipperOptions()
 
     if opts.list_tasks:
         print("Registered tasks:")
@@ -67,10 +69,8 @@ def main() -> int:
 
     if opts.force:
         for task_name in opts.target_task_names:
-            task_config = TaskConfig(cfg, task_name)
+            task_config = ModuleConfig(cfg, task_name)
             task_config.host_task_file.unlink(missing_ok=True)
-
-    nvidia_smi.nvmlInit()
 
     result = luigi.build(
         tasks=tasks,
@@ -80,11 +80,11 @@ def main() -> int:
 
     status = 0 if result.status == luigi.execution_summary.LuigiStatusCode.SUCCESS else 1
 
-    nvidia_smi.nvmlShutdown()
+    shutdown_nvidia()
 
     return status
 
 
 if __name__ == '__main__':
-    status = main()
-    sys.exit(status)
+    sts = main()
+    sys.exit(sts)

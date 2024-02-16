@@ -19,212 +19,241 @@ container:
     repo_dir: /ta1/dev
 
 
-# ---------------------------------------------------------------------------
-# LEGEND_SEGMENT
-# ---------------------------------------------------------------------------
-# where: integration/legend_segment
-# by: Uncharted
-# requires: (nothing)
-# produces: X_map_segmentation.json
-legend_segment:
-    # input:
-    input: $INPUT_DIR/maps/$MAP_NAME
-    model: $INPUT_DIR/modules/legend_segment/layoutlmv3_20230929
-    # output:
-    output: $OUTPUT_DIR/legend_segment
-    # temp:
-    # misc:
+modules:
+    -   name: start
+    -   name: all
+
+    # ---------------------------------------------------------------------------
+    # LEGEND_SEGMENT
+    # ---------------------------------------------------------------------------
+    # where: integration/legend_segment
+    # by: Uncharted
+    # requires: (nothing)
+    # produces: X_map_segmentation.json
+    -   name: legend_segment
+        gpu: true
+        options:
+            # input:
+            input: $INPUT_DIR/maps/$MAP_NAME
+            model: $INPUT_DIR/modules/legend_segment/layoutlmv3_20230929
+            # output:
+            output: $OUTPUT_DIR/legend_segment
+            # temp:
+            # misc:
 
 
-# ---------------------------------------------------------------------------
-# LEGEND_ITEM_SEGMENT
-# ---------------------------------------------------------------------------
-# where: segmentation/legend_item_segmentation
-# by: Fandel
-# requires: text_spotting
-# produces: geojson
-legend_item_segment:
-    # input:
-    input_image: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
-    input_legend_segmentation: $INPUT_DIR/modules/legend_item_segment/ch2_validation_evaluation_labels_coco.json
-    # output:
-    output_dir: $OUTPUT_DIR/legend_item_segment
-    log: $OUTPUT_DIR/legend_item_segment/log_file.txt
-    # temp:
-    path_to_intermediate: $TEMP_DIR/legend_item_segment
-    # misc:
-    postprocessing_for_crs: True
-    competition_custom: True
-    version: 1.2
+    # ---------------------------------------------------------------------------
+    # LEGEND_ITEM_SEGMENT
+    # ---------------------------------------------------------------------------
+    # where: segmentation/legend_item_segmentation
+    # by: Fandel
+    # requires: text_spotting
+    # produces: geojson
+    -   name: legend_item_segment
+        gpu: true
+        options:
+            # input:
+            input_image: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
+            input_legend_segmentation: $INPUT_DIR/modules/legend_item_segment/ch2_validation_evaluation_labels_coco.json
+            # output:
+            output_dir: $OUTPUT_DIR/legend_item_segment
+            log: $OUTPUT_DIR/legend_item_segment/log_file.txt
+            # temp:
+            path_to_intermediate: $TEMP_DIR/legend_item_segment
+            # misc:
+            postprocessing_for_crs: True
+            competition_custom: True
+            version: 1.2
+            only_poly: True
 
 
-# ---------------------------------------------------------------------------
-# LEGEND_ITEM_DESCRIPTION
-# ---------------------------------------------------------------------------
-# where: segmentation/legend_item_description_segment
-# by: Weiwei
-# requires: legend_segment, legend_item_segment
-# produces: json
-legend_item_description:
-    # inputs:
-    map_dir: $INPUT_DIR/maps/$MAP_NAME
-    symbol_json_dir: $INPUT_DIR/maps/$MAP_NAME/legend_item_segment
-    legend_json_path: $OUTPUT_DIR/legend_segment
-    # outputs:
-    gpt4_output_dir: $OUTPUT_DIR/legend_item_description
-    # temp:
-    gpt4_input_dir: $TEMP_DIR/legend_item_description/gpt4_input_dir
-    gpt4_intermediate_dir: $TEMP_DIR/legend_item_description/gpt4_temp_dir
-    # misc:
-    map_name: $MAP_NAME
+    # ---------------------------------------------------------------------------
+    # LEGEND_ITEM_DESCRIPTION
+    # ---------------------------------------------------------------------------
+    # where: segmentation/legend_item_description_segment
+    # by: Weiwei
+    # requires: legend_segment, legend_item_segment
+    # produces: json
+    -   name: legend_item_description
+        gpu: true
+        options:
+            # inputs:
+            map_dir: $INPUT_DIR/maps/$MAP_NAME
+            symbol_json_dir: $INPUT_DIR/maps/$MAP_NAME/legend_item_segment
+            legend_json_path: $OUTPUT_DIR/legend_segment
+            # outputs:
+            gpt4_output_dir: $OUTPUT_DIR/legend_item_description
+            # temp:
+            gpt4_input_dir: $TEMP_DIR/legend_item_description/gpt4_input_dir
+            gpt4_intermediate_dir: $TEMP_DIR/legend_item_description/gpt4_temp_dir
+            # misc:
+            map_name: $MAP_NAME
 
 
-# ---------------------------------------------------------------------------
-# MAP_CROP
-# ---------------------------------------------------------------------------
-# where: system/image_crop
-# by: Weiwei
-# requires: (none)
-# produces: PNGs
-map_crop:
-    # inputs:
-    input_dir: $INPUT_DIR/maps/$MAP_NAME
-    # outputs:
-    output_dir: $OUTPUT_DIR/map_crop
-    # temp:
-    # misc:
-    map_name: $MAP_NAME
-    patch_sizes: [1000, 256]
-    strides: [1000, 256]
+    # ---------------------------------------------------------------------------
+    # MAP_CROP
+    # ---------------------------------------------------------------------------
+    # where: system/image_crop
+    # by: Weiwei
+    # requires: (none)
+    # produces: PNGs
+    -   name: map_crop
+        gpu: true
+        options:
+            # inputs:
+            input_dir: $INPUT_DIR/maps/$MAP_NAME
+            # outputs:
+            output_dir: $OUTPUT_DIR/map_crop
+            # temp:
+            # misc:
+            map_name: $MAP_NAME
+            patch_sizes: [1000, 256]
+            strides: [1000, 256]
 
 
-# ---------------------------------------------------------------------------
-# TEXT_SPOTTING
-# ---------------------------------------------------------------------------
-# where: integration/text_spotting
-# by: Weiwei (Zekun)
-# requires: map_crop
-# produced: geojson
-text_spotting:
-    # inputs:
-    input_dir_path: $OUTPUT_DIR/map_crop/$MAP_NAME_g1000_s1000
-    # outputs:
-    output_folder: $OUTPUT_DIR/text_spotting
-    # temp:
-    # misc:
-    model_weight_path: /home/spotter_v2/PALEJUN/weights/synthmap_pretrain/model_final.pth
-    spotter_config: /home/spotter_v2/PALEJUN/configs/PALEJUN/SynthMap/SynthMap_Polygon.yaml
-    map_kurator_system_dir: /home/mapkurator-system
-    text_spotting_model_dir: /home/spotter_v2/PALEJUN
-    expt_name: mapKurator_test
-    module_text_spotting: ""
-    spotter_model: spotter_v2
-    spotter_expt_name: test
-    module_img_geojson: ""
+    # ---------------------------------------------------------------------------
+    # TEXT_SPOTTING
+    # ---------------------------------------------------------------------------
+    # where: integration/text_spotting
+    # by: Weiwei (Zekun)
+    # requires: map_crop
+    # produced: geojson
+    -   name: text_spotting
+        gpu: true
+        user: root
+        options:
+            # inputs:
+            input_dir_path: $OUTPUT_DIR/map_crop/$MAP_NAME_g1000_s1000
+            # outputs:
+            output_folder: $OUTPUT_DIR/text_spotting
+            # temp:
+            # misc:
+            model_weight_path: /home/spotter_v2/PALEJUN/weights/synthmap_pretrain/model_final.pth
+            spotter_config: /home/spotter_v2/PALEJUN/configs/PALEJUN/SynthMap/SynthMap_Polygon.yaml
+            map_kurator_system_dir: /home/mapkurator-system
+            text_spotting_model_dir: /home/spotter_v2/PALEJUN
+            expt_name: mapKurator_test
+            module_text_spotting: ""
+            spotter_model: spotter_v2
+            spotter_expt_name: test
+            module_img_geojson: ""
 
 
-# ---------------------------------------------------------------------------
-# LINE_EXTRACT
-# ---------------------------------------------------------------------------
-# where: line
-# by: Weiwei
-# requires: legend_item_description, map_crop
-# produces: geojson
-line_extract:
-    # inputs:
-    config: $INPUT_DIR/modules/line_extract/usgs_railroads.yaml
-    trained_model_dir: $INPUT_DIR/modules/line_extract/trained_weights
-    map_legend_json: $OUTPUT_DIR/legend_item_description
-    cropped_image_dir: $OUTPUT_DIR/map_crop/$MAP_NAME_g256_s256"
-    # outputs:
-    prediction_dir: $OUTPUT_DIR/line_extract
-    # temp:
-    # misc:
-    map_name: $MAP_NAME
-    cuda_visible_device: 0
-    predict_raster: ""
+    # ---------------------------------------------------------------------------
+    # LINE_EXTRACT
+    # ---------------------------------------------------------------------------
+    # where: line
+    # by: Weiwei
+    # requires: legend_item_description, map_crop
+    # produces: geojson
+    -   name: line_extract
+        gpu: true
+        user: cmaas
+        options:
+            # inputs:
+            config: $INPUT_DIR/modules/line_extract/usgs_railroads.yaml
+            trained_model_dir: $INPUT_DIR/modules/line_extract/trained_weights
+            map_legend_json: $OUTPUT_DIR/legend_item_description
+            cropped_image_dir: $OUTPUT_DIR/map_crop/$MAP_NAME_g256_s256
+            # outputs:
+            prediction_dir: $OUTPUT_DIR/line_extract
+            # temp:
+            # misc:
+            map_name: $MAP_NAME
+            cuda_visible_device: 0
+            predict_raster: ""
+            predict_vector: ""
 
 
-# ---------------------------------------------------------------------------
-# POLYGON_EXTRACT
-# ---------------------------------------------------------------------------
-# where: polygon
-# by: Fandel
-# requires: legend_item_segment
-# produces: geojson?
-polygon_extract:
-    # inputs:
-    path_to_tif: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
-    path_to_legend_description: $OUTPUT_DIR/legend_item_description/$MAP_NAME_polygon.json
-    path_to_legend_solution: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType.geojson
-    path_to_json: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType_internal.json
-    # outputs:
-    dir_to_integrated_output: $OUTPUT_DIR/polygon_extract
-    log: $OUTPUT_DIR/polygon_extract/log_file.txt
-    # temp:
-    dir_to_intermediate: $TEMP_DIR/polygon_extract
-    # misc:
-    version: 0
+    # ---------------------------------------------------------------------------
+    # POLYGON_EXTRACT
+    # ---------------------------------------------------------------------------
+    # where: polygon
+    # by: Fandel
+    # requires: legend_item_segment
+    # produces: geojson?
+    -   name: polygon_extract
+        gpu: true
+        options:
+            # inputs:
+            path_to_tif: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
+            path_to_legend_description: $OUTPUT_DIR/legend_item_description/$MAP_NAME_polygon.json
+            path_to_legend_solution: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType.geojson
+            path_to_json: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType_internal.json
+            path_to_model: $INPUT_DIR/modules/polygon_extract/checkpoints/checkpoint_epoch14.pth
+            # outputs:
+            dir_to_integrated_output: $OUTPUT_DIR/polygon_extract
+            log: $OUTPUT_DIR/polygon_extract/log_file.txt
+            # temp:
+            dir_to_intermediate: $TEMP_DIR/polygon_extract
+            # misc:
+            version: 0
 
 
-# ---------------------------------------------------------------------------
-# POINT_EXTRACT
-# ---------------------------------------------------------------------------
-# where: point
-# by: Leeje
-# requires: legend_item_description, map_crop
-# produces: TIF, geojson
-point_extract:
-    # inputs:
-    map_dir: $INPUT_DIR/maps/$MAP_NAME
-    template_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Template
-    model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Model_weights
-    # outputs:
-    output_dir_root: $OUTPUT_DIR/point_extract
-    map_metadata_dir: $OUTPUT_DIR/legend_item_description
-    map_patches_dir: $OUTPUT_DIR/map_crop/WY_CO_Peach_g1000_s1000
-    # temp:
-    cropped_legend_dir: $TEMP_DIR/point_extract
-    processed_legend_dir: $TEMP_DIR/point_extract
-    # misc:
+    # ---------------------------------------------------------------------------
+    # POINT_EXTRACT
+    # ---------------------------------------------------------------------------
+    # where: point
+    # by: Leeje
+    # requires: legend_item_description, map_crop
+    # produces: TIF, geojson
+    -   name: point_extract
+        gpu: true
+        options:
+            # inputs:
+            map_dir: $INPUT_DIR/maps
+            template_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Template
+            model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Model_weights
+            # outputs:
+            output_dir_root: $OUTPUT_DIR/point_extract
+            map_metadata_dir: $OUTPUT_DIR/legend_item_description
+            map_patches_dir: $OUTPUT_DIR/map_crop
+            # temp:
+            cropped_legend_dir: $TEMP_DIR/point_extract
+            processed_legend_dir: $TEMP_DIR/point_extract
+            # misc:
 
 
-# ---------------------------------------------------------------------------
-# GEOREFERENCE
-# ---------------------------------------------------------------------------
-# where: georeference
-# by: Weiwei
-# requires: (none)
-# produces: json
-georeference:
-    # inputs:
-    input_path: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
-    support_path: $INPUT_DIR/modules/georeference
-    # outputs:
-    output_path: $OUTPUT_DIR/georeference/$MAP_NAME.json
-    # temp:
-    temp_path: $TEMP_DIR/georeference
-    # misc:
+    # ---------------------------------------------------------------------------
+    # GEOREFERENCE
+    # ---------------------------------------------------------------------------
+    # where: georeference
+    # by: Weiwei
+    # requires: (none)
+    # produces: json
+    -   name: georeference
+        gpu: true
+        options:
+            # inputs:
+            input_path: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
+            support_path: $INPUT_DIR/modules/georeference
+            # outputs:
+            output_path: $OUTPUT_DIR/georeference/$MAP_NAME.json
+            # temp:
+            temp_path: $TEMP_DIR/georeference
+            # misc:
 
 
-# ---------------------------------------------------------------------------
-# GEOPACKAGE
-# ---------------------------------------------------------------------------
-# where: geopackage
-# by: Weiwei
-# requires: point_extract, line_extract, polygon_extract, georeference, legend_segment
-# produces: ?
-geopackage:
-    # inputs:
-    nongeoref_map_dir: $INPUT_DIR/maps
-    layout_output_dir: $OUTPUT_DIR/legend_item_description
-    georef_output_dir: $OUTPUT_DIR/example_inputs/georeference
-    poly_output_dir: $OUTPUT_DIR/polygon_extract
-    ln_output_dir: $OUTPUT_DIR/line_extract
-    pt_output_dir: $OUTPUT_DIR/point_extract
-    # outputs:
-    output_dir: $OUTPUT_DIR/geopackage/gpkg_outputs
-    georef_map_output: $OUTPUT_DIR/geopackage
-    # temp:
-    # misc:
-    map_name: $MAP_NAME
+    # ---------------------------------------------------------------------------
+    # GEOPACKAGE
+    # ---------------------------------------------------------------------------
+    # where: geopackage
+    # by: Weiwei
+    # requires: point_extract, line_extract, polygon_extract, georeference, legend_segment
+    # produces: ?
+    -   name: geopackage
+        gpu: true
+        options:
+            # inputs:
+            nongeoref_map_dir: $INPUT_DIR/maps
+            layout_output_dir: $OUTPUT_DIR/legend_item_description
+            georef_output_dir: $OUTPUT_DIR/example_inputs/georeference
+            poly_output_dir: $OUTPUT_DIR/polygon_extract
+            ln_output_dir: $OUTPUT_DIR/line_extract
+            pt_output_dir: $OUTPUT_DIR/point_extract
+            # outputs:
+            output_dir: $OUTPUT_DIR/geopackage/gpkg_outputs
+            georef_map_output: $OUTPUT_DIR/geopackage
+            # temp:
+            # misc:
+            map_name: $MAP_NAME
