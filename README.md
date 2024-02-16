@@ -1,5 +1,5 @@
 This is the **Module Integration Project (MIP)**, which provides a means for
-running all the TA1 modules from USC/ISI/InferLink in a reproducible,
+running all the TA1 modules from UMN/ISI/InferLink in a reproducible,
 parallelized fashion:
 
 * legend_segment
