@@ -29,4 +29,7 @@ RUN pip --no-input install gdown
 COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
-ENTRYPOINT ["python", "/ta1/dev/usc-umn-inferlink-ta1/polygon/loam_handler.py"]
+ENTRYPOINT [ \
+    "python", "-m", "ilperf", "-d", "5", "-o", "/ta1/output/polygon_extract/ilperf_docker.json", "--exec", \
+    "python", "/ta1/dev/usc-umn-inferlink-ta1/polygon/loam_handler.py" \
+    ]

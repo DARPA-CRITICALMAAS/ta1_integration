@@ -12,8 +12,10 @@ RUN cp \
 
 COPY ./ta1_integration/docker/modules/text_spotting/runme.sh \
     /home/cmaas/text_spotting_runme.sh
-    
-# INCLUDEX perms.txt
+
+# INCLUDEX perms-noperf.txt
 
 CMD []
-ENTRYPOINT [ "/home/cmaas/text_spotting_runme.sh" ]
+ENTRYPOINT [ \
+    "/home/cmaas/text_spotting_runme.sh" \
+    ]

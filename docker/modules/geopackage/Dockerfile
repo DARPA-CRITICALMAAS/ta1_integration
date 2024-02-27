@@ -25,6 +25,6 @@ COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", \
-    "/ta1/dev/usc-umn-inferlink-ta1/system/gpkg_generation/run_gpkg_writer.py" \
+    "python", "-m", "ilperf", "-d", "5", "-o", "/ta1/output/geopackage/ilperf_docker.json", "--exec", \
+    "python", "/ta1/dev/usc-umn-inferlink-ta1/system/gpkg_generation/run_gpkg_writer.py" \
 ]

@@ -10,6 +10,7 @@ RUN pip install \
     segment_anything@git+https://github.com/facebookresearch/segment-anything.git \
     rank_bm25 \
     scikit-image \
+    rasterio \
     matplotlib
 
 # INCLUDEX perms.txt
@@ -19,5 +20,8 @@ COPY . /ta1/dev/usc-umn-inferlink-ta1/
 WORKDIR /ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based
 
 CMD []
-ENTRYPOINT ["python", "-W", "ignore", \
-    "/ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based/run_georeference.py"]
+ENTRYPOINT [ \
+    "python", "-m", "ilperf", "-d", "5", "-o", "/ta1/output/georeference/ilperf_docker.json", "--exec", \
+    "python", "-W", "ignore", \
+    "/ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based/run_georeference.py" \
+    ]

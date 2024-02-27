@@ -28,4 +28,7 @@ COPY ./ta1_integration/docker/modules/legend_item_segment/runme.sh \
 ENV TESSERACT_EXE=/usr/bin/tesseract
 
 CMD []
-ENTRYPOINT ["/home/cmaas/legend_item_segment_runme.sh"]
+ENTRYPOINT [ \
+    "python", "-m", "ilperf", "-d", "5", "-o", "/ta1/output/legend_item_segment/ilperf_docker.json", "--exec", \
+    "/home/cmaas/legend_item_segment_runme.sh" \
+    ]

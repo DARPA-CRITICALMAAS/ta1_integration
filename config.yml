@@ -95,13 +95,14 @@ modules:
     # ---------------------------------------------------------------------------
     # where: system/image_crop
     # by: Weiwei
-    # requires: (none)
+    # requires: legend_segment
     # produces: PNGs
     -   name: map_crop
         gpu: true
         options:
             # inputs:
             input_dir: $INPUT_DIR/maps/$MAP_NAME
+            legend_dir: $OUTPUT_DIR/legend_segment
             # outputs:
             output_dir: $OUTPUT_DIR/map_crop
             # temp:
@@ -109,6 +110,7 @@ modules:
             map_name: $MAP_NAME
             patch_sizes: [1000, 256]
             strides: [1000, 256]
+            only_crop_map_area: [True, True]
 
 
     # ---------------------------------------------------------------------------
@@ -226,11 +228,11 @@ modules:
         options:
             # inputs:
             input_path: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
-            support_path: $INPUT_DIR/modules/georeference
+            support_data_dir: $INPUT_DIR/modules/georeference/support_data
             # outputs:
             output_path: $OUTPUT_DIR/georeference/$MAP_NAME.json
             # temp:
-            temp_path: $TEMP_DIR/georeference
+            temp_dir: $TEMP_DIR/georeference
             # misc:
 
 

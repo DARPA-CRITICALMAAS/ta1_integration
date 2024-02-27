@@ -104,4 +104,7 @@ COPY ./ta1_integration/docker/modules/line_extract/runme.sh \
     /home/cmaas/line_extract_runme.sh
 
 CMD []
-ENTRYPOINT ["/home/cmaas/line_extract_runme.sh"]
+ENTRYPOINT [ \
+    "python", "-m", "ilperf", "-d", "5", "-o", "/ta1/output/line_extract/ilperf_docker.json", "--exec", \
+    "/home/cmaas/line_extract_runme.sh" \
+    ]
