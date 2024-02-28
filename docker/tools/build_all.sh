@@ -4,6 +4,7 @@ set -e
 do_pull=0
 do_build=0
 do_push=0
+no_cache=""
 
 while (($#))
 do
@@ -11,7 +12,8 @@ do
 	--pull) do_pull=1; shift;;
 	--build) do_build=1; shift;;
 	--push) do_push=1; shift;;
-	*) echo "usage: build.sh [--pull] [--build] [--push]" ; false 
+	--no-cache) no_cache="--no-cache"; shift;;
+	*) echo "usage: build.sh [--pull] [--build [--no-cache]] [--push]" ; false
     esac
 done
 
@@ -39,7 +41,7 @@ then
         echo "*** $i... ***"
         echo ""
         pushd ../modules/$i > /dev/null
-        ./build.sh
+        ./build.sh $no_cache
         popd > /dev/null
     done
 fi

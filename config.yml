@@ -125,7 +125,7 @@ modules:
         user: root
         options:
             # inputs:
-            input_dir_path: $OUTPUT_DIR/map_crop/$MAP_NAME_g1000_s1000
+            input_dir_path: $OUTPUT_DIR/map_crop/$MAP_NAME_g1000_s1000_wo_legend
             # outputs:
             output_folder: $OUTPUT_DIR/text_spotting
             # temp:

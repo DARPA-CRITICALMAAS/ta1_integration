@@ -1,7 +1,9 @@
 # Copyright 2024 InferLink Corporation
 
 import logging
-import math
+import subprocess
+import signal
+
 import requests  # needed for docker exceptions
 import time
 from typing import Optional
@@ -27,6 +29,7 @@ class DockerRunner:
                  environment: list[str],  # [VAR=value]
                  gpus: bool,
                  user: Optional[str] = None):
+        self.name = name
 
         self._client = docker.from_env()
 
@@ -78,7 +81,11 @@ class DockerRunner:
 
         self._container.start()
 
-        exit_status = self._wait_for_completion(perf_collection, start)
+        proc = subprocess.Popen(["python", "-m", "ilperf", "--loop", "-d", "5", "-o", f"{self.name}.ilperf.json"])
+
+        exit_status = self._wait_for_completion()
+
+        proc.send_signal(signal.SIGINT)
 
         end = time.time()
         elapsed = round(end-start)
@@ -88,14 +95,8 @@ class DockerRunner:
 
         return exit_status, log, elapsed
 
-    def _wait_for_completion(self, perf_collection: PerfCollection, start_time: float) -> int:
-        # use the wait(timeout) call a perf stats collector (and potential heartbeat)
+    def _wait_for_completion(self) -> int:
         while True:
-            elapsed = time.time() - start_time
-            dynamic_info = perf_collection.poll(elapsed)
-            s = str(dynamic_info)
-            logger.info(s)
-
             try:
                 exit_status = self._container.wait(timeout=WAIT_TIME)
                 return exit_status["StatusCode"]
