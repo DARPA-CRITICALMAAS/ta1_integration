@@ -47,7 +47,7 @@ modules:
     # ---------------------------------------------------------------------------
     # where: segmentation/legend_item_segmentation
     # by: Fandel
-    # requires: text_spotting
+    # requires: text_spotting, legend_segment
     # produces: geojson
     -   name: legend_item_segment
         gpu: true
@@ -80,12 +80,13 @@ modules:
             # inputs:
             map_dir: $INPUT_DIR/maps/$MAP_NAME
             symbol_json_dir: $INPUT_DIR/maps/$MAP_NAME/legend_item_segment
-            legend_json_path: $OUTPUT_DIR/legend_segment
+            legend_json_dir: $OUTPUT_DIR/legend_segment
             # outputs:
-            gpt4_output_dir: $OUTPUT_DIR/legend_item_description
+            output_dir: $OUTPUT_DIR/legend_item_description
             # temp:
-            gpt4_input_dir: $TEMP_DIR/legend_item_description/gpt4_input_dir
-            gpt4_intermediate_dir: $TEMP_DIR/legend_item_description/gpt4_temp_dir
+            temp_dir: $TEMP_DIR/legend_item_description
+            #gpt4_input_dir: $TEMP_DIR/legend_item_description/gpt4_input_dir
+            #gpt4_intermediate_dir: $TEMP_DIR/legend_item_description/gpt4_temp_dir
             # misc:
             map_name: $MAP_NAME
 
@@ -202,17 +203,17 @@ modules:
     -   name: point_extract
         gpu: true
         options:
-            # inputs:
+            ## inputs:
             map_dir: $INPUT_DIR/maps
-            template_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Template
-            model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Model_weights
+            #template_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Template
+            model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/model_weights
             # outputs:
             output_dir_root: $OUTPUT_DIR/point_extract
             map_metadata_dir: $OUTPUT_DIR/legend_item_description
             map_patches_dir: $OUTPUT_DIR/map_crop
             # temp:
-            cropped_legend_dir: $TEMP_DIR/point_extract
-            processed_legend_dir: $TEMP_DIR/point_extract
+            #cropped_legend_dir: $TEMP_DIR/point_extract
+            #processed_legend_dir: $TEMP_DIR/point_extract
             # misc:
 
 
