@@ -20,6 +20,5 @@ COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", "-m", "ilperf", "-d", "5", "-o", "/ta1/output/map_crop/ilperf_docker.json", "--exec", \
     "python", "/ta1/dev/usc-umn-inferlink-ta1/system/image_crop/map2patch.py" \
 ]

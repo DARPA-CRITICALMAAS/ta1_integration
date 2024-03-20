@@ -12,6 +12,7 @@ RUN pip install \
     scikit-image \
     rasterio \
     matplotlib
+RUN pip install fuzzywuzzy
 
 # INCLUDEX perms.txt
 
@@ -21,7 +22,6 @@ WORKDIR /ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based
 
 CMD []
 ENTRYPOINT [ \
-    "python", "-m", "ilperf", "-d", "5", "-o", "/ta1/output/georeference/ilperf_docker.json", "--exec", \
     "python", "-W", "ignore", \
     "/ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based/run_georeference.py" \
     ]

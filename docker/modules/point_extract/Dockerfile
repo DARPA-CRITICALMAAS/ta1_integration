@@ -45,6 +45,5 @@ COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", "-m", "ilperf", "-d", "5", "-o", "/ta1/output/point_extract/ilperf_docker.json", "--exec", \
     "python", "/ta1/dev/usc-umn-inferlink-ta1/point/src/pipeline-scripts/run_point_pipe.py" \
     ]

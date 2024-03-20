@@ -29,6 +29,5 @@ ENV TESSERACT_EXE=/usr/bin/tesseract
 
 CMD []
 ENTRYPOINT [ \
-    "python", "-m", "ilperf", "-d", "5", "-o", "/ta1/output/legend_item_segment/ilperf_docker.json", "--exec", \
     "/home/cmaas/legend_item_segment_runme.sh" \
     ]
