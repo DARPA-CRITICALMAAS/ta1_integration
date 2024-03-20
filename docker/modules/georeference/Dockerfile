@@ -10,7 +10,9 @@ RUN pip install \
     segment_anything@git+https://github.com/facebookresearch/segment-anything.git \
     rank_bm25 \
     scikit-image \
+    rasterio \
     matplotlib
+RUN pip install fuzzywuzzy
 
 # INCLUDEX perms.txt
 
@@ -19,5 +21,7 @@ COPY . /ta1/dev/usc-umn-inferlink-ta1/
 WORKDIR /ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based
 
 CMD []
-ENTRYPOINT ["python", "-W", "ignore", \
-    "/ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based/run_georeference.py"]
+ENTRYPOINT [ \
+    "python", "-W", "ignore", \
+    "/ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based/run_georeference.py" \
+    ]

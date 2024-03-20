@@ -25,6 +25,5 @@ COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", \
-    "/ta1/dev/usc-umn-inferlink-ta1/system/gpkg_generation/run_gpkg_writer.py" \
+    "python", "/ta1/dev/usc-umn-inferlink-ta1/system/gpkg_generation/run_gpkg_writer.py" \
 ]

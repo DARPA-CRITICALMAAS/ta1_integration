@@ -8,4 +8,6 @@ WORKDIR /ta1/dev/uncharted-ta1
 ENV PYTHONPATH=/ta1/dev/uncharted-ta1:$PYTHONPATH
 
 CMD []
-ENTRYPOINT ["python3", "-W", "ignore", "pipelines/segmentation/run_pipeline.py"]
+ENTRYPOINT [ \
+    "python3", "-W", "ignore", "pipelines/segmentation/run_pipeline.py" \
+    ]

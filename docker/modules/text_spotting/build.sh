@@ -1,7 +1,10 @@
 #!/bin/sh
 set -e
 
+args=$@
+
 ../../tools/dockerfile-include.py Dockerfile Dockerfile.tmp ../../tools
 
-docker build -t inferlink/ta1_text_spotting -f Dockerfile.tmp $REPO_DIR
+docker build $args -t inferlink/ta1_text_spotting -f Dockerfile.tmp $REPO_DIR
 
+rm -f Dockerfile.tmp

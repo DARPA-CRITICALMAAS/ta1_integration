@@ -104,4 +104,6 @@ COPY ./ta1_integration/docker/modules/line_extract/runme.sh \
     /home/cmaas/line_extract_runme.sh
 
 CMD []
-ENTRYPOINT ["/home/cmaas/line_extract_runme.sh"]
+ENTRYPOINT [ \
+    "/home/cmaas/line_extract_runme.sh" \
+    ]

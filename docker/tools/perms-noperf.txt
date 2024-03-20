@@ -1,6 +1,3 @@
-RUN apt-get install -y git
-RUN pip install --no-input --force-reinstall git+https://bitbucket.org/inferlink/ilperf
-
 RUN addgroup --gid 1024 cmaasgroup \
    && adduser --disabled-password --gecos '' --ingroup cmaasgroup cmaas \
    && mkdir -p /ta1/input /ta1/output /ta1/temp \

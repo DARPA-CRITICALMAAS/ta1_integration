@@ -28,4 +28,6 @@ COPY ./ta1_integration/docker/modules/legend_item_segment/runme.sh \
 ENV TESSERACT_EXE=/usr/bin/tesseract
 
 CMD []
-ENTRYPOINT ["/home/cmaas/legend_item_segment_runme.sh"]
+ENTRYPOINT [ \
+    "/home/cmaas/legend_item_segment_runme.sh" \
+    ]
