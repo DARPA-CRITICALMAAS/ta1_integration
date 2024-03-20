@@ -6,8 +6,4 @@ pushd /ta1/dev/Deformable-DETR/models/ops
 sudo python setup.py build install
 popd
 
-echo "****************************************************"
-echo "****************************************************"
-echo "****************************************************"
-
 python /ta1/dev/usc-umn-inferlink-ta1/line/run_line_extraction.py $@
