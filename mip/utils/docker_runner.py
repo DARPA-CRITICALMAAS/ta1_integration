@@ -1,8 +1,8 @@
 # Copyright 2024 InferLink Corporation
 
 import logging
-import subprocess
-import signal
+# import subprocess
+# import signal
 
 import requests  # needed for docker exceptions
 import time
@@ -76,16 +76,16 @@ class DockerRunner:
         self.run_command = f"# docker run {gpus_s} --user {user} {vs} {image} {options}\n"
 
     # returns (status code, log data, elapsed seconds)
-    def run(self, perf_collection: PerfCollection) -> tuple[int, str, int]:
+    def run(self, _perf_collection: PerfCollection) -> tuple[int, str, int]:
         start = time.time()
 
         self._container.start()
 
-        proc = subprocess.Popen(["python", "-m", "ilperf", "--loop", "-d", "5", "-o", f"{self.name}.ilperf.json"])
+        # proc = subprocess.Popen(["python", "-m", "ilperf", "--loop", "-d", "5", "-o", f"{self.name}.ilperf.json"])
 
         exit_status = self._wait_for_completion()
 
-        proc.send_signal(signal.SIGINT)
+        # proc.send_signal(signal.SIGINT)
 
         end = time.time()
         elapsed = round(end-start)
