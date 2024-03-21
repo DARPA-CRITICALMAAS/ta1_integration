@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
 # Copyright 2024 InferLink Corporation
 
+import os
 import sys
+
+config_root = os.getenv("CONFIG_ROOT", None)
+if not config_root:
+    print(f"$CONFIG_ROOT not set")
+    sys.exit(1)
+os.environ["LUIGI_CONFIG_PATH"] = config_root + "/luigi.cfg"
+os.environ["LUIGI_LOG_CONFIG_PATH"] = config_root + "/luigi_log.cfg"
 
 import luigi
 import luigi.tools.deps_tree as deps_tree
@@ -16,6 +24,7 @@ from mip.apps.mipper_options import MipperOptions
 
 
 def main() -> int:
+
     start_nvidia()
 
     opts = MipperOptions()
