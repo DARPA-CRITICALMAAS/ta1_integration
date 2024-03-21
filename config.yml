@@ -39,6 +39,7 @@ modules:
             # output:
             output: $OUTPUT_DIR/legend_segment
             # temp:
+            workdir: $TEMP_DIR/legend_segment
             # misc:
 
 
