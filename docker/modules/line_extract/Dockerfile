@@ -62,7 +62,7 @@ ENV C_INCLUDE_PATH=/usr/include/gdal
 RUN pip install GDAL==$(gdal-config --version)
 
 RUN pip install \
-    opencv-python \
+    opencv-contrib-python \
     PyYAML \
     shapely==1.8.5.post1 \
     monai==0.7.0 \
@@ -73,6 +73,8 @@ RUN pip install \
     geopandas \
     ignite==1.1.0 \
     pytorch-ignite==0.4.9
+
+RUN pip install scikit-learn
 
 # Install libgl1-mesa-glx
 RUN apt-get update && apt-get install -y \
