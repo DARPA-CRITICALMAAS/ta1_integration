@@ -24,6 +24,7 @@ class HostConfigurationModel(BaseModel):
     output_dir: Path
     temp_dir: Path
     repo_dir: Path
+    runs_dir: Path
 
 
 class ContainerConfigurationModel(BaseModel):

@@ -10,6 +10,7 @@ host:
     output_dir: /home/ubuntu/dev/ta1_output
     temp_dir: /home/ubuntu/dev/ta1_temp
     repo_dir: /home/ubuntu/dev/
+    runs_dir: /home/ubuntu/dev/ta1_runs
 
 
 container:
