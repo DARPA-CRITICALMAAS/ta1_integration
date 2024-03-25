@@ -12,6 +12,7 @@ from mip.performance.static_info import StaticInfo
 from mip.performance.dynamic_info import DynamicInfo
 from mip.performance.utils import start_nvidia, shutdown_nvidia
 
+
 @dataclasses.dataclass
 class Options:
     cpu: bool
@@ -62,8 +63,6 @@ def get_options() -> Options:
 
 class ComputeLoad:
     def __init__(self, gpu: bool, memory: bool):
-
-
         if gpu:
             mem = 75 if memory else 1
             self.x = torch.linspace(0, 4, mem * 16 * 1024 ** 2).cuda()

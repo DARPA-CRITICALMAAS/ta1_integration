@@ -72,9 +72,8 @@ RUN pip install \
     pyvista \
     geopandas \
     ignite==1.1.0 \
-    pytorch-ignite==0.4.9
-
-RUN pip install scikit-learn
+    pytorch-ignite==0.4.9 \
+    scikit-learn
 
 # Install libgl1-mesa-glx
 RUN apt-get update && apt-get install -y \
