@@ -2,26 +2,29 @@ FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel
 
 # INCLUDEX base.txt
 
-RUN conda install -y -n base     scipy
-RUN conda install -y -n base     matplotlib
-RUN conda install -y -n base     numpy
-RUN conda install -y -n base     pandas
-RUN conda install -y -n base     geopandas
-RUN conda install -y -n base     shapely
-RUN conda install -y -n base     conda-forge::gdal
-RUN conda install -y -n base     fastai::opencv-python-headless
+RUN \
+    conda install -y -n base scipy \
+    && conda install -y -n base matplotlib \
+    && conda install -y -n base numpy \
+    && conda install -y -n base pandas \
+    && conda install -y -n base geopandas \
+    && conda install -y -n base shapely \
+    && conda install -y -n base conda-forge::gdal \
+    && conda install -y -n base fastai::opencv-python-headless
 
-RUN apt-get install -y libtiff-dev
+RUN apt-get update && apt-get install -y \
+    libtiff-dev \
+    libvips-dev
 
-RUN pip --no-input install scikit-image Pillow==9.4.0 rasterio wandb
+RUN pip --no-input install \
+    scikit-image \
+    Pillow==9.4.0 \
+    rasterio \
+    wandb \
+    pyvips \
+    gdown
 
-RUN apt-get update \
-    && apt-get -y install libvips-dev \
-    && pip --no-input install pyvips
-
-RUN conda install -c conda-forge ipywidgets
-
-RUN pip --no-input install gdown
+RUN conda install -y -c conda-forge ipywidgets
 
 # INCLUDEX perms.txt
 

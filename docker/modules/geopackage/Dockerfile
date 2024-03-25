@@ -2,22 +2,14 @@ FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel
 
 # INCLUDEX base.txt
 
-RUN conda install -y -n base \
-    pandas==2.0.3 \
-    geopandas==0.13.2 \
-    conda-forge::gdal==3.6.2
+RUN \
+    conda install -y -n base pandas \
+    && conda install -y -n base geopandas \
+    && conda install -y -n base conda-forge::gdal
 
-RUN pip install criticalmaas.ta1-geopackage
-RUN pip install pytest
-
-#RUN apt-get install -y libtiff-dev
-
-#    scipy \
-#    matplotlib \
-#    numpy \
-#    shapely==2.0.1 \
-#    fastai::opencv-python-headless
-
+RUN pip install --no-input \
+    criticalmaas.ta1-geopackage \
+    pytest
 
 # INCLUDEX perms.txt
 

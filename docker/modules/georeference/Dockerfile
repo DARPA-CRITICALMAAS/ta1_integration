@@ -2,8 +2,15 @@ FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel
 
 # INCLUDEX base.txt
 
-RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6 git
-RUN conda install -y -n base fastai::opencv-python-headless
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    git
+
+RUN conda install -y -n base \
+    fastai::opencv-python-headless
+
 RUN pip install \
     pandas \
     transformers@git+https://github.com/zekun-li/transformers@geolm \
