@@ -9,7 +9,7 @@ Parameters:
         Type: String
     RegionAZ:
         Type: String
-    AMIId:
+    AMI:
         Type: String
 
 
@@ -63,7 +63,7 @@ Resources:
         Type: AWS::EC2::SecurityGroup
         Properties:
             GroupName: "Internet Group"
-            GroupDescription: "SSH and web traffic in, all traffic out."
+            GroupDescription: "SSH, MySQL and web traffic in, all traffic out."
             VpcId: !Ref VPC
             SecurityGroupIngress:
                 - IpProtocol: tcp
@@ -79,34 +79,42 @@ Resources:
                   ToPort: 22
                   CidrIp: 0.0.0.0/0
 
-    ElasticIP:
+    ElasticIPInstance1:
         Type: AWS::EC2::EIP
         Properties:
             Domain: vpc
-            InstanceId: !Ref Linux
+            InstanceId: !Ref LinuxInstance1
 
-    Linux:
+    LinuxInstance1:
         Type: 'AWS::EC2::Instance'
         Properties:
-            SubnetId: !Ref SubnetA
-            ImageId: !Ref AMIId
-            InstanceType:
-                Ref: InstanceType
-            KeyName: !Ref EC2KeyName
-            SecurityGroupIds:
-                - Ref: InstanceSecurityGroup
-            BlockDeviceMappings:
-                - DeviceName: /dev/sda1
-                  Ebs:
-                    VolumeSize: !Ref DiskGB
-            UserData:
-                Fn::Base64: |
-                  #!/bin/bash
-                  echo "Hello World!" > hello.txt
+          SubnetId: !Ref SubnetA
+          ImageId: !Ref AMI
+          InstanceType: !Ref InstanceType
+          KeyName: !Ref EC2KeyName
+          SecurityGroupIds:
+            - !Ref InstanceSecurityGroup
+          BlockDeviceMappings:
+            - DeviceName: /dev/xvda
+              Ebs:
+                VolumeSize: !Ref DiskGB
+          UserData:
+            Fn::Base64: |
+              #!/bin/bash
+              echo "Hello World! Instance 1" > hello_instance1.txt
+          Tags:
+            - Key: Name
+              Value: telex_database_cloud_formation
+
 
 Outputs:
-    PublicIp:
+    PublicIpInstance1:
         Value:
             Fn::GetAtt:
-                - Linux
+                - LinuxInstance1
                 - PublicIp
+    PrivateIpInstance1:
+        Value:
+            Fn::GetAtt:
+                - LinuxInstance1
+                - PrivateIp
