@@ -251,7 +251,7 @@ modules:
         gpu: true
         options:
             # inputs:
-            nongeoref_map_dir: $INPUT_DIR/maps
+            nongeoref_map_dir: $INPUT_DIR/maps/$MAP_NAME
             layout_output_dir: $OUTPUT_DIR/legend_item_description
             georef_output_dir: $OUTPUT_DIR/example_inputs/georeference
             poly_output_dir: $OUTPUT_DIR/polygon_extract
@@ -263,3 +263,4 @@ modules:
             # temp:
             # misc:
             map_name: $MAP_NAME
+            log_path: $OUTPUT_DIR/geopackage/log_file.txt

@@ -9,7 +9,8 @@ RUN \
 
 RUN pip install --no-input \
     criticalmaas.ta1-geopackage \
-    pytest
+    pytest \
+    rasterio
 
 # INCLUDEX perms.txt
 
@@ -17,5 +18,5 @@ COPY . /ta1/dev/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", "/ta1/dev/usc-umn-inferlink-ta1/system/gpkg_generation/run_gpkg_writer.py" \
+    "python", "/ta1/dev/usc-umn-inferlink-ta1/system/gpkg_generation/src/run_gpkg_writer.py" \
 ]
