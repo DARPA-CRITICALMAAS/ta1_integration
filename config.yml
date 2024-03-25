@@ -88,8 +88,6 @@ modules:
             log_path: $OUTPUT_DIR/legend_item_description/run.log
             # temp:
             temp_dir: $TEMP_DIR/legend_item_description
-            #gpt4_input_dir: $TEMP_DIR/legend_item_description/gpt4_input_dir
-            #gpt4_intermediate_dir: $TEMP_DIR/legend_item_description/gpt4_temp_dir
             # misc:
             map_name: $MAP_NAME
 
@@ -210,6 +208,7 @@ modules:
             map_dir: $INPUT_DIR/maps
             #template_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Template
             model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/model_weights
+            symbol_info_json_file: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/automated_model_selection/symbol_info.json
             # outputs:
             output_dir_root: $OUTPUT_DIR/point_extract
             map_metadata_dir: $OUTPUT_DIR/legend_item_description
