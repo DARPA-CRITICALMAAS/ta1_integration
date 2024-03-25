@@ -1,7 +1,19 @@
+# CONTENTS
+
+1. Introduction
+2. Conceptual Overview
+3. System Setup
+4. Running the Mipper Tool
+
+
+
+# 1. Introduction
+
 This is the **Module Integration Project (MIP)**, which provides a means for
 running all the TA1 modules from UMN/ISI/InferLink in a reproducible,
 parallelized fashion:
 
+* georeference
 * legend_segment
 * map_crop
 * text_spotting
@@ -10,32 +22,60 @@ parallelized fashion:
 * line_extract
 * polygon_extract
 * point_extract
-* georeference
+* geopackage
 
-The goals of this project include:
+The five main goals of this project are:
 
-* The creation of docker containers for running all the modules
-* A clear definition of the input files, output files, and inter-module 
-  dependencies for each module
-* A tool (`mipper.py`) that can run some or all of the modules, in the correct
-  order, with a single, simple command line
-* The ability to run (or re-run) a module from existing inputs
+1. A clear definition of the input files, output files, and inter-module
+    dependencies for each module, expressed in a single config file
+2. The creation of a docker container to run each of the modules
+3. A tool (`mipper.py`) that can run (or re-run) one or more of the modules, in
+    the correct order, via a simple command line
+4. The ability to pull TA1 inputs from, and push TA1 outputs to, the CDR
+5. A server exposing a REST API that can run mipper jobs
 
 
-# 1. Conceptual Overview
+
+# 2. Conceptual Overview
+
+## 2.1. System Design: All the Layers
+
+From the highest level, the entire system looks like this:
+
+**Container/Module Layer:** There is a docker container for each module. The
+container is expected to be run in a well-defined execution environment (i.e.
+directory layout, explained below). Each module, and each container, operate
+independently. The actual python code for the modules is (in most cases) in the
+`usc-umn-inferlink-ta1` repo: we don't touch any of that code, we just interact
+with it at the command line level.
+
+**Mipper/Luigi Layer:** Sitting above the container layer is an application
+("mippper") that executes the modules by running the containers. This app uses
+the "luigi" python library to do task orchestration of the task graph. The task
+graph is a DAG whose nodes are modules (run in docker containers) and whose
+edges are input/output dependencies (expressed in the config.yml file). The
+command line switches for running mipper are very simple.
+
+**Web Server Layer:** Sitting above the mipper layer is a web server that
+exposes a REST API for running the modules. Internally, the server just calls
+the mipper app to do its work.
+
+This system all runs on a single host machine.
+
+
+## 2.2. The Execution Environment
 
 Your host machine will have three directories:
 
-* `/ta1/input`: where the (static) input files live (this directory will contain
-  the contents of the `ta1_integration_inputs` repo)
-* `/ta1/output`: where the results from each job (run) will live
+* `/ta1/input`: where the (static) input files live
+* `/ta1/output`: where the results from each mipper job (run) will live
 * `/ta1/temp`: scratch space used when running each job
 
 _NOTE: Here we have used `/ta1` as the root of these three dirs, but in practice
 they can each live anywhere._
 
-These three directories are mounted as volumes when the modules' containers are
-run.
+When a module's container is run, these three directories will be mounted as
+volumes so that the data is accessible from both the host and the container.
 
 Each invocation of the `mipper` tool, to run one or more modules, is called a
 "job". Each job is given a (simple, short) name, and the results from the job
@@ -64,8 +104,9 @@ Each module in the system has its own unique set of command line options. The
 `config.yml` file is used to specify the various switch names and values. The
 syntax allows for the use of a few variables, which are expanded at runtime to
 point to the proper directories. Here is an example of a portion of the
-`config.yml` file for a module that has three switches: one for the map input,
-one for the results from a predecessor module, and one for the output:
+`config.yml` file for a fictitious module that has three switches: one for the
+map input, one for the results from a predecessor module, and one for the
+output:
 
 ```yaml
 extract_ore:
@@ -79,26 +120,124 @@ the config file location, the module(s) to be run, the map image to use, and the
 name of the job.
 
 
-# 2. MIP System Setup
+
+# 3. MIP System Setup
+
+## 3.1. Deploying up the EC2 Instance
+
+Our system runs on an EC2 instance. To make it easy to set up this machine, we
+rely on a homegrown tool named "ilaws" which uses CloudFormation to define and
+deploy the EC2 instance. If you are already familiar with EC2, you can build
+the host using other tools: all that we require is a `p3.8xlarge` host with a
+public IP address.
+
+From your local machine, do the following:
+1. mkdir /tmp/ta1_boot
+2. cd /tmp/ta1_boot
+3. Install ilaws: `pip install git+ssh://git@bitbucket.org/inferlink/ilaws.git/`
+4. Get the two ilaws config files:
+   1. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/stack/template.yml > template.yml`
+   2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/stack/config.yml > config.yml`
+5. Edit `config.yml` to provide your own EC2 key pair name, a project name (any
+    short string), and an owner name (any short string). You can also change
+    the instance type, aws region, etc., in this file if you need to.
+6. Start the instance, using any short string to name your stack (e.g. "ta1_test"):
+    ```
+   python -m ilaws create --stack-name YOUR_STACK_NAME --config-file stack/config.yml
+    ```
+    This will take 1-2 minutes.
+7. Verify the instance is running:
+    ```
+    python -m ilaws info --stack-name ta1-test
+    ```
+    In the JSON output, it should say "running". You will also find the host's 
+    Public IP address in the output.
+
+When you are not using the EC2 instance, you will want to suspend it (so you
+don't get charged):
+```
+python -m ilaws suspend --stack-name ta1-test
+```
+You can then resume it from where you left off:
+```
+python -m ilaws resume --stack-name ta1-test
+```
+Note that it may take 1-2 minutes before the machine is ready to use; run the
+"info" command to check and see if the status is "running" or not.
+
+To completely kill the machine (and all data on it!):
+```
+python -m ilaws delete --stack-name ta1-test
+```
+
+
+
+## 3.2. Configuring the EC2 Host
 
 _In the following, we will assume you are using `/ta1/...` as the root of the
-three mipper directories. Feel free to change these paths._
+mipper execution environment directories. Feel free to change these paths._
 
+Now that your EC2 host is ready to use, we need to configure it.
+
+Using your EC2 key pair, `ssh` into the EC2 host.
+
+First, make the `cmaas` user:
 1. `sudo addgroup --gid 1024 cmaasgroup ; sudo adduser ubuntu cmaasgroup`
-1. Obtain a machine to run on: it requires multiple cores, good GPUs, and 128GB
-   of RAM. (A p2.xlarge EC2 instance seems to work well.)
-2. Make the three dirs: `mkdir /ta1/input /ta1/output /ta1/temp`
-3. Check out the repo `ta1_integration_inputs` and into the directory 
-   `/ta1/ta1_integration_inputs`.
-4. Check out the repo `usc-umn-inferlink-ta` and cd into its `integration`
-   directory.
-5. Start the virtual environment: `poetry shell`
-6. Pull all the prebuilt docker containers as follows:
-   `cd docker-tools ; ./build.sh --pull ; cd ..`
-7. Run `./mipper.py` to your heart's content.
+
+Second, set up the directories needed:
+1. `mkdir /ta1/output /ta1/temp /ta1/dev /ta1/runs`
+2. `cd /ta1`
+3. `git clone git@github.com:DARPA-CRITICALMAAS/ta1_integration_input`
+3. `aws s3 sync s3://inferlink-ta1-integration-inputs /ta1/dev/ta1_integration_input`
+4. `cd /ta1/dev`
+5. `git clone git@github.com:DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
+6. `cd /ta1/dev`
+7. `git clone git@github.com:DARPA-CRITICALMAAS/ta1_integration`
+
+Third, start your python environment:
+1. `curl -sSL https://install.python-poetry.org | python3 -`
+2. `cd /ta1/dev/ta1_integration`
+3. `poetry shell`
+4. `source ./env.sh`
+
+Fourth, pull all the prebuilt docker containers:
+1. `cd /ta1/dev/ta1_integration/docker/tools`
+2. `./build_all.sh --pull`
+
+Fifth, verify Docker is working:
+1. `docker run hello-world`
+
+Sixth, verify the GPUs are working:
+1. `nvidia-smi`
+2. `cd /ta1_integration/docker/hello-gpu`
+4. `docker build -f docker/hello-gpu/Dockerfile -t hello-gpu .`
+5. `docker run --gpus=all hello-gpu --duration 5 --cpu` (should show CPU % well above 0)
+5. `docker run --gpus=all hello-gpu --duration 5 --gpu` (should show GPU % well above 0)
+
+Seventh, verify mipper works:
+1. `cd /ta1/dev/ta1_integration`
+2. `./mip/apps/mipper.py --list-modules`
+3. `./mip/apps/mipper.py --job-name 01 --map-name WY_CO_Peach --module-name start`
+4. `./mip/apps/mipper.py --job-name 01 --map-name WY_CO_Peach --module-name map_crop`
 
 
-# 3. Running the mipper Tool
+
+## 3.3. OPTIONAL: Building the Docker Containers
+
+In the previous section, you pulled down the pre-built docker containers. If you
+want to build them your self, do this:
+1. `cd /ta1/dev`
+2. `git clone git@github.com:DARPA-CRITICALMAAS/uncharted-ta1`
+3. `cd /ta1/dev/ta1_integration/docker/tools`
+4. `./build_all.sh --build`  (you can also use `--no-cache` here)
+
+If you have write-access to docker hub, you can then do:
+1. `docker login`, 
+2. `./build_all.sh --push`
+
+
+
+# 4. Running the mipper Tool
 
 The `mipper` tool runs one job, consisting of one or more module executions for
 one map image.
@@ -138,7 +277,7 @@ Mipper supports a few other switches worth knowing:
   already been run successfully
 
 
-# 3. Adding a New Module
+# 4. Adding a New Module
 
 This section explains how to add a new module, in three steps:
 1. Writing the module
@@ -150,7 +289,7 @@ In our examples below, we will call the new module `extract_ore`, its container
 `inferlink/ta1_extract_ore`, and its class `ExtractOreTask`.
 
 
-## 3.1. Your New Module
+## 4.1. Your New Module
 
 Your module should follow all the conventions of a robust python app (described
 elsewhere), but in particular must follow this rule:
@@ -161,7 +300,7 @@ located relative to the mipper system's required directory layout. Do not use
 any hard-coded paths and do not assume anything lives at "`.`"._
 
 
-## 3.2. Your New Docker Containers
+## 4.2. Your New Docker Containers
 
 Each module needs to be run in its own docker container.
 
@@ -209,7 +348,7 @@ docker containers. (You can then run `./build_all.sh --push` to push all the
 containers, if you have write access to InferLink's DockerHub repository.)
 
 
-## 3.3. Your New Mipper Module
+## 4.3. Your New Mipper Module
 
 To add your new module to the mipper system, you need to write a task class, add
 some verification code, and register the module. Fortunately, this is easy:
@@ -229,7 +368,7 @@ some verification code, and register the module. Fortunately, this is easy:
       of `AllTask`.
 
 
-## 3.4. Your New Config File Section
+## 4.4. Your New Config File Section
 
 Finally, you need to add your new module to the `config.yml` file. You will do
 this by adding a new section to the file and, for each command line switch your
@@ -252,7 +391,7 @@ _NOTE: if your switch takes no parameter (such as a boolean flag), you can't
 leave the "value" part of in the YAML line empty: set it to `""` instead. 
 
 
-# 4. The Luigi Workflow Engine
+# 5. The Luigi Workflow Engine
 
 The mipper system uses the python `luigi` package to orchestrate the execution
 of its tasks. The motivated reader is referred to the luigi docs for more
