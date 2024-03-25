@@ -11,8 +11,8 @@ RUN pip install \
     rank_bm25 \
     scikit-image \
     rasterio \
-    matplotlib
-RUN pip install fuzzywuzzy
+    matplotlib \
+    fuzzywuzzy
 
 # INCLUDEX perms.txt
 
