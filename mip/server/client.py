@@ -78,7 +78,10 @@ def main() -> int:
         if resp.status_code != 200:
             print(f"*** error: {resp.content}")
         s = resp.json()
-        options.output.write_text(s)
+        print("-------------")
+        print(s)
+        print("-------------")
+        options.output.write_text(json.dumps(s))
 
     if options.do_post:
         body = options.input.read_text()
@@ -86,10 +89,10 @@ def main() -> int:
         if resp.status_code != 200:
             print(f"*** error: {resp.content}")
         s = resp.json()
-        options.output.write_text(s)
         print("-------------")
         print(s)
         print("-------------")
+        options.output.write_text(json.dumps(s))
 
     return 0
 

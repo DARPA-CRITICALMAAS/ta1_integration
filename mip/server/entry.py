@@ -27,8 +27,11 @@ async def get_hello() -> str:
 
 
 @app.post("/")
-async def post_hello(body: HelloModel) -> str:
-    result = f"Hello, {body.name}."
+async def post_hello(body: HelloModel) -> HelloModel:
+    result = HelloModel(
+        greeting=body.greeting.upper(),
+        name=body.name.upper(),
+    )
     return result
 
 

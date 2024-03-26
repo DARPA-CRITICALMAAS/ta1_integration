@@ -48,4 +48,5 @@ class ModuleDescription(BaseModel):
 
 
 class HelloModel(BaseModel):
+    greeting: str
     name: str
