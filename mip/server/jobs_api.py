@@ -14,7 +14,7 @@ class JobsApi:
         return
 
     def get_job_names(self) -> list[str]:
-        files = self._configuration.host.output_dir.glob("*.json")
+        files = self._configuration.host.output_dir.glob("*.log")
         return [f.stem for f in files]
 
     def get_module_names(self, job_name: str) -> list[str]:

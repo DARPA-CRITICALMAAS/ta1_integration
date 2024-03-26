@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Copyright 2024 InferLink Corporation
 
+from datetime import datetime
 import os
 import sys
 
@@ -20,7 +21,7 @@ from mip.utils.config import Config
 from mip.utils.module_config import ModuleConfig
 from mip.utils.simple_task import SimpleTask
 from mip.performance.utils import start_nvidia, shutdown_nvidia
-from mip.apps.mipper_options import MipperOptions
+from mip.mipper.mipper_options import MipperOptions
 
 
 def main() -> int:
@@ -81,6 +82,12 @@ def main() -> int:
             task_config = ModuleConfig(cfg, task_name)
             task_config.host_task_file.unlink(missing_ok=True)
 
+    job_log = cfg.host_output_dir / f"{cfg.job_name}.log"
+
+    with open(job_log, "a") as fp:
+        print(f"[{datetime.now()}] Starting job ({os.getpid()})", file=fp)
+        print(" ".join(sys.argv), file=fp)
+
     result = luigi.build(
         tasks=tasks,
         local_scheduler=True,
@@ -88,6 +95,9 @@ def main() -> int:
     )
 
     status = 0 if result.status == luigi.execution_summary.LuigiStatusCode.SUCCESS else 1
+
+    with open(job_log, "a") as fp:
+        print(f"[{datetime.now()}] Stopping job ({os.getpid()}), status={status}", file=fp)
 
     shutdown_nvidia()
 

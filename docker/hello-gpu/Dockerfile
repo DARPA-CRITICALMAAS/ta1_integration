@@ -11,7 +11,7 @@ WORKDIR /ta1/dev/ta1_integration
 ENV PYTHONPATH=/ta1/dev/ta1_integration
 
 CMD []
-ENTRYPOINT ["python", "/ta1/dev/ta1_integration/mip/apps/perf_stress.py"]
+ENTRYPOINT ["python", "/ta1/dev/ta1_integration/mip/performance/test_perf.py"]
 
 
 # python -c "import torch ; print(torch.cuda.is_available())"
