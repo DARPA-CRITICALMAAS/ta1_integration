@@ -14,11 +14,11 @@ From your local machine, do the following:
 2. cd /tmp/ta1_boot
 3. Install ilaws: `pip install git+ssh://git@bitbucket.org/inferlink/ilaws.git/`
 4. Get the two ilaws config files:
-  1. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/stack/template.yml > template.yml`
-  2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/stack/config.yml > config.yml`
+   1. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/stack/template.yml > template.yml`
+   2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/stack/config.yml > config.yml`
 5. Edit `config.yml` to provide your own EC2 key pair name, a project name (any
-   short string), and an owner name (any short string). You can also change
-   the instance type, aws region, etc., in this file if you need to.
+    short string), and an owner name (any short string). You can also change
+    the instance type, aws region, etc., in this file if you need to.
 6. Start the instance, using any short string to name your stack (e.g. "ta1_test"):
     ```
    python -m ilaws create --stack-name YOUR_STACK_NAME --config-file stack/config.yml
@@ -60,16 +60,15 @@ steps...
 1. **Make the `cmaas` user**
     1. `sudo addgroup --gid 1024 cmaasgroup ; sudo adduser ubuntu cmaasgroup`
 
-
 2. **Set up the needed directories**
     1. `mkdir /ta1/output /ta1/temp /ta1/dev /ta1/runs`
     2. `cd /ta1`
     3. TODO `git clone git@github.com:DARPA-CRITICALMAAS/ta1_integration_input`
-    3. TODO `aws s3 sync s3://inferlink-ta1-integration-inputs /ta1/dev/ta1_integration_input`
-    4. `cd /ta1/dev`
-    5. `git clone git@github.com:DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
-    6. `cd /ta1/dev`
-    7. `git clone git@github.com:DARPA-CRITICALMAAS/ta1_integration`
+    4. TODO `aws s3 sync s3://inferlink-ta1-integration-inputs /ta1/dev/ta1_integration_input`
+    5. `cd /ta1/dev`
+    6. `git clone git@github.com:DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
+    7. `cd /ta1/dev`
+    8. `git clone git@github.com:DARPA-CRITICALMAAS/ta1_integration`
 
 3. **Start your python environment**
     1. `curl -sSL https://install.python-poetry.org | python3 -`

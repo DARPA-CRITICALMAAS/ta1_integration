@@ -180,7 +180,7 @@ The following Pydantic classes (JSON dicts) are used for endpoint payloads and r
 
 ## 6. Examples
 
-To run specific the the “map crop” module, it would go something roughly like this:
+To run the “map crop” module, it would go something roughly like this:
 
 1. User creates file a.json:
     ```

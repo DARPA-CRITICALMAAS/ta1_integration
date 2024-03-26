@@ -11,7 +11,7 @@ A few details about our use of luigi:
 * Luigi's logger is configured using the `luigi_logging.conf` file.
 * We are using the "local" scheduler, with only one process, until we're sure
   everything is stable. This means that modules will not be executed in
-  parallel for a given map, even if the dependecy graph allows for it. (You can
+  parallel for a given map, even if the dependency graph allows for it. (You can
   run multiple instances of mipper, however, using different job ids, to
   different maps in parallel.)
 

@@ -12,7 +12,7 @@ independently. The actual python code for the modules is (in most cases) in the
 with it at the command line level.
 
 **Mipper/Luigi Layer:** Sitting above the container layer is an application
-("mippper") that executes the modules by running the containers. This app uses
+("mipper") that executes the modules by running the containers. This app uses
 the "luigi" python library to do task orchestration of the task graph. The task
 graph is a DAG whose nodes are modules (run in docker containers) and whose
 edges are input/output dependencies (expressed in the config.yml file). The

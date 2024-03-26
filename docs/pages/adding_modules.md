@@ -95,7 +95,7 @@ Finally, you need to add your new module to the `config.yml` file. You will do
 this by adding a new section to the file and, for each command line switch your
 python app uses, add a line for it.
 
-For example, assume `extract_ore.py` has four swiches: one for the map input,
+For example, assume `extract_ore.py` has four switches: one for the map input,
 one for the results from a predecessor module, one for the output directory, and
 one for the frobble parameter. Your new section of the config file would look
 like this:

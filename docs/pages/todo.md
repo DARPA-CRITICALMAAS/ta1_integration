@@ -21,8 +21,10 @@
 * switch to ansible
 * make S3 inputs bucket public/read
 * server
-   * figure out CDR linkage
-   * add ability to stop/abort a run
-   * add ability to delete a run
-   * add ability to delete a job
-   * add ability to delete a job/module
+    * document running the server
+    * document running the client
+    * figure out CDR linkage
+    * add ability to stop/abort a run
+    * add ability to delete a run
+    * add ability to delete a job
+    * add ability to delete a job/module
