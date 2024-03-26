@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from mip.apps.mipper_options import MipperOptions
+from mip.mipper.mipper_options import MipperOptions
 from mip.utils.configuration_models import ConfigurationModel, ModuleConfigurationModel
 
 

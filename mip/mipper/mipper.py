@@ -20,7 +20,7 @@ from mip.utils.config import Config
 from mip.utils.module_config import ModuleConfig
 from mip.utils.simple_task import SimpleTask
 from mip.performance.utils import start_nvidia, shutdown_nvidia
-from mip.apps.mipper_options import MipperOptions
+from mip.mipper.mipper_options import MipperOptions
 
 
 def main() -> int:
