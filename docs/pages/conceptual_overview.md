@@ -1,8 +1,6 @@
+# Conceptual Overview
 
-
-# 2. Conceptual Overview
-
-## 2.1. System Design: All the Layers
+## System Design: All the Layers
 
 From the highest level, the entire system looks like this:
 
@@ -27,7 +25,7 @@ the mipper app to do its work.
 This system all runs on a single host machine.
 
 
-## 2.2. The Execution Environment
+## The Execution Environment
 
 Your host machine will have three directories:
 
@@ -82,4 +80,3 @@ extract_ore:
 The  `mipper` tool (described below) takes command line switches to indicate
 the config file location, the module(s) to be run, the map image to use, and the
 name of the job.
-
