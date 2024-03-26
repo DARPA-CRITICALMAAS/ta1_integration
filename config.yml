@@ -81,7 +81,7 @@ modules:
         options:
             # inputs:
             map_dir: $INPUT_DIR/maps/$MAP_NAME
-            symbol_json_dir: $INPUT_DIR/maps/$MAP_NAME/legend_item_segment
+            symbol_json_dir: $OUTPUT_DIR/legend_item_segment
             legend_json_dir: $OUTPUT_DIR/legend_segment
             # outputs:
             output_dir: $OUTPUT_DIR/legend_item_description
