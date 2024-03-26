@@ -56,7 +56,7 @@ modules:
         options:
             # input:
             input_image: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
-            input_legend_segmentation: $INPUT_DIR/modules/legend_item_segment/ch2_validation_evaluation_labels_coco.json
+            input_legend_segmentation: $OUTPUT_DIR/legend_segment/$MAP_NAME_map_segmentation.json
             # output:
             output_dir: $OUTPUT_DIR/legend_item_segment
             log: $OUTPUT_DIR/legend_item_segment/log_file.txt
@@ -64,7 +64,7 @@ modules:
             path_to_intermediate: $TEMP_DIR/legend_item_segment
             # misc:
             postprocessing_for_crs: True
-            competition_custom: True
+            competition_custom: False
             version: 1.2
             only_poly: False
 
