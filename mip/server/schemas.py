@@ -1,7 +1,10 @@
 # Copyright 2024 InferLink Corporation
 
 from datetime import datetime
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except ImportError:
+    from strenum import StrEnum
 from typing import Optional
 
 from pydantic import BaseModel
@@ -42,3 +45,7 @@ class ModuleStatus(BaseModel):
 class ModuleDescription(BaseModel):
     name: str
     version: Optional[str] = None
+
+
+class HelloModel(BaseModel):
+    name: str

@@ -63,7 +63,34 @@ something better._
 
 ## 3. Running the Server
 
+To run the server, ssh into the EC2 host and do this:
+
+1. `cd /ta1/dev/ta1_integration`
+2. `poetry shell`
+3. `source env.sh`
+4. `uvicorn mip.server.entry:app`
+
+
+
 ## 4. Running the Client
+
+The client is implemented so as not to require the full environment on the EC2
+host like the other parts of the system.
+
+1. `pip install requests`
+2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/mip/server/client.py > client.py`
+3. `python ./client.py [options]`
+
+The command line options are:
+
+* `--get`: for GET requests (required, unless `--post` is used)
+* `--post`: for POST requests (required unless `--get` is used)
+* `--url`: url of server (required)
+* `--input`: input json file (required if `--post` is used)
+* `--output`: output json file (required)
+
+See below for examples.
+
 
 ## 5. The REST Endpoints
 

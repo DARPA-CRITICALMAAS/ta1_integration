@@ -4,20 +4,32 @@ from pathlib import Path
 
 from fastapi import FastAPI, Response
 
-from mip.server.schemas import RunPayload, RunStatus, ModuleStatus, ModuleDescription
+from mip.server.schemas import RunPayload, RunStatus, ModuleStatus, ModuleDescription, HelloModel
 from mip.server.runs_api import RunsApi
 from mip.server.jobs_api import JobsApi
 from mip.server.misc_api import MiscApi
 from mip.utils.configuration_models import ConfigurationModel
 
 
-CONFIG_FILE = Path("../../config.yml")
+CONFIG_FILE = Path("config.yml")
 configuration = ConfigurationModel.read(CONFIG_FILE)
 runs_api = RunsApi(configuration)
 jobs_api = JobsApi(configuration)
 misc_api = MiscApi(configuration)
 
 app = FastAPI()
+
+
+@app.get("/")
+async def get_hello() -> str:
+    result = "Hello, mipper."
+    return result
+
+
+@app.post("/")
+async def post_hello(body: HelloModel) -> str:
+    result = f"Hello, {body.name}."
+    return result
 
 
 @app.get("/modules/")

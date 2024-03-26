@@ -21,6 +21,8 @@
 * switch to ansible
 * make S3 inputs bucket public/read
 * server
+    * basicauth
+    * expose the server
     * document running the server
     * document running the client
     * figure out CDR linkage
