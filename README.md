@@ -1,10 +1,12 @@
 # CONTENTS
 
 1. Introduction
-2. Conceptual Overview
+2. [Conceptual Overview](docs/pages/overview.md)
 3. System Setup
 4. Running the Mipper Tool
-
+5. Running the Server
+6. Adding a New Module
+7. Advanced Topics
 
 
 # 1. Introduction
@@ -222,22 +224,7 @@ Seventh, verify mipper works:
 
 
 
-## 3.3. OPTIONAL: Building the Docker Containers
-
-In the previous section, you pulled down the pre-built docker containers. If you
-want to build them your self, do this:
-1. `cd /ta1/dev`
-2. `git clone git@github.com:DARPA-CRITICALMAAS/uncharted-ta1`
-3. `cd /ta1/dev/ta1_integration/docker/tools`
-4. `./build_all.sh --build`  (you can also use `--no-cache` here)
-
-If you have write-access to docker hub, you can then do:
-1. `docker login`, 
-2. `./build_all.sh --push`
-
-
-
-# 4. Running the mipper Tool
+# 4. Running the Mipper Tool
 
 The `mipper` tool runs one job, consisting of one or more module executions for
 one map image.
@@ -277,7 +264,8 @@ Mipper supports a few other switches worth knowing:
   already been run successfully
 
 
-# 4. Adding a New Module
+
+# 5. Adding a New Module
 
 This section explains how to add a new module, in three steps:
 1. Writing the module
@@ -289,7 +277,7 @@ In our examples below, we will call the new module `extract_ore`, its container
 `inferlink/ta1_extract_ore`, and its class `ExtractOreTask`.
 
 
-## 4.1. Your New Module
+## 5.1. Your New Module
 
 Your module should follow all the conventions of a robust python app (described
 elsewhere), but in particular must follow this rule:
@@ -300,7 +288,7 @@ located relative to the mipper system's required directory layout. Do not use
 any hard-coded paths and do not assume anything lives at "`.`"._
 
 
-## 4.2. Your New Docker Containers
+## 5.2. Your New Docker Containers
 
 Each module needs to be run in its own docker container.
 
@@ -348,7 +336,7 @@ docker containers. (You can then run `./build_all.sh --push` to push all the
 containers, if you have write access to InferLink's DockerHub repository.)
 
 
-## 4.3. Your New Mipper Module
+## 5.3. Your New Mipper Module
 
 To add your new module to the mipper system, you need to write a task class, add
 some verification code, and register the module. Fortunately, this is easy:
@@ -368,7 +356,7 @@ some verification code, and register the module. Fortunately, this is easy:
       of `AllTask`.
 
 
-## 4.4. Your New Config File Section
+## 5.4. Your New Config File Section
 
 Finally, you need to add your new module to the `config.yml` file. You will do
 this by adding a new section to the file and, for each command line switch your
@@ -391,7 +379,10 @@ _NOTE: if your switch takes no parameter (such as a boolean flag), you can't
 leave the "value" part of in the YAML line empty: set it to `""` instead. 
 
 
-# 5. The Luigi Workflow Engine
+
+# 6. Advanced Topics
+
+# 6.1. Notes on the Luigi Workflow Engine
 
 The mipper system uses the python `luigi` package to orchestrate the execution
 of its tasks. The motivated reader is referred to the luigi docs for more
@@ -405,3 +396,17 @@ A few details about our use of luigi:
   parallel for a given map, even if the dependecy graph allows for it. (You can
   run multiple instances of mipper, however, using different job ids, to
   different maps in parallel.) 
+
+
+## 6.2. OPTIONAL: Building the Docker Containers
+
+In the previous section, you pulled down the pre-built docker containers. If you
+want to build them your self, do this:
+1. `cd /ta1/dev`
+2. `git clone git@github.com:DARPA-CRITICALMAAS/uncharted-ta1`
+3. `cd /ta1/dev/ta1_integration/docker/tools`
+4. `./build_all.sh --build`  (you can also use `--no-cache` here)
+
+If you have write-access to docker hub, you can then do:
+1. `docker login`,
+2. `./build_all.sh --push`
