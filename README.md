@@ -24,38 +24,10 @@ The five main goals of this project are:
 5. A server exposing a REST API that can run mipper jobs
 
 Documentation links:
-* [Conceptual Overview](docs/pages/conceptual_overview)
-* [System Setup](docs/pages/system_setup)
-* [Running the Mipper Tool](docs/pages/running_mipper)
-* [Running the Server](docs/pages/running_server)
+* [Conceptual Overview](docs/pages/conceptual_overview.md)
+* [System Setup](docs/pages/system_setup.md)
+* [Running the Mipper Tool](docs/pages/running_mipper.md)
+* [Running the Server](docs/pages/running_server.md)
 * [Adding a New Module](docs/pages/adding_modules.md)
-* [Other Topics](docs/pages/other_topics)
-
-
-# Open Issues and Bugs
-
-**HIGH PRIO**
-
-* (9) legend_segment: uncharted-ta1/pipelines/segmentation/deploy/Dockerfile needs to be python3.10-slim
-* (18) need to verify input model files
-    * georeference
-    * legend_segment
-    * line extract
-    * polygon extract
-* implement server
-* deployment
-    * me verify deployment docs
-    * weiwei verify deployment docs
-
-
-**LOW PRIO**
-* **jira tickets**
-* coalesce dockerfile requirements
-* switch to ansible
-* make S3 inputs bucket public/read
-* server
-    * figure out CDR linkage 
-    * add ability to stop/abort a run 
-    * add ability to delete a run 
-    * add ability to delete a job 
-    * add ability to delete a job/module
+* [Other Topics](docs/pages/other_topics.md)
+* [BUGS and ISSUES](docs/pages/todo.md)
