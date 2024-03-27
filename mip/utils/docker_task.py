@@ -45,8 +45,8 @@ class DockerTask(SimpleTask):
         logger.debug(log_data)
         logger.debug("-----------------------------------------------")
 
-        s = self.perf_collection.to_json()
-        self.task_config.host_perf_file.write_text(s)
+        # s = self.perf_collection.to_json()
+        # self.task_config.host_perf_file.write_text(s)
 
         if status:
             raise Exception(f"docker run failed: {self.NAME}")
@@ -55,7 +55,7 @@ class DockerTask(SimpleTask):
         image_name = f"inferlink/ta1_{self.NAME}"
 
         environment = [
-            f"OPENAI_API_KEY={self.config.openai_key}"
+            f"OPENAI_API_KEY={self.context.openai_key}"
         ]
 
         volumes = [
@@ -74,6 +74,7 @@ class DockerTask(SimpleTask):
             command=options,
             volumes=volumes,
             environment=environment,
+            user=self.task_config.user,
             gpus=self.task_config.gpu,
         )
 

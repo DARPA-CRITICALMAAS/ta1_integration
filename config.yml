@@ -59,7 +59,7 @@ modules:
             input_legend_segmentation: $OUTPUT_DIR/legend_segment/$MAP_NAME_map_segmentation.json
             # output:
             output_dir: $OUTPUT_DIR/legend_item_segment
-            log: $OUTPUT_DIR/legend_item_segment/log_file.txt
+            log: $OUTPUT_DIR/legend_item_segment/run.log
             # temp:
             path_to_intermediate: $TEMP_DIR/legend_item_segment
             # misc:
@@ -152,6 +152,7 @@ modules:
     # produces: geojson
     -   name: line_extract
         gpu: true
+        user: cmaas
         options:
             # inputs:
             config: $INPUT_DIR/modules/line_extract/usgs_railroads.yaml
@@ -186,7 +187,7 @@ modules:
             path_to_model: $INPUT_DIR/modules/polygon_extract/checkpoints/checkpoint_epoch14.pth
             # outputs:
             dir_to_integrated_output: $OUTPUT_DIR/polygon_extract
-            log: $OUTPUT_DIR/polygon_extract/log_file.txt
+            log: $OUTPUT_DIR/polygon_extract/run.log
             # temp:
             dir_to_intermediate: $TEMP_DIR/polygon_extract
             # misc:
@@ -262,4 +263,4 @@ modules:
             # temp:
             # misc:
             map_name: $MAP_NAME
-            log_path: $OUTPUT_DIR/geopackage/log_file.txt
+            log_path: $OUTPUT_DIR/geopackage/run.log

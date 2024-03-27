@@ -3,7 +3,9 @@
 
 import argparse
 import json
+import pdb
 from pathlib import Path
+from pprint import pprint
 import sys
 from typing import Optional
 
@@ -42,7 +44,6 @@ class Options:
         parser.add_argument(
             "--output", "-o",
             type=str,
-            required=True,
             help="output json file",
         )
 
@@ -65,7 +66,9 @@ class Options:
         if self.do_get and args.input:
             parser.error("--input is not allowed with with --get")
 
-        self.output = Path(args.output)
+        self.output: Optional[Path] = None
+        if args.output:
+            self.output = Path(args.output)
 
 
 def main() -> int:
@@ -79,10 +82,11 @@ def main() -> int:
         if resp.status_code != 200:
             print(f"*** error: {resp.content}")
         s = resp.json()
-        print("-------------")
-        print(s)
-        print("-------------")
-        options.output.write_text(json.dumps(s))
+        print("GET: ----------------")
+        pprint(s)
+        print("---------------------")
+        if options.output:
+            options.output.write_text(json.dumps(s))
 
     if options.do_post:
         body = options.input.read_text()
@@ -90,10 +94,11 @@ def main() -> int:
         if resp.status_code != 200:
             print(f"*** error: {resp.content}")
         s = resp.json()
-        print("-------------")
-        print(s)
-        print("-------------")
-        options.output.write_text(json.dumps(s))
+        print("POST: ---------------")
+        pprint(s)
+        print("---------------------")
+        if options.output:
+            options.output.write_text(json.dumps(s))
 
     return 0
 

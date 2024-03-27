@@ -2,9 +2,10 @@
 
 import json
 from pathlib import Path
+import pdb
 import shutil
 
-from mip.utils.status_models import ModuleStatusModel
+from mip.utils.status_models import JobStatusModel
 from mip.utils.configuration_models import ConfigurationModel
 
 
@@ -13,43 +14,12 @@ class JobsApi:
         self._configuration = configuration
         return
 
-    def get_job_names(self) -> list[str]:
-        files = self._configuration.host.output_dir.glob("*.log")
+    def get_jobs(self) -> list[str]:
+        files = self._configuration.host.output_dir.glob("*.json")
         return [f.stem for f in files]
 
-    def get_module_names(self, job_name: str) -> list[str]:
-        files = (self._configuration.host.output_dir / job_name).glob("*.status.json")
-        return [f.stem for f in files]
-
-    def get_module_status(self, job_name: str, module_name: str) -> ModuleStatusModel:
-        filename = self._configuration.host.output_dir / job_name / f"{module_name}.status.json"
-        data = json.loads(filename.read_text())
-        run_status = ModuleStatusModel(**data)
-        return run_status
-
-    def get_module_log_files(self, job_name: str, module_name: str) -> Path:
-        zip_file = "tmp"
-        out_file = shutil.make_archive(
-            base_name=zip_file,
-            format="zip",
-            root_dir=".",
-            base_dir=self._configuration.host.log_dir / job_name / module_name)
-        return Path(out_file)
-
-    def get_module_output_files(self, job_name: str, module_name: str) -> Path:
-        zip_file = "tmp"
-        out_file = shutil.make_archive(
-            base_name=zip_file,
-            format="zip",
-            root_dir=".",
-            base_dir=self._configuration.host.output_dir / job_name / module_name)
-        return Path(out_file)
-
-    def get_module_temp_files(self, job_name: str, module_name: str) -> Path:
-        zip_file = "tmp"
-        out_file = shutil.make_archive(
-            base_name=zip_file,
-            format="zip",
-            root_dir=".",
-            base_dir=self._configuration.host.temp_dir / job_name / module_name)
-        return Path(out_file)
+    def get_job_by_name(self, job_name: str) -> JobStatusModel:
+        file = self._configuration.host.output_dir / f"{job_name}.json"
+        data = json.loads(file.read_text())
+        m = JobStatusModel(**data)
+        return m

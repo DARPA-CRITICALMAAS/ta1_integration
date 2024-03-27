@@ -15,8 +15,8 @@ class StartTask(SimpleTask):
         check_file_exists(
             self.task_config.host_input_dir
             / "maps"
-            / self.config.map_name
-            / f"{self.config.map_name}.tif")
+            / self.context.map_name
+            / f"{self.context.map_name}.tif")
 
     def run_body(self):
         (self.task_config.host_task_output_dir / "output.txt").write_text("ok\n")

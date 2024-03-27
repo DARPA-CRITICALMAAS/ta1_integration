@@ -1,16 +1,13 @@
 # Copyright 2024 InferLink Corporation
 
 from datetime import datetime
-try:
-    from enum import StrEnum
-except ImportError:
-    from strenum import StrEnum
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel
 
 
-class Status(StrEnum):
+class Status(str, Enum):
     NOT_STARTED = "NOT_STARTED"
     RUNNING = "RUNNING"
     FAILED = "FAILED"
@@ -22,16 +19,24 @@ class RunPayloadModel(BaseModel):
     modules: list[str]
     map: str
     force_rerun: Optional[bool] = False
-    module_options: Optional[dict[str, str]] = dict()
 
 
 class RunStatusModel(BaseModel):
-    status: Status
+    status: Status = Status.NOT_STARTED
     run_id: str
     payload: RunPayloadModel
     start_time: datetime
     stop_time: Optional[datetime] = None
     log: Optional[str] = None
+
+
+class JobStatusModel(BaseModel):
+    job: str
+    modules: list[str]
+    status: Status
+    start_time: datetime
+    stop_time: Optional[datetime] = None
+    force_rerun: bool
 
 
 class ModuleStatusModel(BaseModel):
@@ -40,6 +45,7 @@ class ModuleStatusModel(BaseModel):
     module: str
     start_time: datetime
     stop_time: Optional[datetime] = None
+    exception: Optional[str]
 
 
 class ModuleDescriptionModel(BaseModel):

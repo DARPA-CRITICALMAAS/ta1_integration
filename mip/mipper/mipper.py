@@ -17,7 +17,7 @@ import luigi.tools.deps_tree as deps_tree
 
 from mip.module_tasks import *  # force registration of all module tasks
 from mip.module_tasks.registry import registry_lookup, get_tasks
-from mip.utils.config import Config
+from mip.utils.context import Context
 from mip.utils.module_config import ModuleConfig
 from mip.utils.simple_task import SimpleTask
 from mip.performance.utils import start_nvidia, shutdown_nvidia
@@ -44,9 +44,9 @@ def main() -> int:
         print(f"OpenAI key file not found: {opts.openai_key_file}")
         return 1
 
-    cfg = Config(opts)
+    context = Context(opts)
 
-    for p in [cfg.host_input_dir, cfg.host_output_dir, cfg.host_temp_dir]:
+    for p in [context.host_input_dir, context.host_output_dir, context.host_temp_dir]:
         if not p.exists():
             print(f"host directory not found: {p}")
             return 1
@@ -54,7 +54,7 @@ def main() -> int:
             print(f"host directory is not a directory: {p}")
             return 1
 
-    for p in [cfg.host_job_output_dir, cfg.host_job_temp_dir]:
+    for p in [context.host_job_output_dir, context.host_job_temp_dir]:
         p.mkdir(parents=True, exist_ok=True)
 
     tasks: list[SimpleTask] = list()
@@ -64,7 +64,7 @@ def main() -> int:
         if not task_cls:
             print(f"task not found: {task_name}")
             return 1
-        task = task_cls(job_name=cfg.job_name, map_name=cfg.map_name)
+        task = task_cls(job_name=context.job_name, map_name=context.map_name)
         tasks.append(task)
 
     if opts.list_deps:
@@ -79,25 +79,26 @@ def main() -> int:
 
     if opts.force:
         for task_name in opts.target_task_names:
-            task_config = ModuleConfig(cfg, task_name)
+            task_config = ModuleConfig(context, task_name)
             task_config.host_task_file.unlink(missing_ok=True)
 
-    job_log = cfg.host_output_dir / f"{cfg.job_name}.log"
+    # now we're ready to start!
 
-    with open(job_log, "a") as fp:
-        print(f"[{datetime.now()}] Starting job ({os.getpid()})", file=fp)
-        print(" ".join(sys.argv), file=fp)
+    context.write_job_status()
 
-    result = luigi.build(
-        tasks=tasks,
-        local_scheduler=True,
-        detailed_summary=True
-    )
+    try:
+        result = luigi.build(
+            tasks=tasks,
+            local_scheduler=True,
+            detailed_summary=True
+        )
+        status = 0 if result.status == luigi.execution_summary.LuigiStatusCode.SUCCESS else 1
+    except Exception:
+        status = 17
 
-    status = 0 if result.status == luigi.execution_summary.LuigiStatusCode.SUCCESS else 1
+    context.set_exit_status(status)
 
-    with open(job_log, "a") as fp:
-        print(f"[{datetime.now()}] Stopping job ({os.getpid()}), status={status}", file=fp)
+    context.write_job_status()
 
     shutdown_nvidia()
 

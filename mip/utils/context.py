@@ -1,21 +1,26 @@
 # Copyright 2024 InferLink Corporation
 
 from __future__ import annotations
-
+from datetime import datetime
+import json
 from typing import Optional
 
 from mip.mipper.mipper_options import MipperOptions
 from mip.utils.configuration_models import ConfigurationModel, ModuleConfigurationModel
+from mip.utils.status_models import Status, JobStatusModel
 
 
-class Config:
+class Context:
 
     # TODO: hack, because we don't know how to pass non-string state to Tasks
-    CONFIG: Optional[Config] = None
+    CONTEXT: Optional[Context] = None
 
     def __init__(self, options: MipperOptions):
+        Context.CONTEXT = self
+
         self.map_name: str = options.map_name
         self.job_name: str = options.job_name
+        self.run_id: str = options.run_id
 
         self._configuration = ConfigurationModel.read(options.config_file)
 
@@ -34,7 +39,14 @@ class Config:
         self.host_job_output_dir = self.host_output_dir / self.job_name
         self.host_job_temp_dir = self.host_temp_dir / self.job_name
 
-        Config.CONFIG = self
+        self._job_status = JobStatusModel(
+            job=options.job_name,
+            modules=options.target_task_names,
+            status=Status.RUNNING,
+            start_time=datetime.now(),
+            stop_time=None,
+            force_rerun=options.force
+        )
 
     def get_module_config(self, module_name: str) -> ModuleConfigurationModel:
         items = [i for i in self._configuration.modules if i.name == module_name]
@@ -43,3 +55,15 @@ class Config:
         if len(items) > 1:
             raise Exception(f"duplicate module names found: {module_name}")
         return items[0]
+
+    def set_exit_status(self, status: int) -> None:
+        if status == 0:
+            self._job_status.status = Status.PASSED
+        else:
+            self._job_status.status = Status.FAILED
+        self._job_status.stop_time = datetime.now()
+
+    def write_job_status(self) -> None:
+        file = self.host_output_dir / f"{self.job_name}.json"
+        s = self._job_status.model_dump_json(indent=4)
+        file.write_text(s)
