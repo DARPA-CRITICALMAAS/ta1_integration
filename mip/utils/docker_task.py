@@ -1,7 +1,6 @@
 # Copyright 2024 InferLink Corporation
 
 import datetime
-import json
 import logging
 
 from mip.utils.docker_runner import DockerRunner
@@ -62,7 +61,7 @@ class DockerTask(SimpleTask):
         volumes = [
             f"{self.task_config.host_input_dir}:{self.task_config.container_input_dir}",
             f"{self.task_config.host_output_dir}:{self.task_config.container_output_dir}",
-            #f"{self.task_config.host_temp_dir}:{self.task_config.container_temp_dir}",
+            # f"{self.task_config.host_temp_dir}:{self.task_config.container_temp_dir}",
         ]
 
         options = self.task_config.get_options()
@@ -75,7 +74,6 @@ class DockerTask(SimpleTask):
             command=options,
             volumes=volumes,
             environment=environment,
-            user=self.task_config.user,
             gpus=self.task_config.gpu,
         )
 

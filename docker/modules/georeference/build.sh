@@ -5,6 +5,6 @@ args=$@
 
 ../../tools/dockerfile-include.py Dockerfile Dockerfile.tmp ../../tools
 
-docker build $args -t inferlink/ta1_georeference -f Dockerfile.tmp $REPO_DIR/usc-umn-inferlink-ta1/
+docker build $args -t inferlink/ta1_georeference -f Dockerfile.tmp $TA1_REPOS_DIR/usc-umn-inferlink-ta1/
 
 rm -f Dockerfile.tmp

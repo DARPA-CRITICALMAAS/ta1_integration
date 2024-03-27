@@ -23,12 +23,12 @@ RUN pip install \
 
 # INCLUDEX perms.txt
 
-COPY . /ta1/dev/usc-umn-inferlink-ta1/
+COPY . /ta1/repos/usc-umn-inferlink-ta1/
 
-WORKDIR /ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based
+WORKDIR /ta1/repos/usc-umn-inferlink-ta1/georeferencing/text-based
 
 CMD []
 ENTRYPOINT [ \
     "python", "-W", "ignore", \
-    "/ta1/dev/usc-umn-inferlink-ta1/georeferencing/text-based/run_georeference.py" \
+    "/ta1/repos/usc-umn-inferlink-ta1/georeferencing/text-based/run_georeference.py" \
     ]

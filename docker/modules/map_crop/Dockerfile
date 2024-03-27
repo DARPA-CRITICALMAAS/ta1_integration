@@ -16,9 +16,9 @@ RUN apt-get install -y libtiff-dev
 
 # INCLUDEX perms.txt
 
-COPY . /ta1/dev/usc-umn-inferlink-ta1/
+COPY . /ta1/repos/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", "/ta1/dev/usc-umn-inferlink-ta1/system/image_crop/map2patch.py" \
+    "python", "/ta1/repos/usc-umn-inferlink-ta1/system/image_crop/map2patch.py" \
 ]

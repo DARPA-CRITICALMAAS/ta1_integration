@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 from threading import Thread
 
-from mip.server.schemas import Status, RunPayload, RunStatus
+from mip.utils.status_models import Status, RunPayloadModel, RunStatusModel
 from mip.utils.configuration_models import ConfigurationModel
 
 
@@ -15,10 +15,10 @@ class RunsApi:
         self._threads: list[Thread] = []
         return
 
-    def start_run(self, body: RunPayload) -> RunStatus:
+    def start_run(self, body: RunPayloadModel) -> RunStatusModel:
         run_id = self._create_run_id()
 
-        run_status = RunStatus(
+        run_status = RunStatusModel(
             run_id=run_id,
             status=Status.RUNNING,
             payload=body,
@@ -37,7 +37,7 @@ class RunsApi:
 
         return run_status
 
-    def _run_mipper(self, run_status: RunStatus) -> None:
+    def _run_mipper(self, run_status: RunStatusModel) -> None:
         stat = subprocess.run(args=[], capture_output=True, stderr=subprocess.STDOUT, text=True)
 
         if stat.returncode == 0:
@@ -56,10 +56,10 @@ class RunsApi:
         files = self._configuration.host.runs_dir.glob("*.json")
         return [f.stem for f in files]
 
-    def get_run_status(self, run_id: str) -> RunStatus:
+    def get_run_status(self, run_id: str) -> RunStatusModel:
         filename = self._get_run_id_filename(run_id)
         data = json.loads(filename.read_text())
-        run_status = RunStatus(**data)
+        run_status = RunStatusModel(**data)
         return run_status
 
     @staticmethod

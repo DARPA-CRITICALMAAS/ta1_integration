@@ -50,18 +50,11 @@ docker run \
     -v /home/ubuntu/dev/ta1_output:/ta1/outout 
     -v /home/ubuntu/dev/ta1_temp:/ta1/temp \
     --gpus all \
-    --user cmaas \
     inferlink/ta1_extract_ore \
     --option1 value --option2 value...
 ```
 
-To build your container, you need to first set the environment variable
-`$REPO_DIR` to point to the dir _above_ where you have the
-`usc-umn-inferlink-ta1` repo checked out. That is, if `$REPO_DIR` is set to
-`/home/user/dev`, your repository should be at
-`/home/user/dev/usc-umn-inferlink-ta1`.
-
-Then, you can just run your `./build.sh`.
+To build, just run your `./build.sh`.
 
 To build all the containers using mipper's build tools, run the build script
 in that directory as `./build_all.sh --build`: this will build each of the

@@ -93,18 +93,12 @@ RUN apt-get update && apt-get install sudo
 
 # INCLUDEX perms.txt
 
-USER root
-RUN adduser cmaas sudo
-RUN echo "cmaas ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
-USER cmaas
-
-COPY ./usc-umn-inferlink-ta1/ /ta1/dev/usc-umn-inferlink-ta1/
-
+COPY ./usc-umn-inferlink-ta1/ /ta1/repos/usc-umn-inferlink-ta1/
 
 COPY ./ta1_integration/docker/modules/line_extract/runme.sh \
-    /home/cmaas/line_extract_runme.sh
+    /ta1/line_extract_runme.sh
 
 CMD []
 ENTRYPOINT [ \
-    "/home/cmaas/line_extract_runme.sh" \
+    "/ta1/line_extract_runme.sh" \
     ]

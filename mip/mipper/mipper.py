@@ -5,12 +5,12 @@ from datetime import datetime
 import os
 import sys
 
-config_root = os.getenv("CONFIG_ROOT", None)
-if not config_root:
-    print(f"$CONFIG_ROOT not set")
+ta1_repos_dir = os.getenv("TA1_REPOS_DIR", None)
+if not ta1_repos_dir:
+    print(f"$TA1_REPOS_DIR not set")
     sys.exit(1)
-os.environ["LUIGI_CONFIG_PATH"] = config_root + "/luigi.cfg"
-os.environ["LUIGI_LOG_CONFIG_PATH"] = config_root + "/luigi_log.cfg"
+os.environ["LUIGI_CONFIG_PATH"] = ta1_repos_dir + "/ta1_integration/luigi.cfg"
+os.environ["LUIGI_LOG_CONFIG_PATH"] = ta1_repos_dir + "/ta1_integration/luigi_log.cfg"
 
 import luigi
 import luigi.tools.deps_tree as deps_tree

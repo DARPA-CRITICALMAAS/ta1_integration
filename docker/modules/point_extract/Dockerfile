@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y \
     git
 
 RUN \
-    conda install -y -n base fastai::opencv-python-headless \
-    && conda install -y -n base conda-forge::gdal
+    conda install -y -n base conda-forge::gdal \
+    && conda install -y -n base fastai::opencv-python-headless
 
 RUN pip install \
     nltk==3.8.1 \
@@ -31,9 +31,9 @@ RUN pip install \
 
 # INCLUDEX perms.txt
 
-COPY . /ta1/dev/usc-umn-inferlink-ta1/
+COPY . /ta1/repos/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", "/ta1/dev/usc-umn-inferlink-ta1/point/src/pipeline-scripts/run_point_pipe.py" \
+    "python", "/ta1/repos/usc-umn-inferlink-ta1/point/src/pipeline-scripts/run_point_pipe.py" \
     ]

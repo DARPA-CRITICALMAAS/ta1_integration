@@ -6,18 +6,18 @@
 #   $REPO_DIR --> the value of {container.repo_dir}
 
 host:
-    input_dir: /home/ubuntu/dev/ta1_integration_input
-    output_dir: /home/ubuntu/dev/ta1_output
-    temp_dir: /home/ubuntu/dev/ta1_temp
-    repo_dir: /home/ubuntu/dev/
-    runs_dir: /home/ubuntu/dev/ta1_runs
+    input_dir: /home/ubuntu/ta1/inputs
+    output_dir: /home/ubuntu/ta1/outputs
+    temp_dir: /home/ubuntu/ta1/temps
+    repo_dir: /home/ubuntu/ta1/repos
+    runs_dir: /home/ubuntu/ta1/runs
 
 
 container:
-    input_dir: /ta1/input
-    output_dir: /ta1/output
-    temp_dir: /ta1/temp
-    repo_dir: /ta1/dev
+    input_dir: /ta1/inputs
+    output_dir: /ta1/outputs
+    temp_dir: /ta1/temps
+    repo_dir: /ta1/repos
 
 
 modules:
@@ -152,7 +152,6 @@ modules:
     # produces: geojson
     -   name: line_extract
         gpu: true
-        user: cmaas
         options:
             # inputs:
             config: $INPUT_DIR/modules/line_extract/usgs_railroads.yaml

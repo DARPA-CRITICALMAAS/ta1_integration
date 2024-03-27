@@ -1,7 +1,17 @@
 # System Setup
 
+To set up the system, you need to (Step 1) build out a host machine and then
+(Step 2) configure the host machine.
 
-## Deploying up the EC2 Instance
+We use a `p3.8xlarge` EC2 instance as our host. If you want to use your own
+machine, you will need a comparable machine: at least one CPU (x64, Intel Xeon
+class), at least one NVIDIA GPU (Tesla V100 or better), at least 128 GB of
+RAM, and at least 250 GB of disk.
+
+
+## STEP 1: Deploy the EC2 Instance
+
+_Skip this step if you already have a host machine._
 
 Our system runs on an EC2 instance. To make it easy to set up this machine, we
 rely on a homegrown tool named "ilaws" which uses CloudFormation to define and
@@ -49,49 +59,50 @@ python -m ilaws delete --stack-name ta1-test
 ```
 
 
-## Configuring the EC2 Host
+## STEP 2: Configuring the Host
 
-Now that your EC2 host is ready to use, we need to configure it.
+Now that your host is ready to use, we need to configure it: `ssh` into the
+host and perform the following steps.
 
-Using your EC2 key pair, `ssh` into the EC2 host and perform the following 
-steps...
+1. **Set up the needed directories**
+    1. `mkdir /ta1 /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos /ta1/runs`
+    2. `cd /ta1/inputs`
+    3. `aws s3 sync s3://inferlink-ta1-integration-inputs .`
+    4. `cd /ta1/repos`
+    5. `git clone git@github.com:DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
+    6. `git clone git@github.com:DARPA-CRITICALMAAS/ta1_integration`
+    7. `git clone git@github.com:DARPA-CRITICALMAAS/uncharted_ta1`
 
-
-1. **Make the `cmaas` user**
-    1. `sudo addgroup --gid 1024 cmaasgroup ; sudo adduser ubuntu cmaasgroup`
-
-2. **Set up the needed directories**
-    1. `mkdir /ta1/output /ta1/temp /ta1/dev /ta1/runs`
-    2. `cd /ta1`
-    3. TODO `git clone git@github.com:DARPA-CRITICALMAAS/ta1_integration_input`
-    4. TODO `aws s3 sync s3://inferlink-ta1-integration-inputs /ta1/dev/ta1_integration_input`
-    5. `cd /ta1/dev`
-    6. `git clone git@github.com:DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
-    7. `cd /ta1/dev`
-    8. `git clone git@github.com:DARPA-CRITICALMAAS/ta1_integration`
-
-3. **Start your python environment**
+2. **Start your python environment**
     1. `curl -sSL https://install.python-poetry.org | python3 -`
-    2. `cd /ta1/dev/ta1_integration`
+    2. `cd /ta1/repos/ta1_integration`
     3. `poetry shell`
-    4. `source ./env.sh`
+    4. `poetry install`
+    5. `source ./envvars.sh`
 
-4. **Pull all the prebuilt docker containers**
-    1. `cd /ta1/dev/ta1_integration/docker/tools`
+3. **Pull all the prebuilt docker containers**
+    1. `cd /ta1/repos/ta1_integration/docker/tools`
     2. `./build_all.sh --pull`
 
-5. **Verify Docker is working**
+4. **Verify Docker is working**
     1. `docker run hello-world`
 
-6. **Verify the GPUs are working**
+5. **Verify the GPUs are working**
     1. `nvidia-smi`
-    2. `cd /ta1_integration/docker/hello-gpu`
+    2. `cd /ta1/repos/ta1_integration/docker/hello-gpu`
     3. `docker build -f docker/hello-gpu/Dockerfile -t hello-gpu .`
     4. `docker run --gpus=all hello-gpu --duration 5 --cpu` (should show CPU % well above 0)
     5. `docker run --gpus=all hello-gpu --duration 5 --gpu` (should show GPU % well above 0)
 
-7. **Verify mipper works**
-    1. `cd /ta1/dev/ta1_integration`
+6. **Verify the mipper application works**
+    1. `cd /ta1/repos/ta1_integration`
     2. `./mip/apps/mipper.py --list-modules`
     3. `./mip/apps/mipper.py --job-name 01 --map-name WY_CO_Peach --module-name start`
     4. `./mip/apps/mipper.py --job-name 01 --map-name WY_CO_Peach --module-name map_crop`
+
+7. ** Verify the server and client work**
+    1. `cd /ta1/repos/ta1_integration`
+    2. `uvicorn mip.server.entry:app`
+    3. _(in another ssh session)_ 
+        1. `./mip/server/client.py --url http://127.0.0.1:8000 --get --output tmp.json`
+        2. `./mip/server/client.py --url http://127.0.0.1:8000 --post --input ./mip/server/hello_input.json --output tmp.json`

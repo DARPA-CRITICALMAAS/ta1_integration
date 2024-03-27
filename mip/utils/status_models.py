@@ -17,7 +17,7 @@ class Status(StrEnum):
     PASSED = "PASSED"
 
 
-class RunPayload(BaseModel):
+class RunPayloadModel(BaseModel):
     job: str
     modules: list[str]
     map: str
@@ -25,16 +25,16 @@ class RunPayload(BaseModel):
     module_options: Optional[dict[str, str]] = dict()
 
 
-class RunStatus(BaseModel):
+class RunStatusModel(BaseModel):
     status: Status
     run_id: str
-    payload: RunPayload
+    payload: RunPayloadModel
     start_time: datetime
     stop_time: Optional[datetime] = None
     log: Optional[str] = None
 
 
-class ModuleStatus(BaseModel):
+class ModuleStatusModel(BaseModel):
     status: Status
     job: str
     module: str
@@ -42,7 +42,7 @@ class ModuleStatus(BaseModel):
     stop_time: Optional[datetime] = None
 
 
-class ModuleDescription(BaseModel):
+class ModuleDescriptionModel(BaseModel):
     name: str
     version: Optional[str] = None
 

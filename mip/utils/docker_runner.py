@@ -27,8 +27,7 @@ class DockerRunner:
                  command: list[str],
                  volumes: list[str],  # [/host:/container]
                  environment: list[str],  # [VAR=value]
-                 gpus: bool,
-                 user: Optional[str] = None):
+                 gpus: bool):
         self.name = name
 
         self._client = docker.from_env()
@@ -59,7 +58,6 @@ class DockerRunner:
             mounts=mounts,
             command=command,
             environment=environment,
-            user=user,
             device_requests=devices,
         )
 
@@ -72,8 +70,8 @@ class DockerRunner:
             options += f" {c}"
 
         gpus_s = "--gpus all" if gpus else ""
-        self.shell_command = f"# docker run {gpus_s} --user {user} {vs} -it --entrypoint bash {image}\n"
-        self.run_command = f"# docker run {gpus_s} --user {user} {vs} {image} {options}\n"
+        self.shell_command = f"# docker run {gpus_s} {vs} -it --entrypoint bash {image}\n"
+        self.run_command = f"# docker run {gpus_s} {vs} {image} {options}\n"
 
     # returns (status code, log data, elapsed seconds)
     def run(self, _perf_collection: PerfCollection) -> tuple[int, str, int]:

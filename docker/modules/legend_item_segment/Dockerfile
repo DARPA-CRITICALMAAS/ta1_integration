@@ -29,13 +29,13 @@ RUN pip --no-input install \
 
 # INCLUDEX perms.txt
 
-COPY ./usc-umn-inferlink-ta1/ /ta1/dev/usc-umn-inferlink-ta1/
+COPY ./usc-umn-inferlink-ta1/ /ta1/repos/usc-umn-inferlink-ta1/
 COPY ./ta1_integration/docker/modules/legend_item_segment/runme.sh \
-    /home/cmaas/legend_item_segment_runme.sh
+    /ta1/legend_item_segment_runme.sh
 
 ENV TESSERACT_EXE=/usr/bin/tesseract
 
 CMD []
 ENTRYPOINT [ \
-    "/home/cmaas/legend_item_segment_runme.sh" \
+    "/ta1/legend_item_segment_runme.sh" \
     ]

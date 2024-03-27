@@ -14,9 +14,9 @@ RUN pip install --no-input \
 
 # INCLUDEX perms.txt
 
-COPY . /ta1/dev/usc-umn-inferlink-ta1/
+COPY . /ta1/repos/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", "/ta1/dev/usc-umn-inferlink-ta1/system/gpkg_generation/src/run_gpkg_writer.py" \
+    "python", "/ta1/repos/usc-umn-inferlink-ta1/system/gpkg_generation/src/run_gpkg_writer.py" \
 ]

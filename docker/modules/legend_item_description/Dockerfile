@@ -26,9 +26,9 @@ ENV OPENAI_API_KEY=$openai_api_key
 
 # INCLUDEX perms.txt
 
-COPY . /ta1/dev/usc-umn-inferlink-ta1/
+COPY . /ta1/repos/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", "/ta1/dev/usc-umn-inferlink-ta1/segmentation/legend_item_description_segment/src/gpt4_main.py" \
+    "python", "/ta1/repos/usc-umn-inferlink-ta1/segmentation/legend_item_description_segment/src/gpt4_main.py" \
     ]

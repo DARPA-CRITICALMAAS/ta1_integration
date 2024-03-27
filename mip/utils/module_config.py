@@ -33,7 +33,6 @@ class ModuleConfig:
         self.host_perf_file = self.host_output_dir / f"{module_name}.perf.json"
 
         self._module = self._config.get_module_config(module_name)
-        self.user = self._module.user
         self.gpu = self._module.gpu
 
     def get_options(self) -> list[str]:

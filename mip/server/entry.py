@@ -4,7 +4,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Response
 
-from mip.server.schemas import RunPayload, RunStatus, ModuleStatus, ModuleDescription, HelloModel
+from mip.utils.status_models import RunPayloadModel, RunStatusModel, ModuleStatusModel, ModuleDescriptionModel, HelloModel
 from mip.server.runs_api import RunsApi
 from mip.server.jobs_api import JobsApi
 from mip.server.misc_api import MiscApi
@@ -36,13 +36,13 @@ async def post_hello(body: HelloModel) -> HelloModel:
 
 
 @app.get("/modules/")
-async def get_modules() -> list[ModuleDescription]:
+async def get_modules() -> list[ModuleDescriptionModel]:
     result = misc_api.get_module_descriptions()
     return result
 
 
 @app.post("/runs/")
-async def post_run(body: RunPayload) -> RunStatus:
+async def post_run(body: RunPayloadModel) -> RunStatusModel:
     result = runs_api.start_run(body)
     return result
 
@@ -54,7 +54,7 @@ async def get_runs() -> list[str]:
 
 
 @app.get("/runs/{run_id}")
-async def get_run(run_id: str) -> RunStatus:
+async def get_run(run_id: str) -> RunStatusModel:
     result = runs_api.get_run_status(run_id)
     return result
 
@@ -72,7 +72,7 @@ async def get_job(job_name: str) -> list[str]:
 
 
 @app.get("/jobs/{job_name}/{module_name}")
-async def get_module(job_name: str, module_name: str) -> ModuleStatus:
+async def get_module(job_name: str, module_name: str) -> ModuleStatusModel:
     result = jobs_api.get_module_status(job_name, module_name)
     return result
 

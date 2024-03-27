@@ -28,9 +28,9 @@ RUN conda install -y -c conda-forge ipywidgets
 
 # INCLUDEX perms.txt
 
-COPY . /ta1/dev/usc-umn-inferlink-ta1/
+COPY . /ta1/repos/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", "/ta1/dev/usc-umn-inferlink-ta1/polygon/loam_handler.py" \
+    "python", "/ta1/repos/usc-umn-inferlink-ta1/polygon/loam_handler.py" \
     ]

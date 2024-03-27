@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import shutil
 
-from mip.server.schemas import ModuleStatus
+from mip.utils.status_models import ModuleStatusModel
 from mip.utils.configuration_models import ConfigurationModel
 
 
@@ -21,10 +21,10 @@ class JobsApi:
         files = (self._configuration.host.output_dir / job_name).glob("*.status.json")
         return [f.stem for f in files]
 
-    def get_module_status(self, job_name: str, module_name: str) -> ModuleStatus:
+    def get_module_status(self, job_name: str, module_name: str) -> ModuleStatusModel:
         filename = self._configuration.host.output_dir / job_name / f"{module_name}.status.json"
         data = json.loads(filename.read_text())
-        run_status = ModuleStatus(**data)
+        run_status = ModuleStatusModel(**data)
         return run_status
 
     def get_module_log_files(self, job_name: str, module_name: str) -> Path:

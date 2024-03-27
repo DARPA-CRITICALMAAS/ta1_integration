@@ -4,7 +4,6 @@
 import argparse
 import json
 from pathlib import Path
-import pdb
 import sys
 from typing import Optional
 
@@ -59,10 +58,12 @@ class Options:
         self.do_post = args.post
 
         self.input: Optional[Path] = None
-        if args.post:
+        if self.do_post:
             if not args.input:
                 parser.error("--input is required with --post")
             self.input = Path(args.input)
+        if self.do_get and args.input:
+            parser.error("--input is not allowed with with --get")
 
         self.output = Path(args.output)
 

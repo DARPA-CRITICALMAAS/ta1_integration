@@ -29,6 +29,11 @@ class MipperOptions:
             help="name of map (example: WY_CO_Peach)",
         )
         parser.add_argument(
+            "--run-id",
+            type=str,
+            help="id of this run",
+        )
+        parser.add_argument(
             "--job-name", "-j",
             type=str,
             help="name of job to execute",
@@ -64,6 +69,7 @@ class MipperOptions:
 
         args = parser.parse_args()
         self.map_name: str = args.map_name
+        self.run_id: str = args.run_id
         self.job_name: str = args.job_name
         self.target_task_names: list[str] = args.module_name
         self.config_file = Path(args.config_file)
@@ -80,3 +86,5 @@ class MipperOptions:
                 parser.error("--map-name is required")
             if not self.job_name:
                 parser.error("--job-name is required")
+            if not self.run_id:
+                parser.error("--run-id is required")
