@@ -3,13 +3,12 @@
 import json
 import os
 from pathlib import Path
-import pdb
 import shutil
 import tempfile
-from zipfile import ZipFile
 
-from mip.utils.status_models import ModuleStatusModel, ModuleDescriptionModel
-from mip.utils.configuration_models import ConfigurationModel
+from mip.utils.module_status_model import ModuleStatusModel
+from mip.utils.module_description_model import ModuleDescriptionModel
+from mip.utils.configuration_model import ConfigurationModel
 
 
 class ModulesApi:

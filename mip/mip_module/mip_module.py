@@ -52,7 +52,7 @@ def main() -> int:
 
     if options.force:
         task_config = ModuleConfig(context, options.module_name)
-        task_config.host_task_file.unlink(missing_ok=True)
+        task_config.host_module_luigi_file.unlink(missing_ok=True)
 
     status_file = context.get_module_status_filename(options.module_name)
     print(f"Status file: {status_file}")

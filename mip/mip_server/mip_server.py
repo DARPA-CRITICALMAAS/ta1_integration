@@ -1,20 +1,20 @@
 # Copyright 2024 InferLink Corporation
-import pdb
+
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from mip.utils.status_models import (
-    RunPayloadModel, RunStatusModel,
-    JobStatusModel,
-    ModuleStatusModel, ModuleDescriptionModel,
-    HelloModel,
-)
-from mip.server.runs_api import RunsApi
-from mip.server.jobs_api import JobsApi
-from mip.server.modules_api import ModulesApi
-from mip.utils.configuration_models import ConfigurationModel
+from mip.mip_server.jobs_api import JobsApi
+from mip.mip_server.modules_api import ModulesApi
+from mip.mip_server.runs_api import RunsApi
+from mip.utils.configuration_model import ConfigurationModel
+from mip.utils.hello_response_model import HelloResponseModel
+from mip.utils.job_status_model import JobStatusModel
+from mip.utils.module_description_model import ModuleDescriptionModel
+from mip.utils.module_status_model import ModuleStatusModel
+from mip.utils.run_payload_model import RunPayloadModel
+from mip.utils.run_status_model import RunStatusModel
 
 
 CONFIG_FILE = Path("config.yml")
@@ -37,8 +37,8 @@ async def get_hello() -> str:
 
 
 @app.post("/")
-async def post_hello(body: HelloModel) -> HelloModel:
-    result = HelloModel(
+async def post_hello(body: HelloResponseModel) -> HelloResponseModel:
+    result = HelloResponseModel(
         greeting=body.greeting.upper(),
         name=body.name.upper(),
     )

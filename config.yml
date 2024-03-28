@@ -107,6 +107,7 @@ modules:
             legend_dir: $OUTPUT_DIR/legend_segment
             # outputs:
             output_dir: $OUTPUT_DIR/map_crop
+            log_path: $OUTPUT_DIR/map_crop/run.log
             # temp:
             # misc:
             map_name: $MAP_NAME

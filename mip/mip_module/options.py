@@ -70,7 +70,6 @@ class Options:
         self.openai_key_file = Path(args.openai_key_file)
         self.force = args.force
 
-
         if not self.list_modules:
             if not self.map_name:
                 parser.error("--map-name is required")

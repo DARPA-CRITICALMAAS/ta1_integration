@@ -4,7 +4,6 @@
 
 * (9) legend_segment: uncharted-ta1/pipelines/segmentation/deploy/Dockerfile needs to be python3.10-slim
 * (18) need to verify input model files
-   * georeference
    * legend_segment
    * line extract
    * polygon extract
@@ -12,7 +11,7 @@
 * deployment
    * me verify deployment docs
    * weiwei verify deployment docs
-
+* (19) map_crop: pass in map_crop logger file name
 
 # Normal Prio
 

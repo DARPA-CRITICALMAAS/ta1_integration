@@ -22,7 +22,6 @@ from mip.module_tasks.registry import registry_lookup, get_tasks
 from mip.utils.context import Context
 from mip.utils.module_config import ModuleConfig
 from mip.utils.simple_task import SimpleTask
-from mip.performance.utils import start_nvidia, shutdown_nvidia
 from mip.mip_job.options import Options
 
 
@@ -79,7 +78,7 @@ def main() -> int:
     if options.force:
         for module_name in options.module_names:
             task_config = ModuleConfig(context, module_name)
-            task_config.host_task_file.unlink(missing_ok=True)
+            task_config.host_module_luigi_file.unlink(missing_ok=True)
 
     # now we're ready to start!
 

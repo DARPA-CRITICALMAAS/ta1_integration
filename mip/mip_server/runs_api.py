@@ -1,13 +1,15 @@
 # Copyright 2024 InferLink Corporation
-import json
-import pdb
+
 from datetime import datetime
+import json
 from pathlib import Path
 import subprocess
 from threading import Thread
 
-from mip.utils.status_models import Status, RunPayloadModel, RunStatusModel
-from mip.utils.configuration_models import ConfigurationModel
+from mip.utils.status_enum import StatusEnum
+from mip.utils.run_payload_model import RunPayloadModel
+from mip.utils.run_status_model import RunStatusModel
+from mip.utils.configuration_model import ConfigurationModel
 
 
 class RunsApi:
@@ -26,7 +28,7 @@ class RunsApi:
 
         run_status = RunStatusModel(
             run_id=run_id,
-            status=Status.RUNNING,
+            status=StatusEnum.RUNNING,
             payload=body,
             start_time=datetime.now(),
             stop_time=None,
@@ -46,9 +48,9 @@ class RunsApi:
         stat = subprocess.run(args=["ls"], capture_output=True, text=True)  # stderr=subprocess.STDOUT
 
         if stat.returncode == 0:
-            run_status.status = Status.PASSED
+            run_status.status = StatusEnum.PASSED
         else:
-            run_status.status = Status.FAILED
+            run_status.status = StatusEnum.FAILED
 
         run_status.log = stat.stdout
 

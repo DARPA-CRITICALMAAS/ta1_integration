@@ -1,7 +1,5 @@
 # Copyright 2024 InferLink Corporation
 
-from __future__ import annotations
-
 from typing import Any
 
 from mip.utils.context import Context
@@ -10,7 +8,7 @@ from mip.utils.context import Context
 class ModuleConfig:
     def __init__(self, context: Context, module_name: str):
         self._context = context
-        self.task_name = module_name
+        self.module_name = module_name
         self.job_name = context.job_name
 
         self.container_input_dir = context.container_input_dir
@@ -18,19 +16,19 @@ class ModuleConfig:
         self.container_temp_dir = context.container_temp_dir
         self.container_repo_dir = context.container_repo_dir
 
-        self.container_task_output_dir = self.container_output_dir / module_name
-        self.container_task_temp_dir = self.container_temp_dir / module_name
+        self.container_module_output_dir = self.container_output_dir / module_name
+        self.container_module_temp_dir = self.container_temp_dir / module_name
 
         self.host_input_dir = context.host_input_dir
         self.host_output_dir = context.host_job_output_dir
         self.host_temp_dir = context.host_job_temp_dir
         self.host_repo_dir = context.host_repo_dir
 
-        self.host_task_output_dir = self.host_output_dir / module_name
-        self.host_task_temp_dir = self.host_temp_dir / module_name
+        self.host_module_output_dir = self.host_output_dir / module_name
+        self.host_module_temp_dir = self.host_temp_dir / module_name
 
         self.host_status_file = self.host_output_dir / f"{module_name}.json"
-        self.host_task_file = self.host_output_dir / f"{module_name}.task"
+        self.host_module_luigi_file = self.host_output_dir / f"{module_name}.task"
         self.host_docker_file = self.host_output_dir / f"{module_name}.docker.log"
         # self.host_perf_file = self.host_output_dir / f"{module_name}.perf_json"
 

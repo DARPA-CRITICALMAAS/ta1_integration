@@ -5,8 +5,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from mip.utils.configuration_models import ConfigurationModel, ModuleConfigurationModel
-from mip.utils.status_models import Status, JobStatusModel, ModuleStatusModel
+from mip.utils.configuration_model import ConfigurationModel
+from mip.utils.module_configuration_model import ModuleConfigurationModel
+from mip.utils.job_status_model import JobStatusModel
+from mip.utils.status_enum import StatusEnum
+from mip.utils.module_status_model import ModuleStatusModel
 
 
 class Context:
@@ -54,7 +57,7 @@ class Context:
         self._job_status = JobStatusModel(
             job=self.job_name,
             modules=self.module_names,
-            status=Status.RUNNING,
+            status=StatusEnum.RUNNING,
             start_time=datetime.now(),
             stop_time=None,
             force_rerun=self.force_rerun
@@ -62,7 +65,7 @@ class Context:
 
         self._module_status = {
             module_name: ModuleStatusModel(
-                status=Status.NOT_STARTED,
+                status=StatusEnum.NOT_STARTED,
                 job=self.job_name,
                 module=module_name,
                 start_time=datetime.now(),
@@ -95,9 +98,9 @@ class Context:
 
         if status is not None:
             if status == 0:
-                self._module_status[module_name].status = Status.PASSED
+                self._module_status[module_name].status = StatusEnum.PASSED
             else:
-                self._module_status[module_name].status = Status.FAILED
+                self._module_status[module_name].status = StatusEnum.FAILED
 
         if exception is not None:
             self._module_status[module_name].exception = exception
@@ -128,9 +131,9 @@ class Context:
     ) -> None:
         if status is not None:
             if status == 0:
-                self._job_status.status = Status.PASSED
+                self._job_status.status = StatusEnum.PASSED
             else:
-                self._job_status.status = Status.FAILED
+                self._job_status.status = StatusEnum.FAILED
 
         if stop_time is not None:
             self._job_status.stop_time = stop_time

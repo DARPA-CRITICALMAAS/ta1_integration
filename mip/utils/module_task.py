@@ -8,7 +8,7 @@ from mip.utils.simple_task import SimpleTask
 logger = logging.getLogger('luigi-interface')
 
 
-class DockerTask(SimpleTask):
+class ModuleTask(SimpleTask):
 
     NAME = "invalid"
 

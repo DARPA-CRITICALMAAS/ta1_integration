@@ -3,7 +3,6 @@
 
 import argparse
 import json
-import pdb
 from pathlib import Path
 from pprint import pprint
 import re
@@ -18,13 +17,13 @@ class Options:
 
         parser = argparse.ArgumentParser(
             prog="client",
-            description="Simple client app for the mipper server")
+            description="Simple client app for the mipper mip_server")
 
         parser.add_argument(
             "--url", "-u",
             type=str,
             required=True,
-            help=f"URL of the mipper server",
+            help=f"URL of the mipper mip_server",
         )
         parser.add_argument(
             "--get", "-g",

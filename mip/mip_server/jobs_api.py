@@ -1,12 +1,9 @@
 # Copyright 2024 InferLink Corporation
 
 import json
-from pathlib import Path
-import pdb
-import shutil
 
-from mip.utils.status_models import JobStatusModel
-from mip.utils.configuration_models import ConfigurationModel
+from mip.utils.job_status_model import JobStatusModel
+from mip.utils.configuration_model import ConfigurationModel
 
 
 class JobsApi:
