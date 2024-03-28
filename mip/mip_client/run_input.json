@@ -4,5 +4,6 @@
     "map_crop"
   ],
   "map": "WY_CO_Peach",
-  "force_rerun": false
+  "force_rerun": false,
+  "openai_key": ""
 }

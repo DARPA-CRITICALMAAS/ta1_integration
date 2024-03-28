@@ -4,63 +4,67 @@
 
 From the highest level, the entire system looks like this:
 
-**Container/Module Layer:** There is a docker container for each module. The
-container is expected to be run in a well-defined execution environment (i.e.
-directory layout, explained below). Each module, and each container, operate
-independently. The actual python code for the modules is (in most cases) in the
-`usc-umn-inferlink-ta1` repo: we don't touch any of that code, we just interact
-with it at the command line level.
+**The Module (Container) Layer:** There is a docker container for each module.
+The container is expected to be run in a well-defined execution environment
+(i.e. directory layout, explained below). Each module, and each container,
+operate independently. The actual python code for the modules is (in most
+cases) in the `usc-umn-inferlink-ta1` repo: we don't touch any of that code, we
+just interact with it at the command line level. **Our `mip_module` tool runs a
+single given module.**
 
-**Mipper/Luigi Layer:** Sitting above the container layer is an application
+**The Job (Luigi) Layer:** Sitting above the module layer is an application
 ("mipper") that executes the modules by running the containers. This app uses
 the "luigi" python library to do task orchestration of the task graph. The task
 graph is a DAG whose nodes are modules (run in docker containers) and whose
-edges are input/output dependencies (expressed in the config.yml file). The
-command line switches for running mipper are very simple.
+edges are input/output dependencies (expressed in the config.yml file). We
+define a "job" to be a named set of executed modules. Modules within a job can
+be re-executed if they fail. **Our `mip_job` tool runs one or more modules (via
+`mip_module`), including any required predecessor modules.**
 
-**Web Server Layer:** Sitting above the mipper layer is a web server that
-exposes a REST API for running the modules. Internally, the server just calls
-the mipper app to do its work.
+**The Server Layer:** Sitting above the job layer is a web server that exposes
+a REST API for running the modules. Internally, the server just calls `mip_job`
+to do its work. **Our `mip_server` tool runs the web server.**
 
 This system all runs on a single host machine.
 
 
 ## The Execution Environment
 
-Your host machine will have three directories:
+Your host machine will have several directories:
 
-* `/ta1/input`: where the (static) input files live
-* `/ta1/output`: where the results from each mipper job (run) will live
-* `/ta1/temp`: scratch space used when running each job
+* `/ta1/inputs`: where the (static) input files live
+* `/ta1/outputs`: where the results from each execution of `mip_module` and
+    `mip_job` will live
+* `/ta1/temps`: scratch space used when running modules
+* `/ta1/runs`: where the results from each (`mip-server`-based) execution of
+    `mip_job` will live
 
-_NOTE: Here we have used `/ta1` as the root of these three dirs, but in practice
+_NOTE: Here we have used `/ta1` as the root of these three dirs, but in theory
 they can each live anywhere._
 
-When a module's container is run, these three directories will be mounted as
+When a module's container is run, some of these directories will be mounted as
 volumes so that the data is accessible from both the host and the container.
 
-Each invocation of the `mipper` tool, to run one or more modules, is called a
-"job". Each job is given a (simple, short) name, and the results from the job
-are stored in a directory with that name. For example, if your job is named
-`alpha`, you will find your results in `/ta1/output/alpha` (and
-`/ta1/temp/alpha`).
+Each invocation of the `mip_module` tool, to run exactly one module from within
+its docker container, will have a job name (short text string). The results
+from the run are stored in a directory with that name. For example, if your job
+is named `alpha` and your target module is named `map_crop`, you will find your
+module's outputs in `/ta1/outputs/alpha/map_crop`. You will also find a status
+file (`/ta1/outputs/alpha/map_crop.json`) holding the execution state of the
+module.
 
-When you run `mipper`, it will execute each of the known modules in the proper
-order. The results from each module are in the job directory under the name of
-the module. For example, if your job is named `alpha`, the results from the
+Each invocation of the `mip_job` tool will run one or more modules, also under
+a given job name. Because `mip_job` uses `mip_module` to run each module, the
+outputs for any module ever run for a given job name will all live in that same
+job directory. You will also find a status file (`/ta1/outputs/alpha.json`)
+holding the execution state of the job. (When a module is run using `mip_job`),
+will also find a luigi state file (`/ta1/outputs/alpha/map_crop.task`); this is
+only used internally.)
+
+When you run `mip_jobs`, it will execute each of the known modules in the
+proper order. The results from each module are in the job directory under the
+name of the module. For example, if your job is named `alpha`, the results from the
 map_crop module will include:
-
-* `/ta1/output/alpha/map_crop.task.txt`: a text file whose presence indicates to
-  the system that the map_crop operation succeeded. The contents of the file
-  have some basic information about the run, including elapsed time.
-* `/ta1/output/alpha/map_crop.docker.txt`: the log file from the dockerized
-  execution of the module, i.e. anything that gets printed out to stdout or
-  stderr. If the module crashes, this is where to look. (At the top of this file
-  are command lines you can use to manually start the docker container,
-  including its module options and volume mounts: this is very handy for
-  debugging.)
-* `/ta1/output/alpha/map_crop/`: the directory containing the output from the
-  module itself.
 
 Each module in the system has its own unique set of command line options. The
 `config.yml` file is used to specify the various switch names and values. The
@@ -71,12 +75,23 @@ map input, one for the results from a predecessor module, and one for the
 output:
 
 ```yaml
-extract_ore:
+refine_ore:
     input_tif: $INPUT_DIR/$MAP_NAME/$MAP_NAME.tif
-    json_feed: $OUTPUT_DIR/feed_module/$MAP_NAME_foo.json
-    output_dir: $OUTPUT_DIR/extract_ore
+    extracted_ore_file: $OUTPUT_DIR/extract_ore/$MAP_NAME_ore.json
+    output_dir: $OUTPUT_DIR/refine_ore
+    throttle: 17
 ```
 
-The  `mipper` tool (described below) takes command line switches to indicate
-the config file location, the module(s) to be run, the map image to use, and the
-name of the job.
+The `mip_module` tool would thus pass these switches to the docker container
+for the `refine_ore` algorithm, when used on the famous `WY_CO_Peach` map:
+
+```
+--input-tif /ta1/inputs/WY_CO_Peach/WY_CO_Peach.tif
+--extracted-ore-file /ta1/outputs/extracted_ore/WY_CO_Peach_ore.tif
+--output_dir /ta1/outputs/refined_ore
+--throttle 17
+```
+
+Note carefully how the command-line arguments have been subjected to variable
+interpolation. Note also that the directory paths are specified relative to the
+container environment, not the host environment.

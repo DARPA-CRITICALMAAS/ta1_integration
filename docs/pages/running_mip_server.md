@@ -1,4 +1,4 @@
-# The Web Server
+# Running the Server (`mip_server`)
 
 ## 1. Goals
 
@@ -68,7 +68,7 @@ To run the server, ssh into the EC2 host and do this:
 1. `cd /ta1/dev/ta1_integration`
 2. `poetry shell`
 3. `source env.sh`
-4. `uvicorn mip.server.entry:app`
+4. `uvicorn mip.mip_server.mip_server:app`
 
 
 
@@ -78,8 +78,8 @@ The client is implemented so as not to require the full environment on the EC2
 host like the other parts of the system.
 
 1. `pip install requests`
-2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/mip/server/client.py > client.py`
-3. `python ./client.py [options]`
+2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/mip/mip_client/mip_client.py > mip_client.py`
+3. `python ./mip_client.py [options]`
 
 The command line options are:
 
@@ -87,58 +87,62 @@ The command line options are:
 * `--post`: for POST requests (required unless `--get` is used)
 * `--url`: url of server (required)
 * `--input`: input json file (required if `--post` is used)
-* `--output`: output json file (required)
+* `--output`: output file (zip or JSON)
 
 See below for examples.
 
 
-## 5. The REST Endpoints
+## 5. The REST API
 
-### 5.1. The Run API
+### 5.1. The "Runs" Endpoints
 
-#### `POST /run`
+#### `POST /runs`
 
 Runs the given module(s). Will also run any required predecessor modules that
 haven’t yet been run.
 * Payload: a RunPayload object
 * Returns: a RunStatus object
-* _Implementation: Generate a new run-id. Write a RunStatus object to the file
-    `/ta1_runs/{run_id}.json`, with status=started, and return that object.
-    Will also start a background thread to run the mipper process, and when
-    process ends we’ll update the json file and end the thread._
 
-#### `GET /run`
+#### `GET /runs`
 
-Returns a list of all the run-ids.
+Gets a list of all the run-ids.
 * Returns: a JSON list of run-id strings
-* _Implementation: Collect all the run-ids by expanding `/ta1_runs/*.json`_
 
-#### `GET /run/{run-id}`
+#### `GET /runs/{run-id}`
 
-Returns the status of the given run-id.
+Gets the status of the given run-id.
 * Returns: a RunStatus object
-* _Implementation: Return the contents of `/ta1_runs/{run_id}.json`_
 
 
-### 5.2. The Job API
+### 5.2. The "Jobs" API
 
 #### `GET /jobs`
 
-Get a list of all jobs that have been run
+Gets a list of all jobs that have been run
 * Returns: a JSON list of all the job names
-* _Implementation: Expand out `/ta1_outputs/*`
 
 #### `GET /jobs/{job_name}`
 
-Get a list of all modules that have been run for the given job
-* Returns: a JSON list of all the module names
-* _Implementation: Expand out `/ta1_outputs/{job_name}/*.status.json`_
+Gets info about the given job
+* Returns: a JobStatusModel object
 
-#### `GET /jobs/{job_name}/{module_name}`
+
+### 5.3. The "Modules" API
+
+#### `GET /modules`
+
+Helper function to get list of the supported modules
+* Returns: list of ModuleDescription objects
+
+#### `GET /modules/{job_name}`
+
+Gets a list of all the modules that have been run for the given job
+* Returns: a list of module names
+
+#### `GET /modules/{job_name}/{module_name}`
 
 Gets info about a module run under a given job name
 * Returns: a ModuleStatus object
-* _Implementation: Return contents of `/ta1_outputs/{job_name}/{module_name}.status.json`
 
 #### `GET /jobs/{job_name}/{module_name}/logs`
 
@@ -155,11 +159,6 @@ Gets the outputs from the last run of the given job/module
 Gets the temp files from the last run of the given job/module
 * Returns: a zip file containing the temp file(s)
 
-#### `GET /modules`
-
-Helper function to get list of the supported modules
-* Returns: list of ModuleDescription objects
-
 
 ### 5.3. The Schemata
 
@@ -170,73 +169,99 @@ The following Pydantic classes (JSON dicts) are used for endpoint payloads and r
 * job: str
 * modules: list of str
 * map: str
-* force_rerun: optional bool (default: False) -- if set, will force the module
-  to be run, even if the job/module has already been successfully run
-* module_options: optional dict of (str, str) (default: empty dict) -- mapping
-    from module name to a string with extra command-line switches for that
-    module
-* **TODO:** will probably require env var interpolation, for dir paths
+* force_rerun: bool _(if set, will force the module to be run, even if the
+    job/module has already been successfully run)_
+* openai_key: str
 
 #### `RunStatus`
 
 * status: enum of (not started, running, passed, failed)
 * run_id: str
-* post_payload: RunPayload
+* payload: RunPayload
 * start_time: timestamp
 * stop_time: timestamp (or None, if run not finished)
-* log: str (or None, if run not finished?)
-* embedded contents of log file, appropriately escaped
+* log: str (or None, if run not finished)
+
+#### `JobStatus`
+
+* status: enum of (not started, running, passed, failed)
+* job str
+* modules: list of str
+* start_time: timestamp
+* stop_time: timestamp (or None, if not finished)
+* log: str (or None, if run not finished)
+* force_rerun: bool _(reflects state of the `RunPayload.force_rerun` field)_
 
 #### `ModuleStatus`
 
-* status: enum of (running, passed, failed)
+* status: enum of (not started, running, passed, failed)
 * job str
 * module: str
 * start_time: timestamp
 * stop_time: timestamp (or None, if not finished)
-* ??? number and sizes of output, log, and temp files
-* ??? perf data
-* ??? module_version: str
+* log: str (or None, if run not finished)
 
 #### `ModuleDescription`
 
 * module_name: str
 * version: str
-* ??? future fields
 
 
 ## 6. Examples
 
-To run the “map crop” module, it would go something roughly like this:
+Included with the system is a stand-alone tool, `mip_client.py`, to make it
+easy to experiment with the server API: it allows you to perform POST or GET
+operations against a given URL.
 
-1. User creates file a.json:
+To run the "map_crop" module, it would go something roughly like this:
+
+1. User creates file `a.json` (using the `RunPayload` schema above):
     ```
     { "map": "WY_CO_Peach", "job": "alpha", "modules": ["map_crop"], ... }
    ```
+   
 2. User submits the run:
     ```
-    $ api.py --post --url http://ta1.com/run \
-    --input a.json \
-    --output b.json
+    $ mip_client.py --post \
+        --url http://ta1.com/runs \
+        --input a.json \
+        --output b.json
     ```
-    The user inspects the field run_id in the file b.json to get the ID of the submitted run.
+    The output (a `RunStatus` object) is printed to the screen and also stored
+    to `b.json`. The user inspects the field `run_id` to get the ID of the
+    submitted run.
+
 3. User queries the run status, using the run-id string:
     ```
-    $ api.py --get --url http://ta1.com/run/$RUN_ID \
-    --output c.json
+    $ mip_client.py --get 
+        --url http://ta1.com/runs/$RUN_ID \
+        --output c.json
     ```
-    The file c.json contains a field named status.
-4. Using the status field from step 3:
+    The output (to the screen and file `c.json`) follows the `RunStatus` schema
+    and contains a field named `status`.
+
+4. User queries the job status, using the job name used in step 1:
+    ```
+    $ mip_client.py --get 
+        --url http://ta1.com/jobs/alpha \
+        --output d.json
+    ```
+    The output (to the screen and file `d.json`) follows the `JobStatus` schema
+    and contains a field named `status`.
+
+5. Using the status field from step 3:
    1. If it is status is “running”, wait a minute and go back to step 3.
    2. If status is “failed”, then get the log file(s) and despair:
         ```
-       $ api.py --get --url http://ta1.com/jobs/alpha/map_crop/logs --output d.zip
+       $ mip_client.py --get 
+           --url http://ta1.com/modules/alpha/map_crop/logs 
+           --output d.zip
         ```
-   3. If status is “passed”, the go on to step 5.
-5. The user gets the outputs from the run:
-    ```
-    $ api.py --get --url http://ta1.com/jobs/alpha/map_crop/outputs \
-    --output e.zip
-    ```
+   3. If status is “passed”, the go on to step 6.
 
-To run all the modules, the user would do the same as above but with the module name set to “all” in step 1.
+6. The user gets the outputs from the run:
+    ```
+    $ mip_client.py --get \
+        --url http://ta1.com/modules/alpha/map_crop/outputs \
+        --output e.zip
+    ```

@@ -3,6 +3,7 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 from pprint import pprint
 import re
@@ -70,6 +71,13 @@ class Options:
         if args.output:
             self.output = Path(args.output)
 
+        self.user = os.getenv("MIP_CLIENT_USER", None)
+        if not self.user:
+            parser.error("$MIP_CLIENT_USER not set")
+        self.password = os.getenv("MIP_CLIENT_PASSWORD", None)
+        if not self.password:
+            parser.error("$MIP_CLIENT_PASSWORD not set")
+
 
 def process_output(resp: requests.Response, output_file: Optional[Path]) -> int:
     content_type = resp.headers.get('content-type')
@@ -113,7 +121,7 @@ def main() -> int:
 
     options = Options()
 
-    auth = None  # ('user', 'pass')
+    auth = (options.user, options.password)
 
     if options.do_get:
         resp = requests.get(url=options.url, auth=auth)
