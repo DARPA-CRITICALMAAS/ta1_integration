@@ -10,7 +10,7 @@ DEFAULT_TASK_NAME = "all"
 DEFAULT_OPENAI_KEY_FILE = f"{os.path.expanduser('~')}/.ssh/openai"
 
 
-class MipperOptions:
+class Options:
     def __init__(self):
 
         parser = argparse.ArgumentParser(
@@ -18,13 +18,13 @@ class MipperOptions:
             description="Runs TA1 modules in an integrated fashion")
 
         parser.add_argument(
-            "--config-file", "-c",
+            "--config-file",
             type=str,
             default=DEFAULT_CONFIG_FILE,
             help=f"path to YML configuration file (default: {DEFAULT_CONFIG_FILE})",
         )
         parser.add_argument(
-            "--map-name", "-i",
+            "--map-name",
             type=str,
             help="name of map (example: WY_CO_Peach)",
         )
@@ -34,12 +34,12 @@ class MipperOptions:
             help="id of this run",
         )
         parser.add_argument(
-            "--job-name", "-j",
+            "--job-name",
             type=str,
             help="name of job to execute",
         )
         parser.add_argument(
-            "--module-name", "-m",
+            "--module-name",
             type=str,
             action='extend',
             nargs='*',
@@ -71,19 +71,18 @@ class MipperOptions:
         self.map_name: str = args.map_name
         self.run_id: str = args.run_id
         self.job_name: str = args.job_name
-        self.target_task_names: list[str] = args.module_name
+        self.module_names: list[str] = args.module_name
         self.config_file = Path(args.config_file)
         self.list_tasks: bool = args.list_modules
         self.list_deps: bool = args.list_deps
         self.openai_key_file = Path(args.openai_key_file)
         self.force = args.force
 
-        if not self.target_task_names:
-            self.target_task_names = [DEFAULT_TASK_NAME]
-
         if not self.list_tasks:
             if not self.map_name:
                 parser.error("--map-name is required")
+            if not self.module_names:
+                parser.error("--module-name is required")
             if not self.job_name:
                 parser.error("--job-name is required")
             if not self.run_id:

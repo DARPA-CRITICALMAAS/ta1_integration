@@ -2,7 +2,9 @@
 # Copyright 2024 InferLink Corporation
 
 from datetime import datetime
+import json
 import os
+from pprint import pprint
 import sys
 
 ta1_repos_dir = os.getenv("TA1_REPOS_DIR", None)
@@ -21,17 +23,15 @@ from mip.utils.context import Context
 from mip.utils.module_config import ModuleConfig
 from mip.utils.simple_task import SimpleTask
 from mip.performance.utils import start_nvidia, shutdown_nvidia
-from mip.mipper.mipper_options import MipperOptions
+from mip.mip_job.options import Options
 
 
 def main() -> int:
 
-    start_nvidia()
+    options = Options()
 
-    opts = MipperOptions()
-
-    if opts.list_tasks:
-        print("Registered tasks:")
+    if options.list_tasks:
+        print("Registered modules:")
         for name, cls in get_tasks().items():
             if cls.REQUIRES:
                 s = ", ".join([c.NAME for c in cls.REQUIRES])
@@ -40,34 +40,33 @@ def main() -> int:
             print(f"    {name}  <--  {s}")
         return 0
 
-    if not opts.openai_key_file.exists():
-        print(f"OpenAI key file not found: {opts.openai_key_file}")
+    if not options.openai_key_file.exists():
+        print(f"*** error: OpenAI key file not found: {options.openai_key_file}")
         return 1
 
-    context = Context(opts)
+    context = Context(
+        map_name=options.map_name,
+        module_names=options.module_names,
+        job_name=options.job_name,
+        run_id=options.run_id,
+        force_rerun=options.force,
+        config_file=options.config_file,
+        openai_key_file=options.openai_key_file
+    )
 
-    for p in [context.host_input_dir, context.host_output_dir, context.host_temp_dir]:
-        if not p.exists():
-            print(f"host directory not found: {p}")
-            return 1
-        if not p.is_dir():
-            print(f"host directory is not a directory: {p}")
-            return 1
-
-    for p in [context.host_job_output_dir, context.host_job_temp_dir]:
-        p.mkdir(parents=True, exist_ok=True)
+    context.verify_host_dirs()
 
     tasks: list[SimpleTask] = list()
 
-    for task_name in opts.target_task_names:
-        task_cls = registry_lookup(task_name)
+    for module_name in options.module_names:
+        task_cls = registry_lookup(module_name)
         if not task_cls:
-            print(f"task not found: {task_name}")
+            print(f"task not found: {module_name}")
             return 1
         task = task_cls(job_name=context.job_name, map_name=context.map_name)
         tasks.append(task)
 
-    if opts.list_deps:
+    if options.list_deps:
         print()
         for task in tasks:
             s = f"TASK: {task.NAME} "
@@ -77,12 +76,18 @@ def main() -> int:
             print()
         return 0
 
-    if opts.force:
-        for task_name in opts.target_task_names:
-            task_config = ModuleConfig(context, task_name)
+    if options.force:
+        for module_name in options.module_names:
+            task_config = ModuleConfig(context, module_name)
             task_config.host_task_file.unlink(missing_ok=True)
 
     # now we're ready to start!
+
+    start_time = datetime.now()
+
+    status_file = context.get_job_status_filename()
+    print(f"Status file: {status_file}")
+    print(f"Started at {datetime.now()}")
 
     context.write_job_status()
 
@@ -93,14 +98,30 @@ def main() -> int:
             detailed_summary=True
         )
         status = 0 if result.status == luigi.execution_summary.LuigiStatusCode.SUCCESS else 1
-    except Exception:
+
+        context.set_job_state(
+            status=status,
+            stop_time=datetime.now(),
+        )
+
+    except Exception as ex:
         status = 17
 
-    context.set_exit_status(status)
+    context.set_job_state(
+        status=status,
+        stop_time=datetime.now(),
+    )
 
     context.write_job_status()
 
-    shutdown_nvidia()
+    elapsed = int((datetime.now() - start_time).total_seconds())
+
+    print(f"Ended at {datetime.now()} ({elapsed} seconds)")
+    print(f"Status: {status}")
+    print("-----------------------")
+    x = json.loads(status_file.read_text())
+    pprint(x)
+    print("-----------------------")
 
     return status
 

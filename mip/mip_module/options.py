@@ -6,7 +6,6 @@ from pathlib import Path
 
 
 DEFAULT_CONFIG_FILE = "./config.yml"
-DEFAULT_TASK_NAME = "all"
 DEFAULT_OPENAI_KEY_FILE = f"{os.path.expanduser('~')}/.ssh/openai"
 
 
@@ -63,7 +62,7 @@ class Options:
         args = parser.parse_args()
 
         self.map_name: str = args.map_name
-        self.module_name: list[str] = args.module_name
+        self.module_name = args.module_name
         self.job_name = args.job_name
         self.run_id = args.run_id
         self.config_file = Path(args.config_file)
@@ -71,12 +70,12 @@ class Options:
         self.openai_key_file = Path(args.openai_key_file)
         self.force = args.force
 
-        if not self.module_name:
-            self.module_name = [DEFAULT_TASK_NAME]
 
         if not self.list_modules:
             if not self.map_name:
                 parser.error("--map-name is required")
+            if not self.module_name:
+                parser.error("--module-name is required")
             if not self.job_name:
                 parser.error("--job-name is required")
             if not self.run_id:

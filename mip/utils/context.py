@@ -88,10 +88,10 @@ class Context:
             self,
             module_name: str,
             *,
-            status: Optional[int] = None,
-            exception: Optional[Exception] = None,
-            log: Optional[str] = None,
-            stop_time: Optional[datetime] = None) -> None:
+            status: Optional[int],
+            exception: Optional[Exception],
+            log: Optional[str],
+            stop_time: Optional[datetime]) -> None:
 
         if status is not None:
             if status == 0:
@@ -120,17 +120,28 @@ class Context:
     # job status
     # --------------------------------------------------------------------
 
-    def set_job_exit_status(self, status: int) -> None:
-        if status == 0:
-            self._job_status.status = Status.PASSED
-        else:
-            self._job_status.status = Status.FAILED
-        self._job_status.stop_time = datetime.now()
+    def set_job_state(
+            self,
+            *,
+            status: Optional[int],
+            stop_time: Optional[datetime],
+    ) -> None:
+        if status is not None:
+            if status == 0:
+                self._job_status.status = Status.PASSED
+            else:
+                self._job_status.status = Status.FAILED
+
+        if stop_time is not None:
+            self._job_status.stop_time = stop_time
 
     def write_job_status(self) -> None:
-        file = self.host_output_dir / f"{self.job_name}.json"
+        file = self.get_job_status_filename()
         s = self._job_status.model_dump_json(indent=4)
         file.write_text(s)
+
+    def get_job_status_filename(self) -> Path:
+        return self.host_output_dir / f"{self.job_name}.json"
 
     # --------------------------------------------------------------------
     # dir checking

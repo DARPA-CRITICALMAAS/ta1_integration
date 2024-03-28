@@ -1,12 +1,10 @@
 # Copyright 2024 InferLink Corporation
 
 from datetime import datetime
-import os
-import sys
 
 from mip.utils.context import Context
 from mip.utils.module_config import ModuleConfig
-from mip.utils.docker_runner import DockerRunner
+from mip.mip_module.docker_runner import DockerRunner
 
 
 class ModuleRunner:
