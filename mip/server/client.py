@@ -6,6 +6,7 @@ import json
 import pdb
 from pathlib import Path
 from pprint import pprint
+import re
 import sys
 from typing import Optional
 
@@ -44,7 +45,7 @@ class Options:
         parser.add_argument(
             "--output", "-o",
             type=str,
-            help="output json file",
+            help="output file (typically json or zip)",
         )
 
         args = parser.parse_args()
@@ -71,6 +72,44 @@ class Options:
             self.output = Path(args.output)
 
 
+def process_output(resp: requests.Response, output_file: Optional[Path]) -> int:
+    content_type = resp.headers.get('content-type')
+    if content_type == "application/json":
+        s = resp.json()
+        print("---------------------")
+        pprint(s)
+        print("---------------------")
+        if output_file:
+            output_file.write_text(json.dumps(s))
+        return 0
+
+    if content_type == "application/zip":
+        size = resp.headers.get('content-length', None)
+        if not output_file:
+            cd = resp.headers.get("content-disposition")
+            m = re.findall('filename=(.+)', cd)
+            if m:
+                f = m[0]
+                if f[0] == '"' and f[-1] == '"':
+                    f = f[1:-1]
+                output_file = Path(f)
+        if output_file:
+            with open(output_file, 'wb') as fp:
+                fp.write(resp.content)
+            print("---------------------------------------")
+            print(f"{output_file}: {size} bytes")
+            print("---------------------------------------")
+        else:
+            # just print size, don't store the data
+            print("---------------------------------------")
+            print(f"{size} bytes (not stored)")
+            print("---------------------------------------")
+        return 0
+
+    print(f"*** error: unsupported content type: {content_type}")
+    return 1
+
+
 def main() -> int:
 
     options = Options()
@@ -81,24 +120,16 @@ def main() -> int:
         resp = requests.get(url=options.url, auth=auth)
         if resp.status_code != 200:
             print(f"*** error: {resp.content}")
-        s = resp.json()
-        print("GET: ----------------")
-        pprint(s)
-        print("---------------------")
-        if options.output:
-            options.output.write_text(json.dumps(s))
+            return 1
+        return process_output(resp, options.output)
 
     if options.do_post:
         body = options.input.read_text()
         resp = requests.post(url=options.url, auth=auth, data=body)
         if resp.status_code != 200:
             print(f"*** error: {resp.content}")
-        s = resp.json()
-        print("POST: ---------------")
-        pprint(s)
-        print("---------------------")
-        if options.output:
-            options.output.write_text(json.dumps(s))
+            return 1
+        return process_output(resp, options.output)
 
     return 0
 

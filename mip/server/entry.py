@@ -1,8 +1,9 @@
 # Copyright 2024 InferLink Corporation
-
+import pdb
 from pathlib import Path
 
-from fastapi import FastAPI, Response
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
 
 from mip.utils.status_models import (
     RunPayloadModel, RunStatusModel,
@@ -83,21 +84,21 @@ async def get_module_status(job_name: str, module_name: str) -> ModuleStatusMode
 
 
 @app.get("/modules/{job_name}/{module_name}/logs")
-async def get_module_logs(job_name: str, module_name: str) -> Response:
+async def get_module_logs(job_name: str, module_name: str) -> FileResponse:
     zip_file = modules_api.get_module_log_files(job_name, module_name)
-    return Response(content=zip_file.read_bytes(), media_type="application/zip")
+    return FileResponse(zip_file, filename=zip_file.name, media_type="application/zip")
 
 
 @app.get("/modules/{job_name}/{module_name}/outputs")
-async def get_module_outputs(job_name: str, module_name: str) -> Response:
-    zip_file = jobs_api.get_module_output_files(job_name, module_name)
-    return Response(content=zip_file.read_bytes(), media_type="application/zip")
+async def get_module_outputs(job_name: str, module_name: str) -> FileResponse:
+    zip_file = modules_api.get_module_output_files(job_name, module_name)
+    return FileResponse(zip_file, filename=zip_file.name, media_type="application/zip")
 
 
 @app.get("/modules/{job_name}/{module_name}/temps")
-async def get_module_temps(job_name: str, module_name: str) -> Response:
-    zip_file = jobs_api.get_module_temp_files(job_name, module_name)
-    return Response(content=zip_file.read_bytes(), media_type="application/zip")
+async def get_module_temps(job_name: str, module_name: str) -> FileResponse:
+    zip_file = modules_api.get_module_temp_files(job_name, module_name)
+    return FileResponse(zip_file, filename=zip_file.name, media_type="application/zip")
 
 
 # ------------------------------------------------------------------------
