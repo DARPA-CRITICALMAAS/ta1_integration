@@ -46,6 +46,7 @@ class ModuleStatusModel(BaseModel):
     start_time: datetime
     stop_time: Optional[datetime]
     exception: Optional[str]
+    log: Optional[str]
 
 
 class ModuleDescriptionModel(BaseModel):

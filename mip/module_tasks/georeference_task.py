@@ -2,14 +2,13 @@
 
 from mip.utils.docker_task import DockerTask
 from mip.module_tasks.registry import register_task
-from mip.module_tasks.start_task import StartTask
 from mip.utils.checker import check_file_exists
 
 
 @register_task
 class GeoreferenceTask(DockerTask):
     NAME = "georeference"
-    REQUIRES = [StartTask]
+    REQUIRES = []
 
     def run_post(self):
         d = self.task_config.host_task_output_dir
