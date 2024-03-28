@@ -11,7 +11,7 @@
 * deployment
    * me verify deployment docs
    * weiwei verify deployment docs
-* (19) map_crop: pass in map_crop logger file name
+
 
 # Normal Prio
 

@@ -172,4 +172,15 @@ class Context:
         for p in host_dirs:
             p.mkdir(parents=True, exist_ok=True)
 
+        host_dirs1 = [
+            self.host_job_output_dir / module_name
+            for module_name in self.module_names
+        ]
+        host_dirs2 = [
+            self.host_job_temp_dir / module_name
+            for module_name in self.module_names
+        ]
+        for p in host_dirs1 + host_dirs2:
+            p.mkdir(parents=True, exist_ok=True)
+
         return 0
