@@ -62,7 +62,7 @@ ENV C_INCLUDE_PATH=/usr/include/gdal
 RUN pip install GDAL==$(gdal-config --version)
 
 RUN pip install \
-    opencv-python \
+    opencv-contrib-python \
     PyYAML \
     shapely==1.8.5.post1 \
     monai==0.7.0 \
@@ -72,7 +72,8 @@ RUN pip install \
     pyvista \
     geopandas \
     ignite==1.1.0 \
-    pytorch-ignite==0.4.9
+    pytorch-ignite==0.4.9 \
+    scikit-learn
 
 # Install libgl1-mesa-glx
 RUN apt-get update && apt-get install -y \
@@ -92,18 +93,12 @@ RUN apt-get update && apt-get install sudo
 
 # INCLUDEX perms.txt
 
-USER root
-RUN adduser cmaas sudo
-RUN echo "cmaas ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
-USER cmaas
-
-COPY ./usc-umn-inferlink-ta1/ /ta1/dev/usc-umn-inferlink-ta1/
-
+COPY ./usc-umn-inferlink-ta1/ /ta1/repos/usc-umn-inferlink-ta1/
 
 COPY ./ta1_integration/docker/modules/line_extract/runme.sh \
-    /home/cmaas/line_extract_runme.sh
+    /ta1/line_extract_runme.sh
 
 CMD []
 ENTRYPOINT [ \
-    "/home/cmaas/line_extract_runme.sh" \
+    "/ta1/line_extract_runme.sh" \
     ]

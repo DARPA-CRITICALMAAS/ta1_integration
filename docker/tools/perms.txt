@@ -1,18 +1,15 @@
-RUN apt-get install -y git
-RUN pip install --no-input --force-reinstall git+https://bitbucket.org/inferlink/ilperf
-
 RUN addgroup --gid 1024 cmaasgroup \
    && adduser --disabled-password --gecos '' --ingroup cmaasgroup cmaas \
-   && mkdir -p /ta1/input /ta1/output /ta1/temp \
+   && mkdir -p /ta1 /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos \
    && chown -R :cmaasgroup /ta1 \
    && chmod -R ug=rwX /ta1 \
    && chmod -R g+s /ta1
 
-VOLUME /ta1/input
-VOLUME /ta1/temp
+VOLUME /ta1/inputs
+VOLUME /ta1/temps
+VOLUME /ta1/outputs
 
-VOLUME /ta1/output
-WORKDIR /ta1/output
+WORKDIR /ta1/outputs
 
 USER cmaas
 

@@ -6,17 +6,18 @@
 #   $REPO_DIR --> the value of {container.repo_dir}
 
 host:
-    input_dir: /home/ubuntu/dev/ta1_integration_input
-    output_dir: /home/ubuntu/dev/ta1_output
-    temp_dir: /home/ubuntu/dev/ta1_temp
-    repo_dir: /home/ubuntu/dev/
+    input_dir: /home/ubuntu/ta1/inputs
+    output_dir: /home/ubuntu/ta1/outputs
+    temp_dir: /home/ubuntu/ta1/temps
+    repo_dir: /home/ubuntu/ta1/repos
+    runs_dir: /home/ubuntu/ta1/runs
 
 
 container:
-    input_dir: /ta1/input
-    output_dir: /ta1/output
-    temp_dir: /ta1/temp
-    repo_dir: /ta1/dev
+    input_dir: /ta1/inputs
+    output_dir: /ta1/outputs
+    temp_dir: /ta1/temps
+    repo_dir: /ta1/repos
 
 
 modules:
@@ -39,6 +40,7 @@ modules:
             # output:
             output: $OUTPUT_DIR/legend_segment
             # temp:
+            workdir: $TEMP_DIR/legend_segment
             # misc:
 
 
@@ -54,15 +56,15 @@ modules:
         options:
             # input:
             input_image: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
-            input_legend_segmentation: $INPUT_DIR/modules/legend_item_segment/ch2_validation_evaluation_labels_coco.json
+            input_legend_segmentation: $OUTPUT_DIR/legend_segment/$MAP_NAME_map_segmentation.json
             # output:
             output_dir: $OUTPUT_DIR/legend_item_segment
-            log: $OUTPUT_DIR/legend_item_segment/log_file.txt
+            log: $OUTPUT_DIR/legend_item_segment/run.log
             # temp:
             path_to_intermediate: $TEMP_DIR/legend_item_segment
             # misc:
             postprocessing_for_crs: True
-            competition_custom: True
+            competition_custom: False
             version: 1.2
             only_poly: False
 
@@ -79,15 +81,13 @@ modules:
         options:
             # inputs:
             map_dir: $INPUT_DIR/maps/$MAP_NAME
-            symbol_json_dir: $INPUT_DIR/maps/$MAP_NAME/legend_item_segment
+            symbol_json_dir: $OUTPUT_DIR/legend_item_segment
             legend_json_dir: $OUTPUT_DIR/legend_segment
             # outputs:
             output_dir: $OUTPUT_DIR/legend_item_description
             log_path: $OUTPUT_DIR/legend_item_description/run.log
             # temp:
             temp_dir: $TEMP_DIR/legend_item_description
-            #gpt4_input_dir: $TEMP_DIR/legend_item_description/gpt4_input_dir
-            #gpt4_intermediate_dir: $TEMP_DIR/legend_item_description/gpt4_temp_dir
             # misc:
             map_name: $MAP_NAME
 
@@ -107,6 +107,7 @@ modules:
             legend_dir: $OUTPUT_DIR/legend_segment
             # outputs:
             output_dir: $OUTPUT_DIR/map_crop
+            log_path: $OUTPUT_DIR/map_crop/run.log
             # temp:
             # misc:
             map_name: $MAP_NAME
@@ -187,7 +188,7 @@ modules:
             path_to_model: $INPUT_DIR/modules/polygon_extract/checkpoints/checkpoint_epoch14.pth
             # outputs:
             dir_to_integrated_output: $OUTPUT_DIR/polygon_extract
-            log: $OUTPUT_DIR/polygon_extract/log_file.txt
+            log: $OUTPUT_DIR/polygon_extract/run.log
             # temp:
             dir_to_intermediate: $TEMP_DIR/polygon_extract
             # misc:
@@ -208,6 +209,7 @@ modules:
             map_dir: $INPUT_DIR/maps
             #template_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Template
             model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/model_weights
+            symbol_info_json_file: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/automated_model_selection/symbol_info.json
             # outputs:
             output_dir_root: $OUTPUT_DIR/point_extract
             map_metadata_dir: $OUTPUT_DIR/legend_item_description
@@ -236,6 +238,7 @@ modules:
             # temp:
             temp_dir: $TEMP_DIR/georeference
             # misc:
+            reformat: ""
 
 
     # ---------------------------------------------------------------------------
@@ -249,7 +252,7 @@ modules:
         gpu: true
         options:
             # inputs:
-            nongeoref_map_dir: $INPUT_DIR/maps
+            nongeoref_map_dir: $INPUT_DIR/maps/$MAP_NAME
             layout_output_dir: $OUTPUT_DIR/legend_item_description
             georef_output_dir: $OUTPUT_DIR/example_inputs/georeference
             poly_output_dir: $OUTPUT_DIR/polygon_extract
@@ -261,3 +264,4 @@ modules:
             # temp:
             # misc:
             map_name: $MAP_NAME
+            log_path: $OUTPUT_DIR/geopackage/run.log

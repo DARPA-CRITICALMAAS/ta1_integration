@@ -1,5 +1,9 @@
-RUN apt update
-RUN \
-  DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y tzdata \
-  && apt-get install -y apt-utils software-properties-common \
-  && conda update -y -n base -c defaults conda
+RUN apt update \
+    && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y tzdata \
+    && apt-get install -y apt-utils software-properties-common git \
+    && conda update -y -n base -c defaults conda \
+    && mkdir -p /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos \
+    && chmod -R ug=rwX /ta1 \
+    && chmod -R g+s /ta1
+
+#    && pip install --no-input --force-reinstall git+https://bitbucket.org/inferlink/ilperf \

@@ -32,7 +32,7 @@ def check_directory_exists(path: str | Path, min_files: int = 0) -> None:
     if not path.is_dir():
         _error(f"object is not a directory: {path}")
         return
-    file_count = len([i for i in os.listdir('.') if os.path.isfile(i)])
+    file_count = len([i for i in os.listdir(path) if os.path.isfile(path / i)])
     if file_count < min_files:
-        _error(f"directory file count is too small: {path} (actual={file_count}, minimum={min_files}")
+        _error(f"directory file count is too small: {path} (actual={file_count}, minimum={min_files})")
         return
