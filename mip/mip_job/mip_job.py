@@ -48,7 +48,7 @@ def main() -> int:
         module_names=options.module_names,
         job_name=options.job_name,
         run_id=options.run_id,
-        force_rerun=options.force,
+        force_rerun=options.force_rerun,
         config_file=options.config_file,
         openai_key_file=options.openai_key_file
     )
@@ -75,7 +75,7 @@ def main() -> int:
             print()
         return 0
 
-    if options.force:
+    if options.force_rerun:
         for module_name in options.module_names:
             task_config = ModuleConfig(context, module_name)
             task_config.host_module_luigi_file.unlink(missing_ok=True)

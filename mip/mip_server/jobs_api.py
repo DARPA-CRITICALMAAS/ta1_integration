@@ -13,7 +13,8 @@ class JobsApi:
 
     def get_jobs(self) -> list[str]:
         files = self._configuration.host.output_dir.glob("*.json")
-        return [f.stem for f in files]
+        files = [f.stem for f in files]
+        return sorted(files)
 
     def get_job_by_name(self, job_name: str) -> JobStatusModel:
         file = self._configuration.host.output_dir / f"{job_name}.json"

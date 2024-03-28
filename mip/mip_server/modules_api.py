@@ -25,7 +25,7 @@ class ModulesApi:
 
     def get_modules_by_job_name(self, job_name: str) -> list[str]:
         files = (self._configuration.host.output_dir / job_name).glob("*.json")
-        return [f.stem for f in files]
+        return sorted([f.stem for f in files])
 
     def get_module_status(self, job_name: str, module_name: str) -> ModuleStatusModel:
         filename = self._configuration.host.output_dir / job_name / f"{module_name}.json"

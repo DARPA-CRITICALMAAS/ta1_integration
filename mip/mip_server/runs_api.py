@@ -45,7 +45,21 @@ class RunsApi:
         return run_status
 
     def _run_mipper(self, run_status: RunStatusModel) -> None:
-        stat = subprocess.run(args=["ls"], capture_output=True, text=True)  # stderr=subprocess.STDOUT
+        args = [
+            "./mip/mip_job/mip_job.py",
+            "--map-name", run_status.payload.map,
+            "--job-name", run_status.payload.job,
+            "--run-id", run_status.run_id,
+            ]
+        if run_status.payload.force_rerun:
+            args.append("--force-rerun")
+        for module_name in run_status.payload.modules:
+            args.append("--module-name")
+            args.append(module_name)
+
+        print("===" + " ".join(args))
+
+        stat = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
         if stat.returncode == 0:
             run_status.status = StatusEnum.PASSED
@@ -61,7 +75,8 @@ class RunsApi:
 
     def get_runs(self) -> list[str]:
         files = self._configuration.host.runs_dir.glob("*.json")
-        return [f.stem for f in files]
+        files = [f.stem for f in files]
+        return sorted(files)
 
     def get_run_by_name(self, run_id: str) -> RunStatusModel:
         filename = self._get_run_id_filename(run_id)

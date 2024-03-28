@@ -54,7 +54,7 @@ class Options:
             help=f"path to file containing OpenAI key (default: {DEFAULT_OPENAI_KEY_FILE})"
         )
         parser.add_argument(
-            "--force",
+            "--force-rerun",
             action="store_true",
             help="forces execution of target module, even if already completed successfully"
         )
@@ -68,7 +68,7 @@ class Options:
         self.config_file = Path(args.config_file)
         self.list_modules: bool = args.list_modules
         self.openai_key_file = Path(args.openai_key_file)
-        self.force = args.force
+        self.force_rerun = args.force_rerun
 
         if not self.list_modules:
             if not self.map_name:
