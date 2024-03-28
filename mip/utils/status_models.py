@@ -18,7 +18,7 @@ class RunPayloadModel(BaseModel):
     job: str
     modules: list[str]
     map: str
-    force_rerun: Optional[bool] = False
+    force_rerun: bool
 
 
 class RunStatusModel(BaseModel):
@@ -26,8 +26,8 @@ class RunStatusModel(BaseModel):
     run_id: str
     payload: RunPayloadModel
     start_time: datetime
-    stop_time: Optional[datetime] = None
-    log: Optional[str] = None
+    stop_time: Optional[datetime]
+    log: Optional[str]
 
 
 class JobStatusModel(BaseModel):
@@ -35,7 +35,7 @@ class JobStatusModel(BaseModel):
     modules: list[str]
     status: Status
     start_time: datetime
-    stop_time: Optional[datetime] = None
+    stop_time: Optional[datetime]
     force_rerun: bool
 
 
@@ -44,7 +44,7 @@ class ModuleStatusModel(BaseModel):
     job: str
     module: str
     start_time: datetime
-    stop_time: Optional[datetime] = None
+    stop_time: Optional[datetime]
     exception: Optional[str]
 
 

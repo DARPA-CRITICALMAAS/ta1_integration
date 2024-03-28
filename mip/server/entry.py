@@ -107,17 +107,17 @@ async def get_module_temps(job_name: str, module_name: str) -> FileResponse:
 
 @app.post("/runs/")
 async def post_run(body: RunPayloadModel) -> RunStatusModel:
-    result = runs_api.start_run(body)
+    result = runs_api.post_run(body)
     return result
 
 
 @app.get("/runs/")
 async def get_runs() -> list[str]:
-    result = runs_api.get_run_ids()
+    result = runs_api.get_runs()
     return result
 
 
 @app.get("/runs/{run_id}")
 async def get_run(run_id: str) -> RunStatusModel:
-    result = runs_api.get_run_status(run_id)
+    result = runs_api.get_run_by_name(run_id)
     return result
