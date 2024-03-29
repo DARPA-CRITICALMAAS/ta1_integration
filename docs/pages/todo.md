@@ -8,8 +8,8 @@
    * legend_segment
    * line_extract
    * polygon_extract
-* (20) legend_item_segment crashes on WY_CO_Peach - for Fandel
-* (21) do we still need the text-spotting module? none of my command lines reference its outputs
+* (21) remove the text-spotting module
+* (22) line_extract - Deformable-DETR is crashing
 * deployment
    * weiwei verify deployment process
 * make S3 inputs bucket public/read
@@ -19,6 +19,7 @@
     * OpenAI key
 * S3 and CDR support
 * overview pptx
+* API to get available maps
 
 
 # Low Priority

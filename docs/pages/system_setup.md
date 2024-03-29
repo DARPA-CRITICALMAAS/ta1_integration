@@ -160,7 +160,34 @@ needed._
     16. _go back to the session running `uvicorn` and kill it
 
 
-## STEP 3: Ta-Da!
+
+## STEP 3: Running the Server as a Public Service
+
+**UNDER CONSTRUCTION -- SKIP THIS STEP FOR NOW**
+
+In this step, we describe how to run `mip_server` so that it is run as a unix
+service on a publicly-visible port.
+
+1. **Set up the `mip_server` service**
+    1. `sudo cp ./ops/mip.service /etc/systemd/system/mip.service`
+    2. `sudo systemctl daemon-reload`
+    3. `sudo systemctl enable mip`
+    4. `sudo systemctl start mip`  **# currently failing**
+
+2. **Run Caddy**
+    1. `sudo ./ops/install_caddy.sh`
+    2. `sudo caddy stop`
+    3. `sudo caddy start --config ./ops/Caddyfile`
+
+3. **Verify it works**
+    1. _open a window on your local machine (not the EC2 host)_
+    2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/mip/mip_client/mip_client.py > mip_client.py`
+    3. `pip install requests`
+    4. `./mip_client.py --get -u http://$PUBLIC_IP_ADDRESS:8000/modules`
+
+
+
+## STEP 4: Ta-Da!
 
 If you have gotten this far, the system is fully working. You can now do a full
 run of all the modules for any of the supported maps by running the `mip_job`

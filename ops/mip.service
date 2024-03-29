@@ -1,0 +1,13 @@
+[Unit]
+Description="Hi. My name is Mip."
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/ta1/repos/t1_integration
+ExecStart=/home/ubuntu/.local/bin/uvicorn mip/mip_server/mip_server:app --reload
+Restart=always
+Environment="TELEX_CONFIG=/home/ubuntu/config.ini"
+
+[Install]
+WantedBy=multi-user.target
