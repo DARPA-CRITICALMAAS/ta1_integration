@@ -79,14 +79,14 @@ needed._
 1. **Set up the needed directories**
     1. **EC2:** `sudo mkdir /ta1`
     2. **EC2:** `sudo chown -R ubuntu /ta1`
-    1. `mkdir -p /ta1 /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos /ta1/runs`
-    3. `cd /ta1/inputs`
-    4. **EC2:** `aws configure`
-    5. `aws s3 sync s3://inferlink-ta1-integration-inputs .`
-    6. `cd /ta1/repos`
-    7. `git clone https://github.com/DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
-    8. `git clone https://github.com/DARPA-CRITICALMAAS/ta1_integration`
-    9. `git clone https://github.com/DARPA-CRITICALMAAS/uncharted-ta1`
+    3. `mkdir -p /ta1 /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos /ta1/runs`
+    4. `cd /ta1/inputs`
+    5. **EC2:** `aws configure`
+    6. `aws s3 sync s3://inferlink-ta1-integration-inputs .`
+    7. `cd /ta1/repos`
+    8. `git clone https://github.com/DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
+    9. `git clone https://github.com/DARPA-CRITICALMAAS/ta1_integration`
+    10. `git clone https://github.com/DARPA-CRITICALMAAS/uncharted-ta1`
 
 2. **Start your environment**
     1. `cd /ta1/repos/ta1_integration`
