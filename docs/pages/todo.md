@@ -9,7 +9,6 @@
    * line_extract
    * polygon_extract
 * (21) remove the text-spotting module
-* (22) line_extract - Deformable-DETR is crashing
 * deployment
    * weiwei verify deployment process
 * make S3 inputs bucket public/read
