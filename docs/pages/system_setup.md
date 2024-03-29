@@ -169,6 +169,7 @@ In this step, we describe how to run `mip_server` so that it is run as a unix
 service on a publicly-visible port.
 
 1. **Set up the `mip_server` service**
+    1. `cp config.yml ./mip/mip_server/`
     1. `sudo cp ./ops/mip.service /etc/systemd/system/mip.service`
     2. `sudo systemctl daemon-reload`
     3. `sudo systemctl enable mip`
