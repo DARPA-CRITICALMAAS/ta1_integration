@@ -223,7 +223,7 @@ modules:
             # inputs:
             nongeoref_map_dir: $INPUT_DIR/maps/$MAP_NAME
             layout_output_dir: $OUTPUT_DIR/legend_item_description
-            georef_output_dir: $OUTPUT_DIR/example_inputs/georeference
+            georef_output_dir: $OUTPUT_DIR/georeference
             poly_output_dir: $OUTPUT_DIR/polygon_extract
             ln_output_dir: $OUTPUT_DIR/line_extract
             pt_output_dir: $OUTPUT_DIR/point_extract
