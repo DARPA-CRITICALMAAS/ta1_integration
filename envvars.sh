@@ -1,4 +1,4 @@
-ta1=$HOME/ta1
+ta1=/ta1
 
 export TA1_INPUTS_DIR=$ta1/inputs
 export TA1_OUTPUTS_DIR=$ta1/outputs

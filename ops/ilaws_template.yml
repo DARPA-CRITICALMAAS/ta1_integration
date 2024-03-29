@@ -95,16 +95,13 @@ Resources:
           SecurityGroupIds:
             - !Ref InstanceSecurityGroup
           BlockDeviceMappings:
-            - DeviceName: /dev/xvda
+            - DeviceName: /dev/sda1
               Ebs:
                 VolumeSize: !Ref DiskGB
           UserData:
             Fn::Base64: |
               #!/bin/bash
-              echo "Hello World! Instance 1" > hello_instance1.txt
-          Tags:
-            - Key: Name
-              Value: telex_database_cloud_formation
+              echo "Hello World!" > hello.txt
 
 
 Outputs:

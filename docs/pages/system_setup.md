@@ -6,7 +6,15 @@ To set up the system, you need to (Step 1) build out a host machine and then
 We use a `p3.8xlarge` EC2 instance as our host. If you want to use your own
 machine, you will need a comparable machine: at least one CPU (x64, Intel Xeon
 class), at least one NVIDIA GPU (Tesla V100 or better), at least 128 GB of
-RAM, and at least 250 GB of disk.
+RAM, and at least 250 GB of disk. You will need to have several tools
+installed, including:
+* `git`
+* aws CLI
+* `python` (3.10 or higher)
+* `docker` and the nvidia docker runtime w/ CUDA 12
+* `poetry`
+* `unzip`
+* `pip` packages: `requests`
 
 
 ## STEP 1: Deploy the EC2 Instance
@@ -24,14 +32,14 @@ From your local machine, do the following:
 2. cd /tmp/ta1_boot
 3. Install ilaws: `pip install git+ssh://git@bitbucket.org/inferlink/ilaws.git/`
 4. Get the two ilaws config files:
-   1. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/stack/template.yml > template.yml`
-   2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/stack/config.yml > config.yml`
+   1. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/ops/ilaws_template.yml > ilaws_template.yml`
+   2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/ops/ilaws_config.yml > ilaws_config.yml`
 5. Edit `config.yml` to provide your own EC2 key pair name, a project name (any
     short string), and an owner name (any short string). You can also change
     the instance type, aws region, etc., in this file if you need to.
 6. Start the instance, using any short string to name your stack (e.g. "ta1_test"):
     ```
-   python -m ilaws create --stack-name YOUR_STACK_NAME --config-file stack/config.yml
+   python -m ilaws create --stack-name YOUR_STACK_NAME --config-file ./ilaws_config.yml
     ```
    This will take 1-2 minutes.
 7. Verify the instance is running:
@@ -64,45 +72,98 @@ python -m ilaws delete --stack-name ta1-test
 Now that your host is ready to use, we need to configure it: `ssh` into the
 host and perform the following steps.
 
-1. **Set up the needed directories**
-    1. `mkdir /ta1 /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos /ta1/runs`
-    2. `cd /ta1/inputs`
-    3. `aws s3 sync s3://inferlink-ta1-integration-inputs .`
-    4. `cd /ta1/repos`
-    5. `git clone git@github.com:DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
-    6. `git clone git@github.com:DARPA-CRITICALMAAS/ta1_integration`
-    7. `git clone git@github.com:DARPA-CRITICALMAAS/uncharted_ta1`
+_Note: if you are on a fresh EC2 host, some required additional steps are
+indicated with as **EC2**. If you are on your own box, these steps might not be
+needed._
 
-2. **Start your python environment**
-    1. `curl -sSL https://install.python-poetry.org | python3 -`
-    2. `cd /ta1/repos/ta1_integration`
+1. **Set up the needed directories**
+    1. **EC2:** `sudo mkdir /ta1`
+    2. **EC2:** `sudo chown -R ubuntu /ta1`
+    1. `mkdir -p /ta1 /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos /ta1/runs`
+    3. `cd /ta1/inputs`
+    4. **EC2:** `aws configure`
+    5. `aws s3 sync s3://inferlink-ta1-integration-inputs .`
+    6. `cd /ta1/repos`
+    7. `git clone https://github.com/DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
+    8. `git clone https://github.com/DARPA-CRITICALMAAS/ta1_integration`
+    9. `git clone https://github.com/DARPA-CRITICALMAAS/uncharted-ta1`
+
+2. **Start your environment**
+    1. `cd /ta1/repos/ta1_integration`
+    2. **EC2:** _install poetry_ 
+        1. `curl -sSL https://install.python-poetry.org | python -`
+        2. `echo export PATH='/home/ubuntu/.local/bin:$PATH' >> ~/.bashrc`
+        3. `source ~/.bashrc`
     3. `poetry shell`
     4. `poetry install`
     5. `source ./envvars.sh`
+    6. `echo YOUR_OPENAI_KEY > /home/ubuntu/.ssh/openai` 
 
 3. **Pull all the prebuilt docker containers**
     1. `cd /ta1/repos/ta1_integration/docker/tools`
-    2. `./build_all.sh --pull`
+    2. `./build_all.sh --pull` _(this may take 15-30 minutes, as the docker images are not well-packed yet)_
 
 4. **Verify Docker is working**
-    1. `docker run hello-world`
+    1. `docker run hello-world` _(should show the "Hello from Docker" text)_
 
 5. **Verify the GPUs are working**
-    1. `nvidia-smi`
-    2. `cd /ta1/repos/ta1_integration/docker/hello-gpu`
+    1. `nvidia-smi` _(should show CUDA 12.0 and at least one GPU)_
+    2. `cd /ta1/repos/ta1_integration`
     3. `docker build -f docker/hello-gpu/Dockerfile -t hello-gpu .`
-    4. `docker run --gpus=all hello-gpu --duration 5 --cpu` (should show CPU % well above 0)
-    5. `docker run --gpus=all hello-gpu --duration 5 --gpu` (should show GPU % well above 0)
+    4. `docker run --gpus=all hello-gpu --duration 5 --cpu` (should show cpu_util column well above 0%)
+    5. `docker run --gpus=all hello-gpu --duration 5 --gpu` (should show gpu_util column well above 0%)
 
-6. **Verify the mipper application works**
+6. **Verify `mip_module` works**
     1. `cd /ta1/repos/ta1_integration`
-    2. `./mip/apps/mipper.py --list-modules`
-    3. `./mip/apps/mipper.py --job-name 01 --map-name WY_CO_Peach --module-name start`
-    4. `./mip/apps/mipper.py --job-name 01 --map-name WY_CO_Peach --module-name map_crop`
+    2. `./mip/mip_module/mip_module.py --list-modules` _(should list ~10 modules)_
+    3. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment --run-id run01`
+        _(will take 1-2 minutes; should report status "PASSED")_
+    4. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json`
 
-7. ** Verify the server and client work**
+7. **Verify `mip_job` works**
     1. `cd /ta1/repos/ta1_integration`
-    2. `uvicorn mip.server.entry:app`
-    3. _(in another ssh session)_ 
-        1. `./mip/server/client.py --url http://127.0.0.1:8000 --get --output tmp.json`
-        2. `./mip/server/client.py --url http://127.0.0.1:8000 --post --input ./mip/server/hello_input.json --output tmp.json`
+    2. `./mip/mip_job/mip_job.py --list-modules`
+    3. `./mip/mip_job/mip_job.py --list-deps` _(should show a DAG of all the modules)_
+    4. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop --run-id 02`
+        _(will take 1-2 minutes; should report status "PASSED")_
+    5. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json`
+    6. `ls -R /ta1/outputs/job02/map_crop`
+
+8. **Verify `mip_server` works**
+    1. `cd /ta1/repos/ta1_integration`
+    2. `uvicorn mip.mip_server.mip_server:app` _(leave this running while you do the next step)_
+
+9. **Verify `mip_client` works**
+    1. _make sure `uvicorn` is running in your first ssh session and start a new, second ssh session_ 
+    2. `cd /ta1/repos/ta1_integration`
+    3. `poetry shell`
+    4. `source ./envvars.sh`
+    5. `export MIP_CLIENT_USER=mpg`
+    6. `export MIP_CLIENT_PASSWORD=mpg`
+    7. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules --get`
+        _(should show a list of all the supported modules)_
+    8. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --get`
+        _(should show "Hello, mipper.")_
+    9. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --post --input ./mip/mip_client/hello_input.json`
+        _(should show JSON object with "HI" and "SELF")_
+    10. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/runs --post --input ./mip/mip_client/run_input.json`
+        _(`status` string should be "RUNNING"; copy the `run_id` string)_
+    11. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/runs/YOUR_RUN_ID --get`
+        _(repeat this line every 15 seconds until `status` string is "PASSED")_
+    12. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/jobs --get`
+        _(list should include `job03`)_
+    13. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules/job03/legend_segment --get`
+    14. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules/job03/legend_segment/outputs --get`
+         _(should report a zip file named `job03_legend_segment_outputs.zip`)_
+    15. `unzip -l job03_legend_segment_outputs.zip`
+         _(should indicate the zip file contains a file named `job03_legend_segment_outputs/WY_CO_Peach_map_segmentation.json`)_
+    16. _go back to the session running `uvicorn` and kill it
+
+
+## STEP 3: Ta-Da!
+
+If you have gotten this far, the system is fully working. You can now do a full
+run of all the modules for any of the supported maps by running the `mip_job`
+(or the server and client!) using the module `geopackage` as a target.
+
+Enjoy!
