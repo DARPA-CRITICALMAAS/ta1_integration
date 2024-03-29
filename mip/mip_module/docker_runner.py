@@ -64,8 +64,8 @@ class DockerRunner:
             options += f" {c}"
 
         gpus_s = "--gpus all" if gpus else ""
-        self.shell_command = f"# docker run {gpus_s} --user {user} {vs} -it --entrypoint bash {image}\n"
-        self.run_command = f"# docker run {gpus_s} --user {user} {vs} {image} {options}\n"
+        self.shell_command = f"#SHELL# docker run {gpus_s} --user {user} {vs} -it --entrypoint bash {image}\n"
+        self.run_command = f"#EXEC# docker run {gpus_s} --user {user} {vs} {image} {options}\n"
 
     # returns (status code, log data, elapsed seconds)
     def run(self) -> tuple[int, str, int]:
@@ -78,8 +78,15 @@ class DockerRunner:
         end = time.time()
         elapsed = round(end-start)
 
-        log = self._container.logs(stdout=True, stderr=True)
-        log = log.decode("utf-8")
+        log = ""
+        log += "------------------------------------------------------------------\n"
+        log += self.shell_command
+        log += self.run_command
+        log += "------------------------------------------------------------------\n"
+
+        s = self._container.logs(stdout=True, stderr=True)
+        log += s.decode("utf-8")
+        log += "------------------------------------------------------------------\n"
 
         return exit_status, log, elapsed
 
