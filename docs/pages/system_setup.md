@@ -5,13 +5,13 @@ To set up the system, you need to (Step 1) build out a host machine and then
 
 We use a `p3.8xlarge` EC2 instance as our host. If you want to use your own
 machine, you will need a comparable machine: at least one CPU (x64, Intel Xeon
-class), at least one NVIDIA GPU (Tesla V100 or better), at least 128 GB of
-RAM, and at least 250 GB of disk. You will need to have several tools
+class), at least one NVIDIA GPU (Tesla V100 or better), at least 128 GB of RAM,
+and **at least 250 GB of free disk space**. You will need to have several tools
 installed, including:
 * `git`
 * aws CLI
 * `python` (3.10 or higher)
-* `docker` and the nvidia docker runtime w/ CUDA 12
+* `docker`, `nvidia-docker2`
 * `poetry`
 * `unzip`
 * `pip` packages: `requests`
