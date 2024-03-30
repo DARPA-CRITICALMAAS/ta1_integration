@@ -4,6 +4,7 @@
 ## High Priority
 
 * **jira tickets**
+* (23) bracket in georeference files
 * (18) need to verify input model files
    * legend_segment
    * line_extract
