@@ -78,7 +78,7 @@ class Options:
         self.openai_key_file = Path(args.openai_key_file)
         self.force_rerun = args.force_rerun
 
-        if not self.list_tasks:
+        if not self.list_tasks and not self.list_deps:
             if not self.map_name:
                 parser.error("--map-name is required")
             if not self.module_names:

@@ -5,13 +5,13 @@ To set up the system, you need to (Step 1) build out a host machine and then
 
 We use a `p3.8xlarge` EC2 instance as our host. If you want to use your own
 machine, you will need a comparable machine: at least one CPU (x64, Intel Xeon
-class), at least one NVIDIA GPU (Tesla V100 or better), at least 128 GB of
-RAM, and at least 250 GB of disk. You will need to have several tools
+class), at least one NVIDIA GPU (Tesla V100 or better), at least 128 GB of RAM,
+and **at least 250 GB of free disk space**. You will need to have several tools
 installed, including:
 * `git`
 * aws CLI
 * `python` (3.10 or higher)
-* `docker` and the nvidia docker runtime w/ CUDA 12
+* `docker`, `nvidia-docker2`
 * `poetry`
 * `unzip`
 * `pip` packages: `requests`
@@ -79,14 +79,14 @@ needed._
 1. **Set up the needed directories**
     1. **EC2:** `sudo mkdir /ta1`
     2. **EC2:** `sudo chown -R ubuntu /ta1`
-    1. `mkdir -p /ta1 /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos /ta1/runs`
-    3. `cd /ta1/inputs`
-    4. **EC2:** `aws configure`
-    5. `aws s3 sync s3://inferlink-ta1-integration-inputs .`
-    6. `cd /ta1/repos`
-    7. `git clone https://github.com/DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
-    8. `git clone https://github.com/DARPA-CRITICALMAAS/ta1_integration`
-    9. `git clone https://github.com/DARPA-CRITICALMAAS/uncharted-ta1`
+    3. `mkdir -p /ta1 /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos /ta1/runs`
+    4. `cd /ta1/inputs`
+    5. **EC2:** `aws configure`
+    6. `aws s3 sync s3://inferlink-ta1-integration-inputs .`
+    7. `cd /ta1/repos`
+    8. `git clone https://github.com/DARPA-CRITICALMAAS/usc-umn-inferlink-ta1`
+    9. `git clone https://github.com/DARPA-CRITICALMAAS/ta1_integration`
+    10. `git clone https://github.com/DARPA-CRITICALMAAS/uncharted-ta1`
 
 2. **Start your environment**
     1. `cd /ta1/repos/ta1_integration`
@@ -160,7 +160,35 @@ needed._
     16. _go back to the session running `uvicorn` and kill it
 
 
-## STEP 3: Ta-Da!
+
+## STEP 3: Running the Server as a Public Service
+
+**UNDER CONSTRUCTION -- SKIP THIS STEP FOR NOW**
+
+In this step, we describe how to run `mip_server` so that it is run as a unix
+service on a publicly-visible port.
+
+1. **Set up the `mip_server` service**
+    1. `cp config.yml ./mip/mip_server/`
+    1. `sudo cp ./ops/mip.service /etc/systemd/system/mip.service`
+    2. `sudo systemctl daemon-reload`
+    3. `sudo systemctl enable mip`
+    4. `sudo systemctl start mip`  **# currently failing**
+
+2. **Run Caddy**
+    1. `sudo ./ops/install_caddy.sh`
+    2. `sudo caddy stop`
+    3. `sudo caddy start --config ./ops/Caddyfile`
+
+3. **Verify it works**
+    1. _open a window on your local machine (not the EC2 host)_
+    2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/mip/mip_client/mip_client.py > mip_client.py`
+    3. `pip install requests`
+    4. `./mip_client.py --get -u http://$PUBLIC_IP_ADDRESS:8000/modules`
+
+
+
+## STEP 4: Ta-Da!
 
 If you have gotten this far, the system is fully working. You can now do a full
 run of all the modules for any of the supported maps by running the `mip_job`

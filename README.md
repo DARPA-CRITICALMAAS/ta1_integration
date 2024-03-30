@@ -5,7 +5,6 @@ parallelized fashion:
 * georeference
 * legend_segment
 * map_crop
-* text_spotting
 * legend_item_segment
 * legend_item_description
 * line_extract

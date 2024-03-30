@@ -46,7 +46,7 @@ modules:
     # ---------------------------------------------------------------------------
     # where: segmentation/legend_item_segmentation
     # by: Fandel
-    # requires: text_spotting, legend_segment
+    # requires: legend_segment
     # produces: geojson
     -   name: legend_item_segment
         gpu: true
@@ -111,34 +111,6 @@ modules:
             patch_sizes: [1000, 256]
             strides: [1000, 256]
             only_crop_map_area: [True, True]
-
-
-    # ---------------------------------------------------------------------------
-    # TEXT_SPOTTING
-    # ---------------------------------------------------------------------------
-    # where: integration/text_spotting
-    # by: Weiwei (Zekun)
-    # requires: map_crop
-    # produced: geojson
-    -   name: text_spotting
-        gpu: true
-        user: root
-        options:
-            # inputs:
-            input_dir_path: $OUTPUT_DIR/map_crop/$MAP_NAME_g1000_s1000_wo_legend
-            # outputs:
-            output_folder: $OUTPUT_DIR/text_spotting
-            # temp:
-            # misc:
-            model_weight_path: /home/spotter_v2/PALEJUN/weights/synthmap_pretrain/model_final.pth
-            spotter_config: /home/spotter_v2/PALEJUN/configs/PALEJUN/SynthMap/SynthMap_Polygon.yaml
-            map_kurator_system_dir: /home/mapkurator-system
-            text_spotting_model_dir: /home/spotter_v2/PALEJUN
-            expt_name: mapKurator_test
-            module_text_spotting: ""
-            spotter_model: spotter_v2
-            spotter_expt_name: test
-            module_img_geojson: ""
 
 
     # ---------------------------------------------------------------------------
@@ -251,7 +223,7 @@ modules:
             # inputs:
             nongeoref_map_dir: $INPUT_DIR/maps/$MAP_NAME
             layout_output_dir: $OUTPUT_DIR/legend_item_description
-            georef_output_dir: $OUTPUT_DIR/example_inputs/georeference
+            georef_output_dir: $OUTPUT_DIR/georeference
             poly_output_dir: $OUTPUT_DIR/polygon_extract
             ln_output_dir: $OUTPUT_DIR/line_extract
             pt_output_dir: $OUTPUT_DIR/point_extract
