@@ -124,7 +124,7 @@ needed._
     3. `source ./envvars.sh`
     4. `./mip/mip_module/mip_module.py --list-modules` _(should list 9 modules
        and their needed predecessor modules)_
-    5. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment --run-id run01`
+    5. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment`
         _(will take 1-2 minutes; should report status "PASSED")_
     6. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json`
         _(check the output from the legend_segment module)_
@@ -134,11 +134,18 @@ needed._
     1. `cd /ta1/repos/ta1_integration`
     2. `poetry shell`
     3. `source ./envvars.sh`
-    4. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and their needed predecessor modules)_
-    5. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop --run-id 02`
+    4. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and
+        their needed predecessor modules)_
+    5. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop`
         _(will take 1-2 minutes; should report status "PASSED")_    
-       **Note:**  The workflow for executing the map_crop module in our system involves first running the legend_segment module, followed by the map_crop module. This sequence is depicted in the module dependencies figure below, where the legend_segment module precedes the map_crop module. As a result, our system executes the legend_segment module before the map_crop module.
-    6. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json` _(check the output from the legend_segment module)_
+       **Note:**  The workflow for executing the map_crop module in our system
+       involves first running the legend_segment module, followed by the
+       map_crop module. This sequence is depicted in the module dependencies
+       figure below, where the legend_segment module precedes the map_crop
+       module. As a result, our system executes the legend_segment module
+       before the map_crop module.
+    6. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json`
+       _(check the output from the legend_segment module)_
     7. `ls -R /ta1/outputs/job02/map_crop` _(check the output from the map_crop module)_
         <img src="module_dependency.png" alt="Figure 1: Modules Dependencies." width="700"/>
 
