@@ -1,7 +1,7 @@
 :80 {
 	reverse_proxy :3000
 	basicauth * {
-		admin $2a$14$zoFxhXNFbGj4ZTDw9GIaN.JXSN7ObUsQLBfEeR2L8049KzJHpkida
+		admin $2a$14$lk1paUMSIxEQXMkIATdMEuMT7Wj2yNhp.D0EC7DbqWz97ni2hi5Va
 	}
 }
 
