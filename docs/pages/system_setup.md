@@ -161,8 +161,8 @@ needed._
     2. `cd /ta1/repos/ta1_integration`
     3. `poetry shell`
     4. `source ./envvars.sh`
-    5. `export MIP_CLIENT_USER=mpg`
-    6. `export MIP_CLIENT_PASSWORD=mpg`
+    5. `export MIP_CLIENT_USER=mip`, `export MIP_CLIENT_PASSWORD=mip`
+    6. `export MIP_OPENAI_KEY=...your_key...`
     7. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules --get`
         _(should show a list of all the supported modules)_
     8. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --get`
