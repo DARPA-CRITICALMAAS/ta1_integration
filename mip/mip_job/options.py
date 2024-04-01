@@ -73,12 +73,36 @@ class Options:
         self.job_name: str = args.job_name
         self.module_names: list[str] = args.module_name
         self.config_file = Path(args.config_file)
-        self.list_tasks: bool = args.list_modules
+        self.list_modules: bool = args.list_modules
         self.list_deps: bool = args.list_deps
         self.openai_key_file = Path(args.openai_key_file)
         self.force_rerun = args.force_rerun
 
-        if not self.list_tasks and not self.list_deps:
+        if self.list_modules:
+            if self.map_name:
+                parser.error("--map-name is not allowed with --list-modules")
+            if self.module_names:
+                parser.error("--module-name is not allowed with --list-modules")
+            if self.job_name:
+                parser.error("--job-name is not allowed with --list-modules")
+            if self.run_id:
+                parser.error("--run-id is not allowed with --list-modules")
+
+        elif self.list_deps:
+            if self.map_name:
+                parser.error("--map-name not allowed with --list-deps")
+            if not self.module_names:
+                parser.error("--module-name is required with --list-deps")
+            if self.job_name:
+                parser.error("--job-name is not allowed with --list-deps")
+            if self.run_id:
+                parser.error("--run-id is not allowed with --list-deps")
+            self.map_name = "NO_MAP"
+            self.job_name = "NO_JOB"
+            self.run_id = "NO_RUN"
+
+        else:
+            # happy path
             if not self.map_name:
                 parser.error("--map-name is required")
             if not self.module_names:
