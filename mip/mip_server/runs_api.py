@@ -51,6 +51,7 @@ class RunsApi:
             "--map-name", run_status.payload.map,
             "--job-name", run_status.payload.job,
             "--run-id", run_status.run_id,
+            "--openai-key", run_status.payload.openai_key,
             ]
         if run_status.payload.force_rerun:
             args.append("--force-rerun")
