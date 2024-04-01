@@ -101,7 +101,9 @@ needed._
 
 3. **Pull all the prebuilt docker containers**
     1. `cd /ta1/repos/ta1_integration/docker/tools`
-    2. `./build_all.sh --pull` _(this may take 15-30 minutes, as the docker images are not well-packed yet)_
+    2. `poetry shell`
+    3. `source ./envvars.sh`
+    4. `./build_all.sh --pull` _(this may take 15-30 minutes, as the docker images are not well-packed yet)_
 
 4. **Verify Docker is working**
     1. `docker run hello-world` _(should show the "Hello from Docker" text)_
@@ -109,41 +111,50 @@ needed._
 5. **Verify the GPUs are working**
     1. `nvidia-smi` _(should show CUDA 12.0 and at least one GPU)_
     2. `cd /ta1/repos/ta1_integration`
-    3. `docker build -f docker/hello-gpu/Dockerfile -t hello-gpu .`
-    4. `docker run --gpus=all hello-gpu --duration 5 --cpu` (should show cpu_util column well above 0%)
-    5. `docker run --gpus=all hello-gpu --duration 5 --gpu` (should show gpu_util column well above 0%)
+    3. `poetry shell`
+    4. `source ./envvars.sh`
+    5. `docker build -f docker/hello-gpu/Dockerfile -t hello-gpu .`
+    6. `docker run --gpus=all hello-gpu --duration 5 --cpu` (should show cpu_util column well above 0%)
+    7. `docker run --gpus=all hello-gpu --duration 5 --gpu` (should show gpu_util column well above 0%)
 
-6. **Verify `mip_module` works** (The `mip_module` tool runs exactly one module in our system. Refer [running_mip_module.md](running_mip_module.md) for details.)  
-   run `poetry shell` to make sure you are in the virtual env, which has project dependencies.  
+6. **Verify `mip_module` works** (The `mip_module` tool runs exactly one module
+    in our system. Refer [running_mip_module.md](running_mip_module.md) for details.)  
     1. `cd /ta1/repos/ta1_integration`
-    2. `./mip/mip_module/mip_module.py --list-modules` _(should list 9 modules and their needed predecessor modules)_
-    3. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment --run-id run01`
+    2. `poetry shell`
+    3. `source ./envvars.sh`
+    4. `./mip/mip_module/mip_module.py --list-modules` _(should list 9 modules
+       and their needed predecessor modules)_
+    5. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment --run-id run01`
         _(will take 1-2 minutes; should report status "PASSED")_
-    4. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json` _(check the output from the legend_segment module)_
+    6. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json`
+        _(check the output from the legend_segment module)_
 
-7. **Verify `mip_job` works** (The `mip_job` tool runs one or several modules, including any needed predecessor modules in our system. Refer [running_mip_job.md](running_mip_job.md) for details.)   
-    run `poetry shell` to make sure you are in the virtual env, which has project dependencies.  
+7. **Verify `mip_job` works** (The `mip_job` tool runs one or several modules,
+    including any needed predecessor modules in our system. Refer [running_mip_job.md](running_mip_job.md) for details.)   
     1. `cd /ta1/repos/ta1_integration`
-    2. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and their needed predecessor modules)_
-    3. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop --run-id 02`
+    2. `poetry shell`
+    3. `source ./envvars.sh`
+    4. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and their needed predecessor modules)_
+    5. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop --run-id 02`
         _(will take 1-2 minutes; should report status "PASSED")_    
        **Note:**  The workflow for executing the map_crop module in our system involves first running the legend_segment module, followed by the map_crop module. This sequence is depicted in the module dependencies figure below, where the legend_segment module precedes the map_crop module. As a result, our system executes the legend_segment module before the map_crop module.
-    5. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json` _(check the output from the legend_segment module)_
-    6. `ls -R /ta1/outputs/job02/map_crop` _(check the output from the map_crop module)_  
-   
-<img src="module_dependency.png" alt="Figure 1: Modules Dependencies." width="700"/>
+    6. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json` _(check the output from the legend_segment module)_
+    7. `ls -R /ta1/outputs/job02/map_crop` _(check the output from the map_crop module)_
+        <img src="module_dependency.png" alt="Figure 1: Modules Dependencies." width="700"/>
 
 8. **Verify `mip_server` works**
     1. `cd /ta1/repos/ta1_integration`
-    2. `uvicorn mip.mip_server.mip_server:app` _(leave this running while you do the next step)_
+    2. `poetry shell`
+    3. `source ./envvars.sh`
+    4. `uvicorn mip.mip_server.mip_server:app` _(leave this running while you do the next step)_
 
 9. **Verify `mip_client` works**
     1. _make sure `uvicorn` is running in your first ssh session and start a new, second ssh session_ 
     2. `cd /ta1/repos/ta1_integration`
     3. `poetry shell`
     4. `source ./envvars.sh`
-    5. `export MIP_CLIENT_USER=mpg`
-    6. `export MIP_CLIENT_PASSWORD=mpg`
+    5. `export MIP_CLIENT_USER=mip`, `export MIP_CLIENT_PASSWORD=mip`
+    6. `export MIP_OPENAI_KEY=...your_key...`
     7. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules --get`
         _(should show a list of all the supported modules)_
     8. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --get`
@@ -173,11 +184,12 @@ In this step, we describe how to run `mip_server` so that it is run as a unix
 service on a publicly-visible port.
 
 1. **Set up the `mip_server` service**
-    1. `sudo cp ./ops/mip.service /etc/systemd/system/mip.service`
-    2. `sudo systemctl daemon-reload`
-    3. `sudo systemctl enable mip`
-    4. `sudo systemctl start mip`
-    5. `sudo systemctl status mip` # verify service running
+    1. `cd /ta1/repos/ta1_integration`
+    2. `sudo cp ./ops/mip.service /etc/systemd/system/mip.service`
+    3. `sudo systemctl daemon-reload`
+    4. `sudo systemctl enable mip`
+    5. `sudo systemctl start mip`
+    6. `sudo systemctl status mip` # verify service running
 You can use `sudo journalctl -u mip` if needed to debug failing service.
 
 2. **Run Caddy**

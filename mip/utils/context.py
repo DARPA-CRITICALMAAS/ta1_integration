@@ -35,6 +35,11 @@ class Context:
         self.run_id = run_id
         self.force_rerun = force_rerun
 
+        print(f"map_name: {self.map_name}")
+        print(f"module_names: {self.module_names}")
+        print(f"job_name: {self.job_name}")
+        print(f"run_id: {self.run_id}")
+
         self._configuration = ConfigurationModel.read(config_file)
 
         self.openai_key = openai_key_file.read_text().strip()
@@ -184,3 +189,8 @@ class Context:
             p.mkdir(parents=True, exist_ok=True)
 
         return 0
+
+
+def create_run_id() -> str:
+    s = datetime.now().strftime("%Y%m%d-%H%M%S")
+    return s
