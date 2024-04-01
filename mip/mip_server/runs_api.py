@@ -10,6 +10,7 @@ from mip.utils.status_enum import StatusEnum
 from mip.utils.run_payload_model import RunPayloadModel
 from mip.utils.run_status_model import RunStatusModel
 from mip.utils.configuration_model import ConfigurationModel
+from mip.utils.context import create_run_id
 
 
 class RunsApi:
@@ -19,7 +20,7 @@ class RunsApi:
         return
 
     def post_run(self, body: RunPayloadModel) -> RunStatusModel:
-        run_id = self._create_run_id()
+        run_id = create_run_id()
 
         filename = self._get_run_id_filename(run_id)
         if filename.exists():
@@ -83,11 +84,6 @@ class RunsApi:
         data = json.loads(filename.read_text())
         run_status = RunStatusModel(**data)
         return run_status
-
-    @staticmethod
-    def _create_run_id() -> str:
-        s = datetime.now().strftime("%Y%m%d-%H%M%S")
-        return s
 
     def _get_run_id_filename(self, run_id: str) -> Path:
         filename = self._configuration.host.runs_dir / f"{run_id}.json"

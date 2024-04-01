@@ -160,7 +160,15 @@ Gets the temp files from the last run of the given job/module
 * Returns: a zip file containing the temp file(s)
 
 
-### 5.3. The Schemata
+### 5.4. The "Misc" API
+
+#### `GET /maps`
+
+Helper function to list the TIFF maps loaded onto the server
+* Returns: list of map names
+
+
+### 5.5. The Schemata
 
 The following Pydantic classes (JSON dicts) are used for endpoint payloads and responses.
 

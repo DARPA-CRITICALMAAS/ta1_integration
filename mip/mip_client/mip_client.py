@@ -77,6 +77,9 @@ class Options:
         self.password = os.getenv("MIP_CLIENT_PASSWORD", None)
         if not self.password:
             parser.error("$MIP_CLIENT_PASSWORD not set")
+        self.openai_key = os.getenv("MIP_OPENAI_KEY", None)
+        if not self.openai_key:
+            parser.error("$MIP_OPENAI_KEY not set")
 
 
 def process_output(resp: requests.Response, output_file: Optional[Path]) -> int:
@@ -132,6 +135,11 @@ def main() -> int:
 
     if options.do_post:
         body = options.input.read_text()
+
+        j = json.loads(body)
+        j["openai_key"] = options.openai_key
+        body = json.dumps(j)
+        
         resp = requests.post(url=options.url, auth=auth, data=body)
         if resp.status_code != 200:
             print(f"*** error: {resp.content}")
