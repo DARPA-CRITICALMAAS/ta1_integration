@@ -36,7 +36,7 @@ From your local machine, do the following:
    2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/ops/ilaws_config.yml > ilaws_config.yml`
 5. Edit `config.yml` to provide your own EC2 key pair name, a project name (any
     short string), and an owner name (any short string). You can also change
-    the instance type, aws region, etc., in this file if you need to.
+    the instance type, aws region, etc., in this file if you need to. Section 3.1 in [README.md](https://bitbucket.org/inferlink/ilaws/src/main/) shows how to create your EC2 key pair.  
 6. Start the instance, using any short string to name your stack (e.g. "ta1_test"):
     ```
    python -m ilaws create --stack-name YOUR_STACK_NAME --config-file ./ilaws_config.yml
@@ -70,7 +70,7 @@ python -m ilaws delete --stack-name ta1-test
 ## STEP 2: Configuring the Host
 
 Now that your host is ready to use, we need to configure it: `ssh` into the
-host and perform the following steps.
+host and perform the following steps. E.g., `ssh -i /path/to/your-key.pem ubutun@instance-public-dns`
 
 _Note: if you are on a fresh EC2 host, some required additional steps are
 indicated with as **EC2**. If you are on your own box, these steps might not be
@@ -113,21 +113,25 @@ needed._
     4. `docker run --gpus=all hello-gpu --duration 5 --cpu` (should show cpu_util column well above 0%)
     5. `docker run --gpus=all hello-gpu --duration 5 --gpu` (should show gpu_util column well above 0%)
 
-6. **Verify `mip_module` works**
+6. **Verify `mip_module` works** (The `mip_module` tool runs exactly one module in our system. Refer [running_mip_module.md](running_mip_module.md) for details.)  
+   run `poetry shell` to make sure you are in the virtual env, which has project dependencies.  
     1. `cd /ta1/repos/ta1_integration`
-    2. `./mip/mip_module/mip_module.py --list-modules` _(should list ~10 modules)_
+    2. `./mip/mip_module/mip_module.py --list-modules` _(should list 9 modules and their needed predecessor modules)_
     3. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment --run-id run01`
         _(will take 1-2 minutes; should report status "PASSED")_
-    4. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json`
+    4. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json` _(check the output from the legend_segment module)_
 
-7. **Verify `mip_job` works**
+7. **Verify `mip_job` works** (The `mip_job` tool runs one or several modules, including any needed predecessor modules in our system. Refer [running_mip_job.md](running_mip_job.md) for details.)   
+    run `poetry shell` to make sure you are in the virtual env, which has project dependencies.  
     1. `cd /ta1/repos/ta1_integration`
-    2. `./mip/mip_job/mip_job.py --list-modules`
-    3. `./mip/mip_job/mip_job.py --list-deps` _(should show a DAG of all the modules)_
-    4. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop --run-id 02`
-        _(will take 1-2 minutes; should report status "PASSED")_
-    5. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json`
-    6. `ls -R /ta1/outputs/job02/map_crop`
+    2. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and their needed predecessor modules)_
+    3. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop --run-id 02`
+        _(will take 1-2 minutes; should report status "PASSED")_    
+       **Note:**  The workflow for executing the map_crop module in our system involves first running the legend_segment module, followed by the map_crop module. This sequence is depicted in the module dependencies figure below, where the legend_segment module precedes the map_crop module. As a result, our system executes the legend_segment module before the map_crop module.
+    5. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json` _(check the output from the legend_segment module)_
+    6. `ls -R /ta1/outputs/job02/map_crop` _(check the output from the map_crop module)_  
+   
+<img src="module_dependency.png" alt="Figure 1: Modules Dependencies." width="700"/>
 
 8. **Verify `mip_server` works**
     1. `cd /ta1/repos/ta1_integration`
