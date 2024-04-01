@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse
 from mip.mip_server.jobs_api import JobsApi
 from mip.mip_server.modules_api import ModulesApi
 from mip.mip_server.runs_api import RunsApi
+from mip.mip_server.misc_api import MiscApi
 from mip.utils.configuration_model import ConfigurationModel
 from mip.utils.hello_response_model import HelloResponseModel
 from mip.utils.job_status_model import JobStatusModel
@@ -22,6 +23,7 @@ configuration = ConfigurationModel.read(CONFIG_FILE)
 runs_api = RunsApi(configuration)
 jobs_api = JobsApi(configuration)
 modules_api = ModulesApi(configuration)
+misc_api = MiscApi(configuration)
 
 app = FastAPI()
 
@@ -120,4 +122,14 @@ async def get_runs() -> list[str]:
 @app.get("/runs/{run_id}")
 async def get_run(run_id: str) -> RunStatusModel:
     result = runs_api.get_run_by_name(run_id)
+    return result
+
+
+# ------------------------------------------------------------------------
+# /MISC
+# ------------------------------------------------------------------------
+
+@app.get("/maps/")
+async def get_maps() -> list[str]:
+    result = misc_api.get_maps()
     return result
