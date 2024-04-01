@@ -4,6 +4,8 @@ import argparse
 import os
 from pathlib import Path
 
+from mip.utils.context import create_run_id
+
 
 DEFAULT_CONFIG_FILE = "./config.yml"
 DEFAULT_OPENAI_KEY_FILE = f"{os.path.expanduser('~')}/.ssh/openai"
@@ -70,7 +72,14 @@ class Options:
         self.openai_key_file = Path(args.openai_key_file)
         self.force_rerun = args.force_rerun
 
-        if not self.list_modules:
+        if self.list_modules:
+            pass
+
+        else:
+            # happy path
+            if not self.run_id:
+                self.run_id = create_run_id()
+
             if not self.map_name:
                 parser.error("--map-name is required")
             if not self.module_name:

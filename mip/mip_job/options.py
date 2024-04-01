@@ -4,6 +4,9 @@ import argparse
 import os
 from pathlib import Path
 
+from mip.utils.context import create_run_id
+
+
 
 DEFAULT_CONFIG_FILE = "./config.yml"
 DEFAULT_TASK_NAME = "all"
@@ -103,6 +106,9 @@ class Options:
 
         else:
             # happy path
+            if not self.run_id:
+                self.run_id = create_run_id()
+
             if not self.map_name:
                 parser.error("--map-name is required")
             if not self.module_names:
