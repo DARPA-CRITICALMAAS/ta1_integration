@@ -121,7 +121,7 @@ needed._
         _(will take 1-2 minutes; should report status "PASSED")_
     4. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json` _(check the output from the legend_segment module)_
 
-8. **Verify `mip_job` works** (The `mip_job` tool runs one or several modules, including any needed predecessor modules in our system. Refer [running_mip_job.md](running_mip_job.md) for details.)   
+7. **Verify `mip_job` works** (The `mip_job` tool runs one or several modules, including any needed predecessor modules in our system. Refer [running_mip_job.md](running_mip_job.md) for details.)   
     run `poetry shell` to make sure you are in the virtual env, which has project dependencies.  
     1. `cd /ta1/repos/ta1_integration`
     2. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and their needed predecessor modules)_
@@ -133,11 +133,11 @@ needed._
    
 <img src="module_dependency.png" alt="Figure 1: Modules Dependencies." width="700"/>
 
-10. **Verify `mip_server` works**
+8. **Verify `mip_server` works**
     1. `cd /ta1/repos/ta1_integration`
     2. `uvicorn mip.mip_server.mip_server:app` _(leave this running while you do the next step)_
 
-11. **Verify `mip_client` works**
+9. **Verify `mip_client` works**
     1. _make sure `uvicorn` is running in your first ssh session and start a new, second ssh session_ 
     2. `cd /ta1/repos/ta1_integration`
     3. `poetry shell`
