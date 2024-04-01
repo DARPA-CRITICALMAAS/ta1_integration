@@ -29,7 +29,7 @@ def main() -> int:
 
     options = Options()
 
-    if options.list_tasks:
+    if options.list_modules:
         print("Registered modules:")
         for name, cls in get_tasks().items():
             if cls.REQUIRES:

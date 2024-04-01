@@ -169,11 +169,12 @@ In this step, we describe how to run `mip_server` so that it is run as a unix
 service on a publicly-visible port.
 
 1. **Set up the `mip_server` service**
-    1. `cp config.yml ./mip/mip_server/`
     1. `sudo cp ./ops/mip.service /etc/systemd/system/mip.service`
     2. `sudo systemctl daemon-reload`
     3. `sudo systemctl enable mip`
-    4. `sudo systemctl start mip`  **# currently failing**
+    4. `sudo systemctl start mip`
+    5. `sudo systemctl status mip` # verify service running
+You can use `sudo journalctl -u mip` if needed to debug failing service.
 
 2. **Run Caddy**
     1. `sudo ./ops/install_caddy.sh`
