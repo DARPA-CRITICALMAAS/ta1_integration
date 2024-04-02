@@ -14,7 +14,7 @@ class Options:
     def __init__(self):
 
         parser = argparse.ArgumentParser(
-            prog="mipper",
+            prog="mip_job",
             description="Runs TA1 modules in an integrated fashion")
 
         parser.add_argument(
@@ -56,7 +56,7 @@ class Options:
             help="display module dependency tree and exit"
         )
         parser.add_argument(
-            "--openai_key",
+            "--openai-key",
             type=str,
             default=None,
             help=f"your OpenAI key string"
