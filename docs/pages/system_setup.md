@@ -154,27 +154,27 @@ needed._
     2. `cd /ta1/repos/ta1_integration`
     3. `export MIP_CLIENT_USER=mip`
     4. `export MIP_CLIENT_PASSWORD=mip`
-    4. `export MIP_OPENAI_KEY=...your_key_here...`
-    4. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules --get`
+    5. `export MIP_OPENAI_KEY=...your_key_here...`
+    6. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules --get`
         _(should show a list of all the supported modules)_
-    4. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/maps --get`
+    7. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/maps --get`
         _(should show a list of all the map preloaded onto the server)_
-    5. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --get`
+    8. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --get`
         _(should show "Hello, mipper.")_
-    6. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --post --input ./mip/mip_client/hello_input.json`
+    9. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --post --input ./mip/mip_client/hello_input.json`
         _(should show JSON object with "HI" and "SELF")_
-    7. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/runs --post --input ./mip/mip_client/run_input.json`
+    10. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/runs --post --input ./mip/mip_client/run_input.json`
         _(`status` string should be "RUNNING"; copy the `run_id` string)_
-    8. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/runs/YOUR_RUN_ID --get`
+    11. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/runs/YOUR_RUN_ID --get`
         _(repeat this line every 15 seconds until `status` string is "PASSED")_
-    9. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/jobs --get`
+    12. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/jobs --get`
         _(list should include `job03`)_
-    10. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules/job03/legend_segment --get`
-    11. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules/job03/legend_segment/outputs --get`
+    13. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules/job03/legend_segment --get`
+    14. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules/job03/legend_segment/outputs --get`
          _(should report a zip file named `job03_legend_segment_outputs.zip`)_
-    12. `unzip -l job03_legend_segment_outputs.zip`
+    15. `unzip -l job03_legend_segment_outputs.zip`
          _(should indicate the zip file contains a file named `job03_legend_segment_outputs/WY_CO_Peach_map_segmentation.json`)_
-    13. _go back to the session running `uvicorn` and kill it
+    16. _go back to the session running `uvicorn` and kill it
 
 
 
@@ -201,10 +201,10 @@ You can use `sudo journalctl -u mip` if needed to debug failing service.
     1. _open a window on your local machine (not the EC2 host)_
     2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/mip/mip_client/mip_client.py > mip_client.py`
     3. `pip install requests`
-    3. `export MIP_CLIENT_USER=mip`
-    4. `export MIP_CLIENT_PASSWORD=mip`
-    4. `export MIP_OPENAI_KEY=...your_key_here...`
-    4. 4. `./mip_client.py --get -u http://$PUBLIC_IP_ADDRESS:8000/modules`
+    4. `export MIP_CLIENT_USER=mip`
+    5. `export MIP_CLIENT_PASSWORD=mip`
+    6. `export MIP_OPENAI_KEY=...your_key_here...`
+    7. `./mip_client.py --get -u http://$PUBLIC_IP_ADDRESS:8080/modules`
 
 
 
