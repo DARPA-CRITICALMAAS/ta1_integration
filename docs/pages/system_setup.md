@@ -128,7 +128,6 @@ needed._
     6. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment`
         _(will take 1-2 minutes; should report status "PASSED")_
     7. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json`
-        _(check the output from the legend_segment module)_
 
 7. **Verify `mip_job` works** (The `mip_job` tool runs one or several modules,
     including any needed predecessor modules in our system. Refer [running_mip_job.md](running_mip_job.md) for details.)   
