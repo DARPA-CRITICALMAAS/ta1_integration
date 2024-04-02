@@ -97,7 +97,7 @@ needed._
     3. `poetry shell`
     4. `poetry install`
     5. `source ./envvars.sh`
-    6. `echo YOUR_OPENAI_KEY > /home/ubuntu/.ssh/openai` 
+    6. `export MIP_OPENAI_KEY=...your_openai_key...` 
 
 3. **Pull all the prebuilt docker containers**
     1. `cd /ta1/repos/ta1_integration/docker/tools`
@@ -122,24 +122,32 @@ needed._
     1. `cd /ta1/repos/ta1_integration`
     2. `poetry shell`
     3. `source ./envvars.sh`
-    4. `./mip/mip_module/mip_module.py --list-modules` _(should list 9 modules
+    4. `export MIP_OPENAI_KEY=...your_openai_key...` 
+    5. `./mip/mip_module/mip_module.py --list-modules` _(should list 9 modules
        and their needed predecessor modules)_
-    5. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment --run-id run01`
+    6. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment`
         _(will take 1-2 minutes; should report status "PASSED")_
-    6. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json`
-        _(check the output from the legend_segment module)_
+    7. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json`
 
 7. **Verify `mip_job` works** (The `mip_job` tool runs one or several modules,
     including any needed predecessor modules in our system. Refer [running_mip_job.md](running_mip_job.md) for details.)   
     1. `cd /ta1/repos/ta1_integration`
     2. `poetry shell`
     3. `source ./envvars.sh`
-    4. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and their needed predecessor modules)_
-    5. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop --run-id 02`
+    4. `export MIP_OPENAI_KEY=...your_openai_key...` 
+    5. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and
+        their needed predecessor modules)_
+    6. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop`
         _(will take 1-2 minutes; should report status "PASSED")_    
-       **Note:**  The workflow for executing the map_crop module in our system involves first running the legend_segment module, followed by the map_crop module. This sequence is depicted in the module dependencies figure below, where the legend_segment module precedes the map_crop module. As a result, our system executes the legend_segment module before the map_crop module.
-    6. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json` _(check the output from the legend_segment module)_
-    7. `ls -R /ta1/outputs/job02/map_crop` _(check the output from the map_crop module)_
+       **Note:**  The workflow for executing the map_crop module in our system
+       involves first running the legend_segment module, followed by the
+       map_crop module. This sequence is depicted in the module dependencies
+       figure below, where the legend_segment module precedes the map_crop
+       module. As a result, our system executes the legend_segment module
+       before the map_crop module.
+    7. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json`
+       _(check the output from the legend_segment module)_
+    8. `ls -R /ta1/outputs/job02/map_crop` _(check the output from the map_crop module)_
         <img src="module_dependency.png" alt="Figure 1: Modules Dependencies." width="700"/>
 
 8. **Verify `mip_server` works**

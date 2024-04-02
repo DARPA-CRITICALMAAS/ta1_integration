@@ -32,10 +32,6 @@ def main() -> int:
         print(f"*** error: invalid module name: {options.module_name}")
         return 1
 
-    if not options.openai_key_file.exists():
-        print(f"*** error: OpenAI key file not found: {options.openai_key_file}")
-        return 1
-
     context = Context(
         map_name=options.map_name,
         module_names=[options.module_name],
@@ -43,7 +39,7 @@ def main() -> int:
         run_id=options.run_id,
         force_rerun=options.force_rerun,
         config_file=options.config_file,
-        openai_key_file=options.openai_key_file
+        openai_key=options.openai_key
     )
 
     status = context.verify_host_dirs()

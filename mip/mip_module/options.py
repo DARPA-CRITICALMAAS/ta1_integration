@@ -50,10 +50,9 @@ class Options:
             help="list names of known modules and exit"
         )
         parser.add_argument(
-            "--openai_key_file",
+            "--openai_key",
             type=str,
-            default=DEFAULT_OPENAI_KEY_FILE,
-            help=f"path to file containing OpenAI key (default: {DEFAULT_OPENAI_KEY_FILE})"
+            help=f"your OpenAI key string"
         )
         parser.add_argument(
             "--force-rerun",
@@ -69,7 +68,7 @@ class Options:
         self.run_id = args.run_id
         self.config_file = Path(args.config_file)
         self.list_modules: bool = args.list_modules
-        self.openai_key_file = Path(args.openai_key_file)
+        self.openai_key = args.openai_key
         self.force_rerun = args.force_rerun
 
         if self.list_modules:

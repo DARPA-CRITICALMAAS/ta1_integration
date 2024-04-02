@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from datetime import datetime
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -26,7 +27,7 @@ class Context:
             run_id: str,
             force_rerun: bool,
             config_file: Path,
-            openai_key_file: Path):
+            openai_key: Optional[str]):
         Context.CONTEXT = self
 
         self.map_name = map_name
@@ -42,7 +43,12 @@ class Context:
 
         self._configuration = ConfigurationModel.read(config_file)
 
-        self.openai_key = openai_key_file.read_text().strip()
+        if openai_key:
+            self.openai_key = openai_key.strip()
+        else:
+            self.openai_key = os.getenv("MIP_OPENAI_KEY", None)
+        if not self.openai_key:
+            raise Exception(f"Neither --openai-key nor $MIP_OPENAI_KEY was given")
 
         self.host_input_dir = self._configuration.host.input_dir
         self.host_output_dir = self._configuration.host.output_dir

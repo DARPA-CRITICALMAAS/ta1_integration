@@ -6,11 +6,8 @@ from pathlib import Path
 
 from mip.utils.context import create_run_id
 
-
-
 DEFAULT_CONFIG_FILE = "./config.yml"
 DEFAULT_TASK_NAME = "all"
-DEFAULT_OPENAI_KEY_FILE = f"{os.path.expanduser('~')}/.ssh/openai"
 
 
 class Options:
@@ -59,10 +56,10 @@ class Options:
             help="display module dependency tree and exit"
         )
         parser.add_argument(
-            "--openai_key_file",
+            "--openai_key",
             type=str,
-            default=DEFAULT_OPENAI_KEY_FILE,
-            help=f"path to file containing OpenAI key (default: {DEFAULT_OPENAI_KEY_FILE})"
+            default=None,
+            help=f"your OpenAI key string"
         )
         parser.add_argument(
             "--force-rerun",
@@ -78,7 +75,7 @@ class Options:
         self.config_file = Path(args.config_file)
         self.list_modules: bool = args.list_modules
         self.list_deps: bool = args.list_deps
-        self.openai_key_file = Path(args.openai_key_file)
+        self.openai_key = args.openai_key
         self.force_rerun = args.force_rerun
 
         if self.list_modules:
