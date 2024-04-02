@@ -34,7 +34,7 @@ From your local machine, do the following:
 4. Get the two ilaws config files:
    1. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/ops/ilaws_template.yml > ilaws_template.yml`
    2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/ops/ilaws_config.yml > ilaws_config.yml`
-5. Edit `config.yml` to provide your own EC2 key pair name, a project name (any
+5. Edit `ilaws_config.yml` to provide your own EC2 key pair name, a project name (any
     short string), and an owner name (any short string). You can also change
     the instance type, aws region, etc., in this file if you need to. Section 3.1 in [README.md](https://bitbucket.org/inferlink/ilaws/src/main/) shows how to create your EC2 key pair.  
 6. Start the instance, using any short string to name your stack (e.g. "ta1_test"):
@@ -99,11 +99,13 @@ needed._
     5. `source ./envvars.sh`
     6. `export MIP_OPENAI_KEY=...your_openai_key...` 
 
+    **IMPORTANT:** _For all subsequent steps, you will need to re-run the
+    following, if you are starting from a new shell: `poetry shell`,
+    `source ./envvars.sh`, `export MIP_OPENAI_KEY=...`
+
 3. **Pull all the prebuilt docker containers**
     1. `cd /ta1/repos/ta1_integration/docker/tools`
-    2. `poetry shell`
-    3. `source ./envvars.sh`
-    4. `./build_all.sh --pull` _(this may take 15-30 minutes, as the docker images are not well-packed yet)_
+    2. `./build_all.sh --pull` _(this may take 15-30 minutes, as the docker images are not well-packed yet)_
 
 4. **Verify Docker is working**
     1. `docker run hello-world` _(should show the "Hello from Docker" text)_
@@ -111,33 +113,24 @@ needed._
 5. **Verify the GPUs are working**
     1. `nvidia-smi` _(should show CUDA 12.0 and at least one GPU)_
     2. `cd /ta1/repos/ta1_integration`
-    3. `poetry shell`
-    4. `source ./envvars.sh`
-    5. `docker build -f docker/hello-gpu/Dockerfile -t hello-gpu .`
-    6. `docker run --gpus=all hello-gpu --duration 5 --cpu` (should show cpu_util column well above 0%)
-    7. `docker run --gpus=all hello-gpu --duration 5 --gpu` (should show gpu_util column well above 0%)
+    3. `docker build -f docker/hello-gpu/Dockerfile -t hello-gpu .`
+    4. `docker run --gpus=all hello-gpu --duration 5 --cpu` _(should show cpu_util column well above 0%)_
+    5. `docker run --gpus=all hello-gpu --duration 5 --gpu` _(should show gpu_util column well above 0%)_
 
 6. **Verify `mip_module` works** (The `mip_module` tool runs exactly one module
     in our system. Refer [running_mip_module.md](running_mip_module.md) for details.)  
-    1. `cd /ta1/repos/ta1_integration`
-    2. `poetry shell`
-    3. `source ./envvars.sh`
-    4. `export MIP_OPENAI_KEY=...your_openai_key...` 
-    5. `./mip/mip_module/mip_module.py --list-modules` _(should list 9 modules
+    1. `./mip/mip_module/mip_module.py --list-modules` _(should list 9 modules
        and their needed predecessor modules)_
-    6. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment`
+    2. `./mip/mip_module/mip_module.py --job-name job01 --map-name WY_CO_Peach --module-name legend_segment`
         _(will take 1-2 minutes; should report status "PASSED")_
-    7. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json`
+    3. `cat /ta1/outputs/job01/legend_segment/WY_CO_Peach_map_segmentation.json`
 
 7. **Verify `mip_job` works** (The `mip_job` tool runs one or several modules,
     including any needed predecessor modules in our system. Refer [running_mip_job.md](running_mip_job.md) for details.)   
     1. `cd /ta1/repos/ta1_integration`
-    2. `poetry shell`
-    3. `source ./envvars.sh`
-    4. `export MIP_OPENAI_KEY=...your_openai_key...` 
-    5. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and
+    2. `./mip/mip_job/mip_job.py --list-modules` _(should list 9 modules and
         their needed predecessor modules)_
-    6. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop`
+    3. `./mip/mip_job/mip_job.py --job-name job02 --map-name WY_CO_Peach --module-name map_crop`
         _(will take 1-2 minutes; should report status "PASSED")_    
        **Note:**  The workflow for executing the map_crop module in our system
        involves first running the legend_segment module, followed by the
@@ -145,26 +138,27 @@ needed._
        figure below, where the legend_segment module precedes the map_crop
        module. As a result, our system executes the legend_segment module
        before the map_crop module.
-    7. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json`
+    4. `cat /ta1/outputs/job02/legend_segment/WY_CO_Peach_map_segmentation.json`
        _(check the output from the legend_segment module)_
-    8. `ls -R /ta1/outputs/job02/map_crop` _(check the output from the map_crop module)_
+    5. `ls -R /ta1/outputs/job02/map_crop` _(check the output from the map_crop module)_
         <img src="module_dependency.png" alt="Figure 1: Modules Dependencies." width="700"/>
 
 8. **Verify `mip_server` works**
     1. `cd /ta1/repos/ta1_integration`
-    2. `poetry shell`
-    3. `source ./envvars.sh`
-    4. `uvicorn mip.mip_server.mip_server:app` _(leave this running while you do the next step)_
+    2. `uvicorn mip.mip_server.mip_server:app` _(leave this running while you do the next step)_
 
 9. **Verify `mip_client` works**
-    1. _make sure `uvicorn` is running in your first ssh session and start a new, second ssh session_ 
+    1. _make sure `uvicorn` is running in your first ssh session and start a
+       new, second ssh session; note this session does NOT require you start a
+       poetry environment_
     2. `cd /ta1/repos/ta1_integration`
-    3. `poetry shell`
-    4. `source ./envvars.sh`
-    5. `export MIP_CLIENT_USER=mip`, `export MIP_CLIENT_PASSWORD=mip`
-    6. `export MIP_OPENAI_KEY=...your_key...`
-    7. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules --get`
+    3. `export MIP_CLIENT_USER=mip`
+    4. `export MIP_CLIENT_PASSWORD=mip`
+    5. `export MIP_OPENAI_KEY=...your_key_here...`
+    6. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/modules --get`
         _(should show a list of all the supported modules)_
+    7. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000/maps --get`
+        _(should show a list of all the map preloaded onto the server)_
     8. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --get`
         _(should show "Hello, mipper.")_
     9. `./mip/mip_client/mip_client.py --url http://127.0.0.1:8000 --post --input ./mip/mip_client/hello_input.json`
@@ -186,8 +180,6 @@ needed._
 
 ## STEP 3: Running the Server as a Public Service
 
-**UNDER CONSTRUCTION -- SKIP THIS STEP FOR NOW**
-
 In this step, we describe how to run `mip_server` so that it is run as a unix
 service on a publicly-visible port.
 
@@ -197,7 +189,7 @@ service on a publicly-visible port.
     3. `sudo systemctl daemon-reload`
     4. `sudo systemctl enable mip`
     5. `sudo systemctl start mip`
-    6. `sudo systemctl status mip` # verify service running
+    6. `sudo systemctl status mip` _(verify service is running)_
 You can use `sudo journalctl -u mip` if needed to debug failing service.
 
 2. **Run Caddy**
@@ -209,7 +201,10 @@ You can use `sudo journalctl -u mip` if needed to debug failing service.
     1. _open a window on your local machine (not the EC2 host)_
     2. `curl https://raw.githubusercontent.com/DARPA-CRITICALMAAS/ta1_integration/main/mip/mip_client/mip_client.py > mip_client.py`
     3. `pip install requests`
-    4. `./mip_client.py --get -u http://$PUBLIC_IP_ADDRESS:8000/modules`
+    4. `export MIP_CLIENT_USER=mip`
+    5. `export MIP_CLIENT_PASSWORD=mip`
+    6. `export MIP_OPENAI_KEY=...your_key_here...`
+    7. `./mip_client.py --get -u http://$PUBLIC_IP_ADDRESS:8080/modules`
 
 
 
