@@ -108,7 +108,7 @@ modules:
             # temp:
             # misc:
             map_name: $MAP_NAME
-            patch_sizes: [1000, 200]
+            patch_sizes: [1000, 256]
             strides: [1000, 200]
             only_crop_map_area: [True, True]
 
