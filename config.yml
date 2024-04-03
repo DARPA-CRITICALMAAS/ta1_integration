@@ -226,7 +226,7 @@ modules:
             georef_output_dir: $OUTPUT_DIR/georeference
             poly_output_dir: $OUTPUT_DIR/polygon_extract
             ln_output_dir: $OUTPUT_DIR/line_extract
-            pt_output_dir: $OUTPUT_DIR/point_extract
+            pt_output_dir: $OUTPUT_DIR/point_extract/output-per-symbol
             # outputs:
             output_dir: $OUTPUT_DIR/geopackage/gpkg_outputs
             georef_map_output: $OUTPUT_DIR/geopackage

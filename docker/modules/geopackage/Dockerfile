@@ -8,9 +8,9 @@ RUN \
     && conda install -y -n base conda-forge::gdal
 
 RUN pip install --no-input \
-    criticalmaas.ta1-geopackage \
     pytest \
     rasterio
+RUN pip install git+https://github.com/DARPA-CRITICALMAAS/ta1-geopackage.git
 
 # INCLUDEX perms.txt
 
