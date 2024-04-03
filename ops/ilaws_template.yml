@@ -11,6 +11,14 @@ Parameters:
         Type: String
     AMI:
         Type: String
+    ProjectName:
+        Type: String
+    OwnerName:
+        Type: String
+    UsageType:
+        Type: String
+    StackName:
+        Type: String
 
 
 Resources:
@@ -63,7 +71,7 @@ Resources:
         Type: AWS::EC2::SecurityGroup
         Properties:
             GroupName: "Internet Group"
-            GroupDescription: "SSH, MySQL and web traffic in, all traffic out."
+            GroupDescription: "SSH, SSL, and web traffic in, all traffic out."
             VpcId: !Ref VPC
             SecurityGroupIngress:
                 # ssh
@@ -115,8 +123,15 @@ Resources:
             Fn::Base64: |
               #!/bin/bash
               echo "Hello World!" > hello.txt
-
-
+          Tags:
+            - Key: ProjectName
+              Value: !Ref ProjectName
+            - Key: UserName
+              Value: !Ref OwnerName
+            - Key: UsageType
+              Value: !Ref UsageType
+            - Key: StackName
+              Value: !Ref StackName
 Outputs:
     PublicIpInstance1:
         Value:

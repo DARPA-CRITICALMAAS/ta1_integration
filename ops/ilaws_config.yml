@@ -1,14 +1,14 @@
-ec2_key: YOUR_EC2_KEY_NAME
-owner: YOUR_NAME
-project: YOUR_PROJECT_NAME
-
 # ubuntu + nvidia drivers + tensorflow
 ami: ami-0d7f1f074c0dfe7c6
 
+ec2_key: YOUR_EC2_KEY_NAME
 disk_gb: 250
 instance_type: p3.8xlarge
-
 region: us-west-2
 region_az: us-west-2a
 
-template: ./ilaws_template.yml
+template_file: ./ops/ilaws_template.yml
+
+owner_name: YOUR_NAME
+project_name: YOUR_PROJECT_NAME
+usage_type: dev
