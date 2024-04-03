@@ -108,8 +108,8 @@ modules:
             # temp:
             # misc:
             map_name: $MAP_NAME
-            patch_sizes: [1000, 256]
-            strides: [1000, 256]
+            patch_sizes: [1000, 200]
+            strides: [1000, 200]
             only_crop_map_area: [True, True]
 
 
@@ -128,7 +128,7 @@ modules:
             config: $INPUT_DIR/modules/line_extract/usgs_railroads.yaml
             trained_model_dir: $INPUT_DIR/modules/line_extract/trained_weights
             map_legend_json: $OUTPUT_DIR/legend_item_description
-            cropped_image_dir: $OUTPUT_DIR/map_crop/$MAP_NAME_g256_s256_wo_legend
+            cropped_image_dir: $OUTPUT_DIR/map_crop/$MAP_NAME_g200_s200_wo_legend
             # outputs:
             prediction_dir: $OUTPUT_DIR/line_extract
             # temp:
@@ -182,7 +182,7 @@ modules:
             # outputs:
             output_dir_root: $OUTPUT_DIR/point_extract
             map_metadata_dir: $OUTPUT_DIR/legend_item_description
-            map_patches_dir: $OUTPUT_DIR/map_crop/WY_CO_Peach_g1000_s1000_wo_legend
+            map_patches_dir: $OUTPUT_DIR/map_crop/$MAP_NAME_g1000_s1000_wo_legend
             # temp:
             #cropped_legend_dir: $TEMP_DIR/point_extract
             #processed_legend_dir: $TEMP_DIR/point_extract

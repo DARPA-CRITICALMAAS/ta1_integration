@@ -17,5 +17,5 @@ class MapCropTask(ModuleTask):
         d = self.module_config.host_module_output_dir
 
         # TODO: match this to the path/stride params
-        check_directory_exists(path=d / f"{self.map_name}_g256_s256_wo_legend", min_files=1)
+        check_directory_exists(path=d / f"{self.map_name}_g200_s200_wo_legend", min_files=1)
         check_directory_exists(path=d / f"{self.map_name}_g1000_s1000_wo_legend", min_files=1)
