@@ -16,6 +16,13 @@ class MapCropTask(ModuleTask):
     def run_post(self):
         d = self.module_config.host_module_output_dir
 
-        # TODO: match this to the path/stride params
-        check_directory_exists(path=d / f"{self.map_name}_g200_s200_wo_legend", min_files=1)
-        check_directory_exists(path=d / f"{self.map_name}_g1000_s1000_wo_legend", min_files=1)
+        # match the path/stride params
+        switches =  self.module_config.get_options()
+        patch_switch_index = switches.index('--patch_sizes')
+        stride_switch_index = switches.index('--strides')
+        patches = switches[patch_switch_index+1: stride_switch_index]
+        strides = switches[stride_switch_index+1: stride_switch_index+1+len(patches)]
+
+        for i, patch in enumerate(patches):
+            check_directory_exists(path=d / f"{self.map_name}_g{patch}_s{strides[i]}_wo_legend", min_files=1)
+
