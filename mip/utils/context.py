@@ -35,6 +35,7 @@ class Context:
         self.job_name = job_name
         self.run_id = run_id
         self.force_rerun = force_rerun
+        self.config_file = config_file
 
         print(f"map_name: {self.map_name}")
         print(f"module_names: {self.module_names}")

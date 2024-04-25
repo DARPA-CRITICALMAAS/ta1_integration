@@ -19,5 +19,6 @@ class ConfigurationModel(BaseModel):
     @staticmethod
     def read(path: Path) -> ConfigurationModel:
         s = path.read_text()
+
         c = parse_yaml_raw_as(ConfigurationModel, s)
         return c

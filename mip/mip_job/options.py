@@ -6,7 +6,7 @@ from pathlib import Path
 
 from mip.utils.context import create_run_id
 
-DEFAULT_CONFIG_FILE = "./config.yml"
+DEFAULT_CONFIG_FILE = "./config_raster.yml"
 DEFAULT_TASK_NAME = "all"
 
 
@@ -21,7 +21,7 @@ class Options:
             "--config-file",
             type=str,
             default=DEFAULT_CONFIG_FILE,
-            help=f"path to YML configuration file (default: {DEFAULT_CONFIG_FILE})",
+            # help=f"path to YML configuration file (default: {DEFAULT_CONFIG_FILE})",
         )
         parser.add_argument(
             "--map-name",
