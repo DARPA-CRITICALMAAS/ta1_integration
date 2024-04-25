@@ -38,6 +38,7 @@ class ModuleConfig:
 
     def get_options(self) -> list[str]:
         ret: list[str] = []
+        
         for k, v in self._module.options.items():
             ret.append(f"--{k}")
             if type(v) is list:
