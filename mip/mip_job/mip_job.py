@@ -7,10 +7,17 @@ import os
 from pprint import pprint
 import sys
 
+# Get the absolute path of the current directory
+# current_directory = os.path.abspath(os.path.dirname(__file__))
+
+# Add the current directory to sys.path
+
 ta1_repos_dir = os.getenv("TA1_REPOS_DIR", None)
 if not ta1_repos_dir:
     print(f"$TA1_REPOS_DIR not set")
     sys.exit(1)
+sys.path.append(f'{ta1_repos_dir}/ta1_integration')
+
 os.environ["LUIGI_CONFIG_PATH"] = ta1_repos_dir + "/ta1_integration/luigi.cfg"
 os.environ["LUIGI_LOG_CONFIG_PATH"] = ta1_repos_dir + "/ta1_integration/luigi_log.cfg"
 

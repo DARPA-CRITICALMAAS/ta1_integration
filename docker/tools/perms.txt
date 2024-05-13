@@ -1,15 +1,15 @@
 RUN addgroup --gid 1024 cmaasgroup \
    && adduser --disabled-password --gecos '' --ingroup cmaasgroup cmaas \
-   && mkdir -p /ta1 /ta1/inputs /ta1/outputs /ta1/temps /ta1/repos \
-   && chown -R :cmaasgroup /ta1 \
-   && chmod -R ug=rwX /ta1 \
-   && chmod -R g+s /ta1
+   && mkdir -p /cdr /cdr/inputs /cdr/outputs /cdr/temps /cdr/repos \
+   && chown -R :cmaasgroup /cdr \
+   && chmod -R ug=rwX /cdr \
+   && chmod -R g+s /cdr
 
-VOLUME /ta1/inputs
-VOLUME /ta1/temps
-VOLUME /ta1/outputs
+VOLUME /cdr/inputs
+VOLUME /cdr/temps
+VOLUME /cdr/outputs
 
-WORKDIR /ta1/outputs
+WORKDIR /cdr/outputs
 
 USER cmaas
 

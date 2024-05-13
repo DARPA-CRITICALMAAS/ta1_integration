@@ -22,6 +22,7 @@ class ModuleRunner:
             f"{self._module_config.host_input_dir}:{self._module_config.container_input_dir}",
             f"{self._module_config.host_output_dir}:{self._module_config.container_output_dir}",
             f"{self._module_config.host_temp_dir}:{self._module_config.container_temp_dir}",
+            f"{self._module_config.host_repo_dir}:{self._module_config.container_repo_dir}"
         ]
 
         options = self._module_config.get_options()

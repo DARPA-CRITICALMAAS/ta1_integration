@@ -62,7 +62,7 @@ class RunsApi:
         print("===" + " ".join(args))
 
         stat = subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-
+        print("===", stat)
         if stat.returncode == 0:
             run_status.status = StatusEnum.PASSED
         else:

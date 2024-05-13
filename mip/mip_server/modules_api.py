@@ -48,6 +48,21 @@ class ModulesApi:
         source_dir = self._configuration.host.output_dir / job_name / module_name
         return _make_zip_from_dir(base_name, source_dir)
 
+    def get_module_output_file_paths(self, job_name: str, module_name: str) -> Path:
+        # base_name = f"{job_name}_{module_name}_outputs"
+        if module_name == 'point_extract':
+            source_dir = self._configuration.host.output_dir / job_name / module_name / "output-per-symbol" / job_name
+        elif module_name == 'georeference':
+            source_dir = self._configuration.host.output_dir / job_name / module_name
+        else:
+            source_dir = self._configuration.host.output_dir / job_name / module_name / job_name
+        if not os.path.exists(source_dir):
+            return []
+        file_paths = [os.path.join(source_dir, file) for file in os.listdir(source_dir) \
+                      if not(file == '.ipynb_checkpoints' or 'empty' in file)]
+        return file_paths
+            
+
     def get_module_temp_files(self, job_name: str, module_name: str) -> Path:
         base_name = f"{job_name}_{module_name}_temps"
         source_dir = self._configuration.host.temp_dir / job_name / module_name

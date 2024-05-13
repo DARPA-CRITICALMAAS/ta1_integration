@@ -26,6 +26,7 @@ class ModuleTask(SimpleTask):
             "--job-name", self.context.job_name,
             "--run-id", self.context.run_id,
             "--module-name", self.NAME,
+            "--config-file", self.context.config_file,
         ]
         stat = subprocess.run(args=args, capture_output=True, text=True)  # stderr=subprocess.STDOUT
 
