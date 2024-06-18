@@ -16,6 +16,8 @@ from mip.mip_server.runs_api import RunsApi
 from mip.utils.configuration_model import ConfigurationModel
 from mip.utils.process_georef_output_cdr import georef4CDR
 from mip.utils.process_feature_output_cdr import feature4CDR
+from cdr_schemas.georeference import GeoreferenceResults
+from cdr_schemas.feature_results import FeatureResults
 import asyncio
 import httpx
 import time
@@ -95,7 +97,6 @@ async def donwload_map(req):
     cog_url = req['cog_url']
     print(f"COG ID: {cog_id}")
     print(f"COG URL: {cog_url}")
-    print('===', os.getenv("TA1_INPUTS_DIR"))
     all_map_dir = os.getenv("TA1_INPUTS_DIR") + '/maps'
     if os.path.exists(os.path.join(all_map_dir, cog_id)):
         return {"ok": "success"}
@@ -192,7 +193,7 @@ async def send_results_to_cdr(job_id: str, event: str):
             mip_body = {
                 "job": job_id,
                 "modules": [
-                        module_name
+                        module
                       ],
                 "map": job_id,
                 "force_rerun": False,
@@ -200,7 +201,7 @@ async def send_results_to_cdr(job_id: str, event: str):
             }
             feature2cdr_processor = feature4CDR(output_paths, mip_body)
             results = feature2cdr_processor.get_feature_list()
-            feature_result_dict[module_name] = results 
+            feature_result_dict[module] = results 
     
         feature_payload = gen_feature_payload(job_id, feature_result_dict)
         headers = {'Authorization': f'Bearer {app.config["cdr_token"]}',\
@@ -212,9 +213,9 @@ async def send_results_to_cdr(job_id: str, event: str):
     
         try:
             resp.raise_for_status()
-            print(f"Posted Features to CDR! {cog_id}")
+            print(f"Posted Features to CDR! {job_id}")
         except Exception:          
-            print(f"Failed to CDR! {cog_id}")
+            print(f"Failed to CDR! {job_id}")
         return resp.raise_for_status()
     
     elif event == 'georeference':
@@ -267,10 +268,9 @@ def consumer_loop(queue: Queue) -> None:
         job_dict = queue.peek_job()
         job_id, event_name = list(job_dict.keys())[0], list(job_dict.values())[0]
         job_status = run_job(job_id, event_name)
-        print(f"Running in background: {job_id}")
+        print(f"Sending results to CDR: {job_id}")
         if job_status == 'PASSED':
             send_status = run_async_function(send_results_to_cdr(job_id, event_name))
-            pass
         _ = queue.pop_job()
         sleep(2.0)
 
