@@ -6,7 +6,7 @@ from pathlib import Path
 
 from mip.utils.context import create_run_id
 
-DEFAULT_CONFIG_FILE = "./config_raster.yml"
+DEFAULT_CONFIG_FILE = "./config.yml"
 DEFAULT_TASK_NAME = "all"
 
 

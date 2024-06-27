@@ -122,7 +122,6 @@ def main() -> int:
     print(f"Status: {status}")
     print("-----------------------")
     x = json.loads(status_file.read_text())
-    pprint(x)
     print("-----------------------")
 
     return status

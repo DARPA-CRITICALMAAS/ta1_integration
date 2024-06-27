@@ -7,26 +7,27 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y \
     libglib2.0-0 \
+    sudo \ 
     git \
     libgl1-mesa-glx  && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y \
-#     ffmpeg \
-#     libsm6 \
-#     libxext6  \
-    sudo \ 
-    git \
-    libgl1-mesa-glx \
-    # libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y \
+# #     ffmpeg \
+# #     libsm6 \
+# #     libxext6  \
+#     sudo \ 
+#     git \
+#     libgl1-mesa-glx \
+#     # libglib2.0-0 \
+#     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install \
     Pillow==9.4.0 \
     pandas==1.4.3 \
     pyyaml \
-    numpy==1.21.6 \
+    numpy==1.23 \
     opencv-python \
     Polygon3 \
     shapely==1.8.2 \
@@ -47,7 +48,7 @@ RUN echo "cmaas ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER cmaas
 
 # COPY ./usc-umn-inferlink-ta1 /ta1/repos/usc-umn-inferlink-ta1
-COPY ./AdelaiDet /ta1/repos/AdelaiDet
+# COPY ./AdelaiDet /ta1/repos/AdelaiDet
 
 # RUN cp \
 #       /ta1/repos/usc-umn-inferlink-ta1/system/mapkurator/mapkurator-system/run_text_spotting.py \

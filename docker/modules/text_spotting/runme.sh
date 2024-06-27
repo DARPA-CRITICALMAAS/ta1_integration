@@ -2,7 +2,8 @@
 
 python -c "import torch; print(f'\n\n\n!! {torch.cuda.is_available()} **\n\n\n')"
 
-pushd /ta1/repos/AdelaiDet
+# pushd /ta1/repos/AdelaiDet
+pushd /ta1/repos/usc-umn-inferlink-ta1/system/mapkurator/spotter-v2
 sudo python setup.py build develop
 popd
 

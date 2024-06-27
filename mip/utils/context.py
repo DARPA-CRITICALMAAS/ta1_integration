@@ -93,6 +93,10 @@ class Context:
             raise Exception(f"module not found: {module_name}")
         if len(items) > 1:
             raise Exception(f"duplicate module names found: {module_name}")
+        # check the human-annotated inputs for the module
+        dynamic_inputs = os.path.join(self.host_input_dir, module_name)
+        if os.path.exists(dynamic_inputs):
+            items[0].options['human_input_path'] = dynamic_inputs
         return items[0]
 
     # --------------------------------------------------------------------

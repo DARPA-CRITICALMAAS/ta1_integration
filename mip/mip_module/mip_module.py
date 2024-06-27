@@ -51,8 +51,6 @@ def main() -> int:
         task_config.host_module_luigi_file.unlink(missing_ok=True)
 
     status_file = context.get_module_status_filename(options.module_name)
-    print(f"Status file: {status_file}")
-    print(f"Started at {datetime.now()}")
 
     context.write_module_status(options.module_name)
 
