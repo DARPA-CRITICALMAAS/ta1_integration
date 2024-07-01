@@ -1,0 +1,24 @@
+FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel
+
+COPY ./usc-umn-inferlink-ta1/segmentation/layoutlmv3 /ta1/repos/usc-umn-inferlink-ta1/segmentation/layoutlmv3
+RUN chmod -R 777 /ta1/repos/usc-umn-inferlink-ta1/segmentation/layoutlmv3
+
+# INCLUDEX perms.txt
+USER root
+RUN adduser cmaas sudo
+RUN echo "cmaas ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN chown -R cmaas /ta1/repos/usc-umn-inferlink-ta1/segmentation/layoutlmv3
+USER cmaas
+
+# RUN pip install --upgrade pip setuptools wheel
+RUN pip install setuptools==69.5.1
+WORKDIR /ta1/repos/usc-umn-inferlink-ta1/segmentation/layoutlmv3
+RUN pip install -e . --verbose
+
+# COPY ./ta1_integration/docker/modules/ptln_legend_item_description/runme.sh \
+#     /ta1/ptln_legend_item_description_runme.sh
+
+CMD []
+ENTRYPOINT [ \
+    #  "/ta1/ptln_legend_item_description_runme.sh" \
+    ]

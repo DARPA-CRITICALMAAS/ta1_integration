@@ -245,10 +245,10 @@ modules:
     -   name: point_extract
         gpu: true
         options:
-            ## inputs:
+            # inputs:
             map_dir: $INPUT_DIR/maps/$MAP_NAME
             map_metadata_dir: $OUTPUT_DIR/ptln_legend_item_description
-            map_patches_dir: $OUTPUT_DIR/map_crop/feature-extraction/
+            map_patches_dir: $OUTPUT_DIR/map_crop/feature-extraction/$MAP_NAME_g1000_s1000_wo_legend
             model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/model_weights
             symbol_info_json_file: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/automated_model_selection_img_txt/data/symbol_info.json
             strike_model_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/strike_model_weights/
@@ -273,6 +273,8 @@ modules:
             # inputs:
             input_path: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
             support_data_dir: $INPUT_DIR/modules/georeference/support_data
+            mapkurator_coords_dir: $OUTPUT_DIR/coordinate_spotting/$MAP_NAME/spotter/$MAP_NAME
+            segmentation_json_path: $OUTPUT_DI/cdr/repos/ta1_integration/docker/modules/georeferenceR/legend_segment/$MAP_NAME_map_segmentation.json
             # outputs:
             output_path: $OUTPUT_DIR/georeference/$MAP_NAME.json
             # temp:

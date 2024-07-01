@@ -66,7 +66,9 @@ class DockerRunner:
         gpus_s = "--gpus all" if gpus else ""
         self.shell_command = f"#SHELL# docker run {gpus_s} --user {user} {vs} -it --entrypoint bash {image}\n"
         self.run_command = f"#EXEC# docker run {gpus_s} --user {user} {vs} {image} {options}\n"
-
+        print(self.shell_command)
+        print('================')
+        print(self.run_command)
     # returns (status code, log data, elapsed seconds)
     def run(self) -> tuple[int, str, int]:
         start = time.time()
