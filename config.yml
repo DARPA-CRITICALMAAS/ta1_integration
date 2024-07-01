@@ -33,7 +33,7 @@ modules:
         options:
             # input:
             input: $INPUT_DIR/maps/$MAP_NAME
-            model: $INPUT_DIR/modules/legend_segment/layoutlmv3_20230929
+            model: $INPUT_DIR/modules/legend_segment/layoutlmv3_20240531
             # output:
             output: $OUTPUT_DIR/legend_segment
             # temp:
@@ -87,6 +87,26 @@ modules:
             temp_dir: $TEMP_DIR/legend_item_description
             # misc:
             map_name: $MAP_NAME
+    
+     # ---------------------------------------------------------------------------
+    # PTLN_LEGEND_ITEM_DESCRIPTION
+    # ---------------------------------------------------------------------------
+    # where: segmentation/layoutlmv3
+    # by: Weiwei
+    # requires: legend_segment
+    # produces: json
+    -   name: ptln_legend_item_description
+        gpu: true
+        options:
+            # inputs:
+            map_input_dir: $INPUT_DIR/maps/$MAP_NAME
+            legend_input_dir: $OUTPUT_DIR/legend_segment
+            # outputs:
+            output_dir: $OUTPUT_DIR/ptln_legend_item_description
+            # temp:
+            temp_dir: $TEMP_DIR/ptln_legend_item_description
+            # misc:
+            map_name: $MAP_NAME
 
 
     # ---------------------------------------------------------------------------
@@ -112,7 +132,7 @@ modules:
             strides: [1000, 200, 320]
             only_crop_map_area: [True, True, True]
 
-     # ---------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------
     # TEXT_SPOTTING
     # ---------------------------------------------------------------------------
     # where: integration/text_spotting
@@ -124,18 +144,45 @@ modules:
         user: root
         options:
             # inputs:
-            input_dir_path: $OUTPUT_DIR/map_crop/$MAP_NAME_g1000_s1000_wo_legend
+            input_dir_path: $OUTPUT_DIR/map_crop/feature-extraction/$MAP_NAME_g1000_s1000_wo_legend
             # outputs:
             output_folder: $OUTPUT_DIR/text_spotting
             # temp:
             # misc:
-            model_weight_path: $INPUT_DIR/modules/text_spotting/trained_weights/model_final.pth
-            spotter_config: $REPO_DIR/usc-umn-inferlink-ta1/system/mapkurator/spotter_v2/PALEJUN/configs/PALEJUN/SynthMap/SynthMap_Polygon.yaml
+            model_weight_path: $INPUT_DIR/modules/text_spotting/trained_weights/model_v2_en.pth
+            spotter_config: $INPUT_DIR/modules/text_spotting/inference_en.yaml
             map_kurator_system_dir: $REPO_DIR/usc-umn-inferlink-ta1/system/mapkurator/mapkurator-system
-            text_spotting_model_dir: $REPO_DIR/usc-umn-inferlink-ta1/system/mapkurator/spotter_v2/PALEJUN
+            text_spotting_model_dir: $REPO_DIR/usc-umn-inferlink-ta1/system/mapkurator/spotter-v2
             expt_name: $MAP_NAME
             module_text_spotting: ""
-            spotter_model: spotter_v2
+            spotter_model: spotter-v2
+            spotter_expt_name: $MAP_NAME
+            module_img_geojson: ""
+    
+    # ---------------------------------------------------------------------------
+    # COORDINATE_SPOTTING
+    # ---------------------------------------------------------------------------
+    # where: integration/coordinate_spotting
+    # by: Yijun
+    # requires: map_crop
+    # produced: geojson
+    -   name: coordinate_spotting
+        gpu: true
+        user: root
+        options:
+            # inputs:
+            input_dir_path: $OUTPUT_DIR/map_crop/georef/
+            # outputs:
+            output_folder: $OUTPUT_DIR/coordinate_spotting
+            # temp:
+            # misc:
+            model_weight_path: $INPUT_DIR/modules/coordinate_spotting/trained_weights/model_v2_coord.pth
+            spotter_config: $INPUT_DIR/modules/coordinate_spotting/inference_coord.yaml
+            map_kurator_system_dir: $REPO_DIR/usc-umn-inferlink-ta1/system/mapkurator/mapkurator-system
+            text_spotting_model_dir: $REPO_DIR/usc-umn-inferlink-ta1/system/mapkurator/spotter-v2
+            expt_name: $MAP_NAME
+            module_text_spotting: ""
+            spotter_model: spotter-v2
             spotter_expt_name: $MAP_NAME
             module_img_geojson: ""
 
@@ -177,18 +224,16 @@ modules:
         options:
             # inputs:
             path_to_tif: $INPUT_DIR/maps/$MAP_NAME/$MAP_NAME.tif
-            path_to_legend_description: $OUTPUT_DIR/legend_item_description/$MAP_NAME_polygon.json
-            path_to_legend_solution: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType.geojson
             path_to_json: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType_internal.json
-            path_to_model: $INPUT_DIR/modules/polygon_extract/checkpoints/checkpoint_epoch14.pth
+            path_to_legend_solution: $OUTPUT_DIR/legend_item_segment/$MAP_NAME_PolygonType.geojson
+            path_to_bound: $OUTPUT_DIR/legend_item_segment/$MAP_map_segementation.json
+            path_to_legend_description: $OUTPUT_DIR/legend_item_description/$MAP_NAME_polygon.json
             # outputs:
-            dir_to_integrated_output: $OUTPUT_DIR/polygon_extract
-            log: $OUTPUT_DIR/polygon_extract/run.log
+            dir_to_vector_output: $OUTPUT_DIR/polygon_extract
             # temp:
             dir_to_intermediate: $TEMP_DIR/polygon_extract
             # misc:
-            version: 0
-            trade_off: 6
+            log: $OUTPUT_DIR/polygon_extract/run.log
 
     # ---------------------------------------------------------------------------
     # POINT_EXTRACT
@@ -201,20 +246,18 @@ modules:
         gpu: true
         options:
             ## inputs:
-            map_dir: $INPUT_DIR/maps
-            map_metadata_dir: $OUTPUT_DIR/legend_item_description
-            map_patches_dir: $OUTPUT_DIR/map_crop/$MAP_NAME_g1000_s1000_wo_legend
-            #template_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/point-symbol-pipeline/Template
+            map_dir: $INPUT_DIR/maps/$MAP_NAME
+            map_metadata_dir: $OUTPUT_DIR/ptln_legend_item_description
+            map_patches_dir: $OUTPUT_DIR/map_crop/feature-extraction/
             model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/model_weights
-            symbol_info_json_file: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/automated_model_selection/symbol_info.json
+            symbol_info_json_file: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/automated_model_selection_img_txt/data/symbol_info.json
             strike_model_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/strike_model_weights/
+            cropped_legend_patches_dir: $OUTPUT_DIR/map_crop/feature-extraction/
+            image_based_model_weight: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/automated_model_selection_img_txt/data/model.pt
             # outputs:
             output_dir_root: $OUTPUT_DIR/point_extract
-            # temp:
-            #cropped_legend_dir: $TEMP_DIR/point_extract
-            #processed_legend_dir: $TEMP_DIR/point_extract
             # misc:
-            gpu_id: 2
+            gpu_id: 0
 
 
     # ---------------------------------------------------------------------------
@@ -235,7 +278,7 @@ modules:
             # temp:
             temp_dir: $TEMP_DIR/georeference
             # misc:
-            gpu_id: 3
+            gpu_id: 0
             # reformat: ""
 
 

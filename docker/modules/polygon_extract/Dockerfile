@@ -16,13 +16,14 @@ RUN apt-get update && apt-get install -y \
     libtiff-dev \
     libvips-dev
 
+RUN pip install --upgrade setuptools
+
 RUN pip --no-input install \
     scikit-image \
-    Pillow==9.4.0 \
+    Pillow \
     rasterio \
-    wandb \
-    pyvips \
-    gdown
+    wandb==0.16.4 \
+    pyvips==2.2.1 
 
 RUN conda install -y -c conda-forge ipywidgets
 
@@ -32,5 +33,5 @@ COPY . /ta1/repos/usc-umn-inferlink-ta1/
 
 CMD []
 ENTRYPOINT [ \
-    "python", "/ta1/repos/usc-umn-inferlink-ta1/polygon/loam_handler.py" \
+    "python", "/ta1/repos/usc-umn-inferlink-ta1/polygon/permian_handler.py" \
     ]

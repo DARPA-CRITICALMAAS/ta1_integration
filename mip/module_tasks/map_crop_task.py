@@ -24,5 +24,5 @@ class MapCropTask(ModuleTask):
         strides = switches[stride_switch_index+1: stride_switch_index+1+len(patches)]
 
         for i, patch in enumerate(patches):
-            check_directory_exists(path=d / f"{self.map_name}_g{patch}_s{strides[i]}_wo_legend", min_files=1)
+            check_directory_exists(path=d / f"feature-extraction/{self.map_name}_g{patch}_s{strides[i]}_wo_legend", min_files=1)
 
