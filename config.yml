@@ -251,7 +251,8 @@ modules:
             map_patches_dir: $OUTPUT_DIR/map_crop/feature-extraction/$MAP_NAME_g1000_s1000_wo_legend
             model_weights_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/model_weights
             symbol_info_json_file: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/automated_model_selection_img_txt/data/symbol_info.json
-            strike_model_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/strike_model_weights/
+            # strike_model_dir: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/strike_model_weights/
+            dip_direct_model_path: $INPUT_DIR/modules/point_extract/trained_weights/dip_direct_cls.pt 
             cropped_legend_patches_dir: $OUTPUT_DIR/map_crop/feature-extraction/
             image_based_model_weight: $REPO_DIR/usc-umn-inferlink-ta1/point/src/pipeline-scripts/automated_model_selection_img_txt/data/model.pt
             # outputs:

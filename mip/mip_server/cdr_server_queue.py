@@ -9,7 +9,7 @@ from time import sleep
 from typing import Optional
 import os
 from filelock import FileLock
-from flask import Flask, request
+from flask import Flask, request, abort, current_app
 import hmac
 from mip.mip_server.modules_api import ModulesApi
 from mip.mip_server.runs_api import RunsApi
@@ -248,6 +248,29 @@ async def send_results_to_cdr(job_id: str, event: str):
     else:
         return f"Unknown event: {event}"
 
+def log_cdr_paylod(payload):
+    file_path = 'cdr_payload.json'
+    # Open the JSON file in append mode
+    with open(file_path, 'a+') as file:
+        # Move cursor to the beginning of the file to read existing content
+        file.seek(0)
+        try:
+            # Load existing JSON content if any
+            json_data = json.load(file)
+        except json.JSONDecodeError:
+            # Handle the case where file is empty (no content)
+            json_data = []
+
+        # Append new data to the JSON data list
+        json_data.append(data_to_append)
+
+        # Move cursor to the beginning of the file to write new content
+        file.seek(0)
+        # Write JSON data back to the file
+        json.dump(json_data, file, indent=4)
+        # Ensure any remaining content is overwritten
+        file.truncate()
+    return
 
 @app.post("/")
 def producer_loop() -> None:
@@ -255,6 +278,9 @@ def producer_loop() -> None:
      # check the signature
     validate_request(request.data, request.headers.get("x-cdr-signature-256"), current_app.config["callback_secret"])
     data = request.get_json()
+    log_cdr_paylod(data)
+    if  data["payload"].get('cog_id', None) is None or data["payload"].get('cog_url', None) is None:
+        return {"ok": "success"}
     job, event = data["cog_id"], data["event"]
     run_async_function(donwload_map(data))
     if event == "map.process":
